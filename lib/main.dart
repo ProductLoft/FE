@@ -1,125 +1,274 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
+import 'package:lang_fe/pages/buttons_page.dart';
+import 'package:lang_fe/pages/colors_page.dart';
+import 'package:lang_fe/pages/dialogs_page.dart';
+import 'package:lang_fe/pages/fields_page.dart';
+import 'package:lang_fe/pages/indicators_page.dart';
+import 'package:lang_fe/pages/resizable_pane_page.dart';
+import 'package:lang_fe/pages/selectors_page.dart';
+import 'package:lang_fe/pages/sliver_toolbar_page.dart';
+import 'package:lang_fe/pages/tabview_page.dart';
+import 'package:lang_fe/pages/toolbar_page.dart';
+import 'package:lang_fe/pages/typography_page.dart';
+import 'package:lang_fe/platform_menus.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:macos_ui/macos_ui.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'theme.dart';
+
+/// This method initializes macos_window_utils and styles the window.
+Future<void> _configureMacosWindowUtils() async {
+  const config = MacosWindowUtilsConfig();
+  await config.apply();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+Future<void> main() async {
+  if (!kIsWeb) {
+    if (Platform.isMacOS) {
+      await _configureMacosWindowUtils();
+    }
+  }
 
-  // This widget is the root of your application.
+  runApp(const MacosUIGalleryApp());
+}
+
+class MacosUIGalleryApp extends StatelessWidget {
+  const MacosUIGalleryApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return ChangeNotifierProvider(
+      create: (_) => AppTheme(),
+      builder: (context, _) {
+        final appTheme = context.watch<AppTheme>();
+        return MacosApp(
+          title: 'macos_ui Widget Gallery',
+          theme: MacosThemeData.light(),
+          darkTheme: MacosThemeData.dark(),
+          themeMode: appTheme.mode,
+          debugShowCheckedModeBanner: false,
+          home: const WidgetGallery(),
+        );
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class WidgetGallery extends StatefulWidget {
+  const WidgetGallery({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<WidgetGallery> createState() => _WidgetGalleryState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _WidgetGalleryState extends State<WidgetGallery> {
+  int pageIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  late final searchFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return PlatformMenuBar(
+      menus: menuBarItems(),
+      child: MacosWindow(
+        sidebar: Sidebar(
+          top: MacosSearchField(
+            placeholder: 'Search',
+            controller: searchFieldController,
+            onResultSelected: (result) {
+              switch (result.searchKey) {
+                case 'Buttons':
+                  setState(() {
+                    pageIndex = 0;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Indicators':
+                  setState(() {
+                    pageIndex = 1;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Fields':
+                  setState(() {
+                    pageIndex = 2;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Colors':
+                  setState(() {
+                    pageIndex = 3;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Dialogs and Sheets':
+                  setState(() {
+                    pageIndex = 4;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Toolbar':
+                  setState(() {
+                    pageIndex = 6;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'ResizablePane':
+                  setState(() {
+                    pageIndex = 7;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Selectors':
+                  setState(() {
+                    pageIndex = 8;
+                    searchFieldController.clear();
+                  });
+                  break;
+                default:
+                  searchFieldController.clear();
+              }
+            },
+            results: const [
+              SearchResultItem('Buttons'),
+              SearchResultItem('Indicators'),
+              SearchResultItem('Fields'),
+              SearchResultItem('Colors'),
+              SearchResultItem('Dialogs and Sheets'),
+              SearchResultItem('Toolbar'),
+              SearchResultItem('ResizablePane'),
+              SearchResultItem('Selectors'),
+            ],
+          ),
+          minWidth: 200,
+          builder: (context, scrollController) {
+            return SidebarItems(
+              currentIndex: pageIndex,
+              onChanged: (i) {
+                if (kIsWeb && i == 10) {
+                  launchUrl(
+                    Uri.parse(
+                      'https://www.figma.com/file/IX6ph2VWrJiRoMTI1Byz0K/Apple-Design-Resources---macOS-(Community)?node-id=0%3A1745&mode=dev',
+                    ),
+                  );
+                } else {
+                  setState(() => pageIndex = i);
+                }
+              },
+              scrollController: scrollController,
+              itemSize: SidebarItemSize.large,
+              items: const [
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage('assets/sf_symbols/button_programmable_2x.png'),
+                  ),
+                  label: Text('Buttons'),
+                ),
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage(
+                      'assets/sf_symbols/lines_measurement_horizontal_2x.png',
+                    ),
+                  ),
+                  label: Text('Indicators'),
+                ),
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage(
+                      'assets/sf_symbols/character_cursor_ibeam_2x.png',
+                    ),
+                  ),
+                  label: Text('Fields'),
+                ),
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage('assets/sf_symbols/rectangle_3_group_2x.png'),
+                  ),
+                  label: Text('Colors'),
+                ),
+                SidebarItem(
+                  leading: MacosIcon(CupertinoIcons.square_on_square),
+                  label: Text('Dialogs & Sheets'),
+                ),
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage(
+                      'assets/sf_symbols/macwindow.on.rectangle_2x.png',
+                    ),
+                  ),
+                  label: Text('Layout'),
+                  disclosureItems: [
+                    SidebarItem(
+                      leading: MacosIcon(CupertinoIcons.macwindow),
+                      label: Text('Toolbar'),
+                    ),
+                    SidebarItem(
+                      leading: MacosImageIcon(
+                        AssetImage(
+                          'assets/sf_symbols/menubar.rectangle_2x.png',
+                        ),
+                      ),
+                      label: Text('SliverToolbar'),
+                    ),
+                    SidebarItem(
+                      leading: MacosIcon(CupertinoIcons.uiwindow_split_2x1),
+                      label: Text('TabView'),
+                    ),
+                    SidebarItem(
+                      leading: MacosIcon(CupertinoIcons.rectangle_split_3x1),
+                      label: Text('ResizablePane'),
+                    ),
+                  ],
+                ),
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage(
+                        'assets/sf_symbols/filemenu_and_selection_2x.png'),
+                  ),
+                  label: Text('Selectors'),
+                ),
+                SidebarItem(
+                  leading: MacosIcon(CupertinoIcons.textformat_size),
+                  label: Text('Typography'),
+                ),
+              ],
+            );
+          },
+          bottom: const MacosListTile(
+            leading: MacosIcon(CupertinoIcons.profile_circled),
+            title: Text('Tim Apple'),
+            subtitle: Text('tim@apple.com'),
+          ),
         ),
+        endSidebar: Sidebar(
+          startWidth: 200,
+          minWidth: 200,
+          maxWidth: 300,
+          shownByDefault: false,
+          builder: (context, _) {
+            return const Center(
+              child: Text('End Sidebar'),
+            );
+          },
+        ),
+        child: [
+          CupertinoTabView(builder: (_) => const ButtonsPage()),
+          const IndicatorsPage(),
+          const FieldsPage(),
+          const ColorsPage(),
+          const DialogsPage(),
+          const ToolbarPage(),
+          const SliverToolbarPage(isVisible: !kIsWeb),
+          const TabViewPage(),
+          const ResizablePanePage(),
+          const SelectorsPage(),
+          const TypographyPage(),
+        ][pageIndex],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
