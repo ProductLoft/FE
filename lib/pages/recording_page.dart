@@ -4,6 +4,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data' show Uint8List;
+
+import 'package:audio_session/audio_session.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart' show DateFormat;
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../theme.dart';
 
@@ -26,22 +40,27 @@ enum AudioState {
 }
 
 
-class ButtonsPage extends StatefulWidget {
-  const ButtonsPage({super.key});
+
+class RecordingPage extends StatefulWidget {
+  const RecordingPage({super.key});
 
   @override
-  State<ButtonsPage> createState() => _ButtonsPageState();
+  State<RecordingPage> createState() => _RecordingPageState();
 }
 
-class _ButtonsPageState extends State<ButtonsPage> {
+class _RecordingPageState extends State<RecordingPage> {
+
   String popupValue = 'One';
   String languagePopupValue = 'English';
   bool switchValue = false;
   bool isDisclosureButtonPressed = false;
   final _tabController = MacosTabController(initialIndex: 0, length: 3);
 
+
   @override
   Widget build(BuildContext context) {
+
+
     return MacosScaffold(
       toolBar: ToolBar(
         title: const Text('Buttons'),
@@ -88,7 +107,7 @@ class _ButtonsPageState extends State<ButtonsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const WidgetTextTitle1(widgetName: 'PushButton'),
+                  const WidgetTextTitle1(widgetName: 'Start recording'),
                   Divider(color: MacosTheme.of(context).dividerColor),
                   Text(
                     'Primary',

@@ -5,6 +5,7 @@ import 'package:lang_fe/pages/colors_page.dart';
 import 'package:lang_fe/pages/dialogs_page.dart';
 import 'package:lang_fe/pages/fields_page.dart';
 import 'package:lang_fe/pages/indicators_page.dart';
+import 'package:lang_fe/pages/recording_page.dart';
 import 'package:lang_fe/pages/resizable_pane_page.dart';
 import 'package:lang_fe/pages/selectors_page.dart';
 import 'package:lang_fe/pages/sliver_toolbar_page.dart';
@@ -81,33 +82,39 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             controller: searchFieldController,
             onResultSelected: (result) {
               switch (result.searchKey) {
-                case 'Buttons':
+                case 'Recording':
                   setState(() {
                     pageIndex = 0;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Indicators':
+                case 'Buttons':
                   setState(() {
                     pageIndex = 1;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Fields':
+                case 'Indicators':
                   setState(() {
                     pageIndex = 2;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Colors':
+                case 'Fields':
                   setState(() {
                     pageIndex = 3;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Dialogs and Sheets':
+                case 'Colors':
                   setState(() {
                     pageIndex = 4;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Dialogs and Sheets':
+                  setState(() {
+                    pageIndex = 5;
                     searchFieldController.clear();
                   });
                   break;
@@ -134,6 +141,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
               }
             },
             results: const [
+              SearchResultItem('Recording'),
               SearchResultItem('Buttons'),
               SearchResultItem('Indicators'),
               SearchResultItem('Fields'),
@@ -162,6 +170,12 @@ class _WidgetGalleryState extends State<WidgetGallery> {
               scrollController: scrollController,
               itemSize: SidebarItemSize.large,
               items: const [
+                SidebarItem(
+                  leading: MacosImageIcon(
+                    AssetImage('assets/sf_symbols/button_programmable_2x.png'),
+                  ),
+                  label: Text('Recording'),
+                ),
                 SidebarItem(
                   leading: MacosImageIcon(
                     AssetImage('assets/sf_symbols/button_programmable_2x.png'),
@@ -256,6 +270,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
           },
         ),
         child: [
+          CupertinoTabView(builder: (_) => const RecordingPage()),
           CupertinoTabView(builder: (_) => const ButtonsPage()),
           const IndicatorsPage(),
           const FieldsPage(),
