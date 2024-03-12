@@ -1,4 +1,6 @@
 PODS:
+  - appkit_ui_element_colors (1.0.0):
+    - FlutterMacOS
   - audioplayers_darwin (0.0.1):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
@@ -12,19 +14,26 @@ PODS:
   - record_darwin (1.0.0):
     - Flutter
     - FlutterMacOS
+  - sqflite (0.0.3):
+    - Flutter
+    - FlutterMacOS
   - url_launcher_macos (0.0.1):
     - FlutterMacOS
 
 DEPENDENCIES:
+  - appkit_ui_element_colors (from `Flutter/ephemeral/.symlinks/plugins/appkit_ui_element_colors/macos`)
   - audioplayers_darwin (from `Flutter/ephemeral/.symlinks/plugins/audioplayers_darwin/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - macos_ui (from `Flutter/ephemeral/.symlinks/plugins/macos_ui/macos`)
   - macos_window_utils (from `Flutter/ephemeral/.symlinks/plugins/macos_window_utils/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - record_darwin (from `Flutter/ephemeral/.symlinks/plugins/record_darwin/macos`)
+  - sqflite (from `Flutter/ephemeral/.symlinks/plugins/sqflite/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
 
 EXTERNAL SOURCES:
+  appkit_ui_element_colors:
+    :path: Flutter/ephemeral/.symlinks/plugins/appkit_ui_element_colors/macos
   audioplayers_darwin:
     :path: Flutter/ephemeral/.symlinks/plugins/audioplayers_darwin/macos
   FlutterMacOS:
@@ -37,16 +46,20 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
   record_darwin:
     :path: Flutter/ephemeral/.symlinks/plugins/record_darwin/macos
+  sqflite:
+    :path: Flutter/ephemeral/.symlinks/plugins/sqflite/darwin
   url_launcher_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
 
 SPEC CHECKSUMS:
+  appkit_ui_element_colors: 39bb2d80be3f19b152ccf4c70d5bbe6cba43d74a
   audioplayers_darwin: dcad41de4fbd0099cb3749f7ab3b0cb8f70b810c
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   macos_ui: 6229a8922cd97bafb7d9636c8eb8dfb0744183ca
   macos_window_utils: 933f91f64805e2eb91a5bd057cf97cd097276663
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   record_darwin: 1f6619f2abac4d1ca91d3eeab038c980d76f1517
+  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95
 
 PODFILE CHECKSUM: 9ebaf0ce3d369aaa26a9ea0e159195ed94724cf3

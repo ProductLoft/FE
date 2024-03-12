@@ -41,9 +41,10 @@ dependencies:
   google_fonts: ^6.1.0
   record:
   audioplayers:
-  path:
+  path: ^1.9.0
   path_provider: ^2.1.2
   flutter_sound: ^9.2.13
+  sqflite:
 
 dev_dependencies:
   flutter_test:

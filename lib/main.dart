@@ -71,6 +71,107 @@ class _WidgetGalleryState extends State<WidgetGallery> {
 
   late final searchFieldController = TextEditingController();
 
+  SidebarItems getSidebarItems(context, scrollController) {
+    return SidebarItems(
+      currentIndex: pageIndex,
+      onChanged: (i) {
+        if (kIsWeb && i == 10) {
+          launchUrl(
+            Uri.parse(
+              'https://www.figma.com/file/IX6ph2VWrJiRoMTI1Byz0K/Apple-Design-Resources---macOS-(Community)?node-id=0%3A1745&mode=dev',
+            ),
+          );
+        } else {
+          setState(() => pageIndex = i);
+        }
+      },
+      scrollController: scrollController,
+      itemSize: SidebarItemSize.large,
+      items: const [
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage('assets/sf_symbols/button_programmable_2x.png'),
+          ),
+          label: Text('Recording'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage('assets/sf_symbols/button_programmable_2x.png'),
+          ),
+          label: Text('Buttons'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage(
+              'assets/sf_symbols/lines_measurement_horizontal_2x.png',
+            ),
+          ),
+          label: Text('Indicators'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage(
+              'assets/sf_symbols/character_cursor_ibeam_2x.png',
+            ),
+          ),
+          label: Text('Fields'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage('assets/sf_symbols/rectangle_3_group_2x.png'),
+          ),
+          label: Text('Colors'),
+        ),
+        SidebarItem(
+          leading: MacosIcon(CupertinoIcons.square_on_square),
+          label: Text('Dialogs & Sheets'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage(
+              'assets/sf_symbols/macwindow.on.rectangle_2x.png',
+            ),
+          ),
+          label: Text('Layout'),
+          disclosureItems: [
+            SidebarItem(
+              leading: MacosIcon(CupertinoIcons.macwindow),
+              label: Text('Toolbar'),
+            ),
+            SidebarItem(
+              leading: MacosImageIcon(
+                AssetImage(
+                  'assets/sf_symbols/menubar.rectangle_2x.png',
+                ),
+              ),
+              label: Text('SliverToolbar'),
+            ),
+            SidebarItem(
+              leading: MacosIcon(CupertinoIcons.uiwindow_split_2x1),
+              label: Text('TabView'),
+            ),
+            SidebarItem(
+              leading: MacosIcon(CupertinoIcons.rectangle_split_3x1),
+              label: Text('ResizablePane'),
+            ),
+          ],
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage(
+                'assets/sf_symbols/filemenu_and_selection_2x.png'),
+          ),
+          label: Text('Selectors'),
+        ),
+        SidebarItem(
+          leading: MacosIcon(CupertinoIcons.textformat_size),
+          label: Text('Typography'),
+        ),
+      ],
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return PlatformMenuBar(
@@ -153,105 +254,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             ],
           ),
           minWidth: 200,
-          builder: (context, scrollController) {
-            return SidebarItems(
-              currentIndex: pageIndex,
-              onChanged: (i) {
-                if (kIsWeb && i == 10) {
-                  launchUrl(
-                    Uri.parse(
-                      'https://www.figma.com/file/IX6ph2VWrJiRoMTI1Byz0K/Apple-Design-Resources---macOS-(Community)?node-id=0%3A1745&mode=dev',
-                    ),
-                  );
-                } else {
-                  setState(() => pageIndex = i);
-                }
-              },
-              scrollController: scrollController,
-              itemSize: SidebarItemSize.large,
-              items: const [
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage('assets/sf_symbols/button_programmable_2x.png'),
-                  ),
-                  label: Text('Recording'),
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage('assets/sf_symbols/button_programmable_2x.png'),
-                  ),
-                  label: Text('Buttons'),
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage(
-                      'assets/sf_symbols/lines_measurement_horizontal_2x.png',
-                    ),
-                  ),
-                  label: Text('Indicators'),
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage(
-                      'assets/sf_symbols/character_cursor_ibeam_2x.png',
-                    ),
-                  ),
-                  label: Text('Fields'),
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage('assets/sf_symbols/rectangle_3_group_2x.png'),
-                  ),
-                  label: Text('Colors'),
-                ),
-                SidebarItem(
-                  leading: MacosIcon(CupertinoIcons.square_on_square),
-                  label: Text('Dialogs & Sheets'),
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage(
-                      'assets/sf_symbols/macwindow.on.rectangle_2x.png',
-                    ),
-                  ),
-                  label: Text('Layout'),
-                  disclosureItems: [
-                    SidebarItem(
-                      leading: MacosIcon(CupertinoIcons.macwindow),
-                      label: Text('Toolbar'),
-                    ),
-                    SidebarItem(
-                      leading: MacosImageIcon(
-                        AssetImage(
-                          'assets/sf_symbols/menubar.rectangle_2x.png',
-                        ),
-                      ),
-                      label: Text('SliverToolbar'),
-                    ),
-                    SidebarItem(
-                      leading: MacosIcon(CupertinoIcons.uiwindow_split_2x1),
-                      label: Text('TabView'),
-                    ),
-                    SidebarItem(
-                      leading: MacosIcon(CupertinoIcons.rectangle_split_3x1),
-                      label: Text('ResizablePane'),
-                    ),
-                  ],
-                ),
-                SidebarItem(
-                  leading: MacosImageIcon(
-                    AssetImage(
-                        'assets/sf_symbols/filemenu_and_selection_2x.png'),
-                  ),
-                  label: Text('Selectors'),
-                ),
-                SidebarItem(
-                  leading: MacosIcon(CupertinoIcons.textformat_size),
-                  label: Text('Typography'),
-                ),
-              ],
-            );
-          },
+          builder: getSidebarItems,
           bottom: const MacosListTile(
             leading: MacosIcon(CupertinoIcons.profile_circled),
             title: Text('Tim Apple'),
