@@ -7,6 +7,25 @@ import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
+
+enum AudioState {
+  ///
+  isPlaying,
+
+  ///
+  isPaused,
+
+  ///
+  isStopped,
+
+  ///
+  isRecording,
+
+  ///
+  isRecordingPaused,
+}
+
+
 class ButtonsPage extends StatefulWidget {
   const ButtonsPage({super.key});
 
