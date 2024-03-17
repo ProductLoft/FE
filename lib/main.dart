@@ -5,6 +5,7 @@ import 'package:lang_fe/pages/colors_page.dart';
 import 'package:lang_fe/pages/dialogs_page.dart';
 import 'package:lang_fe/pages/fields_page.dart';
 import 'package:lang_fe/pages/indicators_page.dart';
+import 'package:lang_fe/pages/login.dart';
 import 'package:lang_fe/pages/recording_page.dart';
 import 'package:lang_fe/pages/resizable_pane_page.dart';
 import 'package:lang_fe/pages/selectors_page.dart';
@@ -67,7 +68,7 @@ class WidgetGallery extends StatefulWidget {
 }
 
 class _WidgetGalleryState extends State<WidgetGallery> {
-  int pageIndex = 0;
+  int pageIndex = 1;
 
   late final searchFieldController = TextEditingController();
 
@@ -93,6 +94,12 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             AssetImage('assets/sf_symbols/button_programmable_2x.png'),
           ),
           label: Text('Recording'),
+        ),
+        SidebarItem(
+          leading: MacosImageIcon(
+            AssetImage('assets/sf_symbols/button_programmable_2x.png'),
+          ),
+          label: Text('Login'),
         ),
         SidebarItem(
           leading: MacosImageIcon(
@@ -172,6 +179,20 @@ class _WidgetGalleryState extends State<WidgetGallery> {
   }
 
 
+  Sidebar getEndSidebar() {
+    return Sidebar(
+      startWidth: 200,
+      minWidth: 200,
+      maxWidth: 300,
+      shownByDefault: false,
+      builder: (context, _) {
+        return const Center(
+          child: Text('End Sidebar'),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PlatformMenuBar(
@@ -189,51 +210,57 @@ class _WidgetGalleryState extends State<WidgetGallery> {
                     searchFieldController.clear();
                   });
                   break;
-                case 'Buttons':
+                case 'Login':
                   setState(() {
                     pageIndex = 1;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Indicators':
+                case 'Buttons':
                   setState(() {
                     pageIndex = 2;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Fields':
+                case 'Indicators':
                   setState(() {
                     pageIndex = 3;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Colors':
+                case 'Fields':
                   setState(() {
                     pageIndex = 4;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Dialogs and Sheets':
+                case 'Colors':
                   setState(() {
                     pageIndex = 5;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Toolbar':
+                case 'Dialogs and Sheets':
                   setState(() {
                     pageIndex = 6;
                     searchFieldController.clear();
                   });
                   break;
-                case 'ResizablePane':
+                case 'Toolbar':
                   setState(() {
                     pageIndex = 7;
                     searchFieldController.clear();
                   });
                   break;
-                case 'Selectors':
+                case 'ResizablePane':
                   setState(() {
                     pageIndex = 8;
+                    searchFieldController.clear();
+                  });
+                  break;
+                case 'Selectors':
+                  setState(() {
+                    pageIndex = 9;
                     searchFieldController.clear();
                   });
                   break;
@@ -243,6 +270,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             },
             results: const [
               SearchResultItem('Recording'),
+              SearchResultItem('Login'),
               SearchResultItem('Buttons'),
               SearchResultItem('Indicators'),
               SearchResultItem('Fields'),
@@ -261,19 +289,9 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             subtitle: Text('tim@apple.com'),
           ),
         ),
-        endSidebar: Sidebar(
-          startWidth: 200,
-          minWidth: 200,
-          maxWidth: 300,
-          shownByDefault: false,
-          builder: (context, _) {
-            return const Center(
-              child: Text('End Sidebar'),
-            );
-          },
-        ),
         child: [
           CupertinoTabView(builder: (_) => const RecordingPage()),
+          CupertinoTabView(builder: (_) => const Login(title: "Login")),
           CupertinoTabView(builder: (_) => const ButtonsPage()),
           const IndicatorsPage(),
           const FieldsPage(),

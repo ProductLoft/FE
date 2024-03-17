@@ -64,6 +64,19 @@ create table $userTable (
     return user;
   }
 
+  Future<User> getUser() async {
+    List<Map> maps = await db.query(userTable, columns: [userId, userName, useruserName, userPassword]);
+    if (maps.length > 0) {
+      return User(
+        id: maps[0][userId],
+        name: maps[0][userName],
+        userName: maps[0][useruserName],
+        password: maps[0][userPassword],
+      );
+    }
+    return User(id: 0, name: "", userName: "", password: "");
+  }
+
   Future<bool> isLoggedin() async {
     var res = await db.query("select * from $userTable");
     return res.isNotEmpty;
