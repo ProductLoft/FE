@@ -35,11 +35,18 @@ Future<void> main() async {
     }
   }
 
-  runApp(const MacosUIGalleryApp());
+  runApp(const LanguageApp());
 }
 
-class MacosUIGalleryApp extends StatelessWidget {
-  const MacosUIGalleryApp({super.key});
+class LanguageApp extends StatelessWidget {
+  const LanguageApp({super.key});
+
+  // Function to check login state
+  Future<bool> checkLoggedIn() async {
+    // Replace with your actual authentication check logic
+    return await Future.delayed(Duration(seconds: 1))
+        .then((value) => false); // Simulating not logged in
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +60,27 @@ class MacosUIGalleryApp extends StatelessWidget {
           darkTheme: MacosThemeData.dark(),
           themeMode: appTheme.mode,
           debugShowCheckedModeBanner: false,
-          home: const WidgetGallery(),
+          home: FutureBuilder(
+            future: checkLoggedIn(),
+            builder: (context, snapshot) {
+              // if (snapshot.hasData) {
+              //   return snapshot.data == true ? () : LoginPage();
+              // } else {
+              //   const WidgetGallery();
+              // }
+
+              if (snapshot.hasData) {
+                return snapshot.data == true
+                    ? const WidgetGallery()
+                    : const Login(title: "Login");
+              }
+              return const WidgetGallery();
+              // else {
+              //   // Show a loading indicator
+              //   // return CircularProgressIndicator();
+              // }
+            },
+          ),
         );
       },
     );
@@ -165,8 +192,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
         ),
         SidebarItem(
           leading: MacosImageIcon(
-            AssetImage(
-                'assets/sf_symbols/filemenu_and_selection_2x.png'),
+            AssetImage('assets/sf_symbols/filemenu_and_selection_2x.png'),
           ),
           label: Text('Selectors'),
         ),
@@ -177,7 +203,6 @@ class _WidgetGalleryState extends State<WidgetGallery> {
       ],
     );
   }
-
 
   Sidebar getEndSidebar() {
     return Sidebar(
