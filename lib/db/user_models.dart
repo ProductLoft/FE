@@ -12,12 +12,14 @@ class User {
   final int id;
   final String name;
   final String userName;
+  final String email;
   final String cookie;
 
   User({
     required this.id,
     required this.name,
     required this.userName,
+    required this.email,
     required this.cookie,
   });
 
@@ -26,6 +28,7 @@ class User {
       userIdColumn: id,
       nameColumn: name,
       usernameColumn: userName,
+      emailColumn: email,
       cookieColumn: cookie,
     };
     return map;
@@ -34,7 +37,7 @@ class User {
 
 class UserProvider {
   UserProvider();
-  Future<User> createUser(name, username, cookie) async {
+  Future<User> createUser(name, username, email, cookie) async {
 
     Database db = await DatabaseHelper().database;
     User user = User(
@@ -42,6 +45,7 @@ class UserProvider {
       id: 1,
       name: name,
       userName: username,
+      email: email,
       cookie: cookie,
     );
     print(user.toMap());
@@ -66,12 +70,13 @@ class UserProvider {
     try {
       Database db = await DatabaseHelper().database;
       List<Map> maps = await db.query(userTable,
-          columns: [userIdColumn, nameColumn, usernameColumn, cookieColumn]);
+          columns: [userIdColumn, nameColumn, usernameColumn, emailColumn, cookieColumn]);
       if (maps.isNotEmpty) {
         return User(
           id: maps[0][userIdColumn],
           name: maps[0][nameColumn],
           userName: maps[0][usernameColumn],
+          email: maps[0][emailColumn],
           cookie: maps[0][cookieColumn],
         );
       }

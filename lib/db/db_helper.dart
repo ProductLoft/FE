@@ -26,7 +26,8 @@ class DatabaseHelper {
       $userIdColumn integer primary key autoincrement, 
       $nameColumn text not null,
       $usernameColumn text not null,
-      $cookieColumn text not null
+      $cookieColumn text not null,
+      $emailColumn text not null
       );
     ''');
       }

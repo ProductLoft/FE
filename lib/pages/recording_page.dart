@@ -32,7 +32,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     return MacosScaffold(
       toolBar: ToolBar(
-        title: const Text('Buttons'),
+        title: const Text('Recording Page'),
         titleWidth: 150.0,
         leading: MacosTooltip(
           message: 'Toggle Sidebar',
@@ -55,17 +55,6 @@ class _RecordingPageState extends State<RecordingPage> {
             onPressed: () => MacosWindowScope.of(context).toggleSidebar(),
           ),
         ),
-        actions: [
-          ToolBarIconButton(
-            label: 'Toggle End Sidebar',
-            tooltipMessage: 'Toggle End Sidebar',
-            icon: const MacosIcon(
-              CupertinoIcons.sidebar_right,
-            ),
-            onPressed: () => MacosWindowScope.of(context).toggleEndSidebar(),
-            showLabel: false,
-          ),
-        ],
       ),
       children: [
         ContentArea(
