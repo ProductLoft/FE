@@ -1,17 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lang_fe/const/consts.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter/widgets.dart';
-
-// names of columns
-const String userTable = "user";
-const String userId = "id";
-const String userName = "name";
-const String useruserName = "userName";
-const String userPassword = "password";
+import 'package:lang_fe/db/db_helper.dart';
 
 // Open the database and store the reference.
 
@@ -19,73 +12,88 @@ class User {
   final int id;
   final String name;
   final String userName;
-  final String password;
+  final String cookie;
 
   User({
     required this.id,
     required this.name,
     required this.userName,
-    required this.password,
+    required this.cookie,
   });
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
-      userId: id,
-      userName: name,
-      useruserName: userName,
-      userPassword: password,
+      userIdColumn: id,
+      nameColumn: name,
+      usernameColumn: userName,
+      cookieColumn: cookie,
     };
     return map;
   }
-
 }
 
 class UserProvider {
-  Database db;
+  UserProvider();
+  Future<User> createUser(name, username, cookie) async {
 
-  UserProvider(this.db);
-
-  Future open(String path) async {
-    db = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute('''
-create table $userTable ( 
-  $userId integer primary key autoincrement, 
-  $userName text not null,
-  $useruserName text not null
-  $userPassword text not null
-  )
-''');
-    });
-  }
-
-  Future<User> insert(User user) async {
-    var r = await db.insert(userTable, user.toMap());
+    Database db = await DatabaseHelper().database;
+    User user = User(
+      // TODO : check if id is autoincremented
+      id: 1,
+      name: name,
+      userName: username,
+      cookie: cookie,
+    );
+    print(user.toMap());
+    var r = await db.insert(userTable, user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    if (r == 1) {
+      if (kDebugMode) {
+        print('user created');
+      }
+    } else {
+      if (kDebugMode) {
+        print('error creating user');
+      }
+    }
     return user;
   }
 
-  Future<User> getUser() async {
-    List<Map> maps = await db.query(userTable, columns: [userId, userName, useruserName, userPassword]);
-    if (maps.length > 0) {
-      return User(
-        id: maps[0][userId],
-        name: maps[0][userName],
-        userName: maps[0][useruserName],
-        password: maps[0][userPassword],
-      );
+  Future<String?> getToken() {
+    return getUser().then((value) => value?.cookie);
+  }
+
+  Future<User?> getUser() async {
+    try {
+      Database db = await DatabaseHelper().database;
+      List<Map> maps = await db.query(userTable,
+          columns: [userIdColumn, nameColumn, usernameColumn, cookieColumn]);
+      if (maps.isNotEmpty) {
+        return User(
+          id: maps[0][userIdColumn],
+          name: maps[0][nameColumn],
+          userName: maps[0][usernameColumn],
+          cookie: maps[0][cookieColumn],
+        );
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        print('error getting user: $e');
+      }
+      return null;
     }
-    return User(id: 0, name: "", userName: "", password: "");
   }
 
   Future<bool> isLoggedin() async {
-    var res = await db.query("select * from $userTable");
+    Database db = await DatabaseHelper().database;
+    var res = await db.query(userTable);
+    print('res: $res');
     return res.isNotEmpty;
   }
 
   Future<bool> logout() async {
-    var r = await db.delete(userTable);
+    Database db = await DatabaseHelper().database;
+    var _ = await db.delete(userTable);
     return true;
   }
-
-
 }
