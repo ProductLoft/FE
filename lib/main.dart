@@ -118,8 +118,8 @@ class _WidgetGalleryState extends State<WidgetGallery> {
   Future<MacosWindow> getMacosWindow() async {
     User? user = await UserProvider().getUser();
     print('user: $user');
-    String name = user?.name?? 'Anon';
-    String email = user?.email?? 'Anon';
+    String name = user?.name ?? 'Anon';
+    String email = user?.email ?? 'Anon';
 
     return MacosWindow(
       sidebar: Sidebar(
@@ -139,7 +139,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
             }
           },
           results: const [
-            SearchResultItem('Recording'),
+            SearchResultItem('Record'),
           ],
         ),
         minWidth: 200,
@@ -211,20 +211,9 @@ class _WidgetGalleryState extends State<WidgetGallery> {
   // Handle user login
   MacosScaffold getLogin() {
     return MacosScaffold(
-        toolBar: ToolBar(
-          title: const Text('Login'),
+        toolBar: const ToolBar(
+          title: Text('Login'),
           titleWidth: 150.0,
-          actions: [
-            ToolBarIconButton(
-              label: 'Toggle End Sidebar',
-              tooltipMessage: 'Toggle End Sidebar',
-              icon: const MacosIcon(
-                CupertinoIcons.sidebar_right,
-              ),
-              onPressed: () => MacosWindowScope.of(context).toggleEndSidebar(),
-              showLabel: false,
-            ),
-          ],
         ),
         children: [
           ContentArea(builder: (context, scrollController) {
@@ -294,7 +283,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
                   if (windowSnapshot.hasData) {
                     return windowSnapshot.data!; // Return the actual widget
                   } else {
-                    return Center(
+                    return const Center(
                         child: CircularProgressIndicator()); // Show loading
                   }
                 },
