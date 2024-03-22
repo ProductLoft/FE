@@ -7,4 +7,5 @@ const String userTable = "user";
 const String userIdColumn = "id";
 const String nameColumn = "name";
 const String usernameColumn = "username";
+const String emailColumn = "email";
 const String cookieColumn = "cookie";
