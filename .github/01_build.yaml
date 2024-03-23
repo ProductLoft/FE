@@ -1,0 +1,66 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:  # Trigger on creating a new tag (e.g., v1.0.0)
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Dependencies (if needed)
+        run: brew install any-dependency
+
+      - name: Set up Code Signing
+        run: |
+          # Export certificate from Keychain (replace placeholders)
+          security export -t codesigning -i "Apple Development: Name (ID)" -P "YourPassword" -o development.p12 
+          # Import certificate into Keychain
+          security import development.p12 -k login.keychain -P "YourPassword" -T /usr/bin/codesign  
+
+      - name: Build the App
+        run: |
+          xcodebuild -workspace YourApp.xcworkspace \
+                  -scheme YourAppScheme \
+                  -configuration Release \
+                  CODE_SIGN_STYLE=Automatic \
+                  CODE_SIGN_IDENTITY="Apple Development: Name (ID)" \
+                  PROVISIONING_PROFILE_SPECIFIER="Provisioning Profile Name" \
+                  archive -archivePath build/YourApp.xcbuild 
+          # Build for macOS, adjust flags/parameters if needed
+
+      - name: Prepare Release Artifacts
+        run: |
+          # Create a release directory if needed
+          mkdir -p release
+
+          # Copy the app, dSYM file, and any other assets into the release directory
+          cp -r build/YourApp.xcbuild/Release/YourApp.app release/
+          cp -r build/YourApp.xcbuild/dSYMs/YourApp.dSYM release/
+
+      - name: Create Release on GitHub
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            *Download Links*  (Adjust as needed)
+            * macOS App: [YourApp.zip](URL_TO_ZIP)
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/YourApp.app.zip   # Zip the app if needed
+          asset_name: YourApp.app.zip
+          asset_content_type: application/zip

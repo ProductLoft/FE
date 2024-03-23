@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:lang_fe/const/utils.dart';
 import 'package:lang_fe/db/user_models.dart';
 import 'package:lang_fe/pages/recording_page.dart';
 import 'package:http/http.dart' as http;
@@ -163,7 +164,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://127.0.0.1:8000/auth/login/'),
+          Uri.parse(getAuthUrl()),
           body: {
             'username': _emailController.text,
             'password': _passwordController.text
@@ -251,7 +252,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
                                 if (_formKey.currentState!.validate()) {
                                   // Navigate the user to the Home page
                                   _login();
-                                  setState(() {});
+                                  // setState(() {});
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
