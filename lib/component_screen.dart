@@ -33,10 +33,10 @@ class FirstComponentList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> children = [
       const Actions(),
-      colDivider,
-      const Communication(),
-      colDivider,
-      const Containment(),
+      // colDivider,
+      // const Communication(),
+      // colDivider,
+      // const Containment(),
       // if (!showSecondList) ...[
       //   colDivider,
       //   Navigation(scaffoldKey: scaffoldKey),
@@ -284,7 +284,6 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ComponentGroupDecoration(
-        label: 'Start Recording',
         children: <Widget>[
           // RecordingPage(),
           Recordings(),
@@ -297,7 +296,7 @@ class Communication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ComponentGroupDecoration(label: 'Communication', children: [
+    return const ComponentGroupDecoration(children: [
       NavigationBars(
         selectedIndex: 1,
         isExampleBar: true,
@@ -314,7 +313,7 @@ class Containment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ComponentGroupDecoration(label: 'Containment', children: [
+    return const ComponentGroupDecoration( children: [
       BottomSheetSection(),
       Cards(),
       Dialogs(),
@@ -332,7 +331,7 @@ class Navigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ComponentGroupDecoration(label: 'Navigation', children: [
+    return ComponentGroupDecoration( children: [
       const BottomAppBars(),
       const NavigationBars(
         selectedIndex: 0,
@@ -352,7 +351,7 @@ class Selection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ComponentGroupDecoration(label: 'Selection', children: [
+    return const ComponentGroupDecoration( children: [
       Checkboxes(),
       Chips(),
       DatePicker(),
@@ -371,7 +370,6 @@ class TextInputs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ComponentGroupDecoration(
-      label: 'Text inputs',
       children: [TextFields()],
     );
   }
@@ -1140,8 +1138,8 @@ const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
     tooltip: '',
     icon: Icon(Icons.widgets_outlined),
-    label: 'Components',
-    selectedIcon: Icon(Icons.widgets),
+    label: 'Record',
+    selectedIcon: Icon(Icons.record_voice_over_outlined),
   ),
   NavigationDestination(
     tooltip: '',
@@ -2574,9 +2572,8 @@ class _ComponentDecorationState extends State<ComponentDecoration> {
 
 class ComponentGroupDecoration extends StatelessWidget {
   const ComponentGroupDecoration(
-      {super.key, required this.label, required this.children});
+      {super.key, required this.children});
 
-  final String label;
   final List<Widget> children;
 
   @override
@@ -2585,7 +2582,7 @@ class ComponentGroupDecoration extends StatelessWidget {
     return FocusTraversalGroup(
       child: Card(
         margin: EdgeInsets.zero,
-        elevation: 3,
+        elevation: 0,
         color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -2593,7 +2590,6 @@ class ComponentGroupDecoration extends StatelessWidget {
             widthFactor: 10,
             child: Column(
               children: [
-                Text(label, style: Theme.of(context).textTheme.titleLarge),
                 colDivider,
                 ...children
               ],

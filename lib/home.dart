@@ -132,7 +132,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   PreferredSizeWidget createAppBar() {
     return AppBar(
       title: widget.useMaterial3
-          ? const Text('Material 3')
+          ? const Text('')
           : const Text('Material 2'),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
@@ -462,7 +462,7 @@ class _ExpandedTrailingActions extends StatelessWidget {
           Row(
             children: [
               useMaterial3
-                  ? const Text('Material 3')
+                  ? const Text('')
                   : const Text('Material 2'),
               Expanded(child: Container()),
               Switch(
