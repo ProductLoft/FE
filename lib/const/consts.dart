@@ -1,6 +1,6 @@
 
 
-const DB_PATH = "db/lang.db";
+const dbPath = "db/lang.db";
 
 
 

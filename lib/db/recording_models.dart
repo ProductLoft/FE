@@ -6,14 +6,14 @@ import 'db_helper.dart';
 
 class Recording {
   int? id;
-  final String filePath;
+  final String path;
   final String comment;
   final String length;
   final String timestamp;
 
   Recording({
     this.id,
-    required this.filePath,
+    required this.path,
     required this.comment,
     required this.length,
     required this.timestamp,
@@ -22,7 +22,7 @@ class Recording {
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       idColumn: id,
-      filePathColumn: filePath,
+      filePathColumn: path,
       commentColumn: comment,
       lengthColumn: length,
       timestampColumn: timestamp,
@@ -34,11 +34,11 @@ class Recording {
 class RecordingProvider {
   RecordingProvider();
 
-  Future<Recording> createRecording(
+  Future<Recording?> createRecording(
       filePath, comment, length, timestamp) async {
     Database db = await DatabaseHelper().database;
     Recording recording = Recording(
-      filePath: filePath,
+      path: filePath,
       comment: comment,
       length: length,
       timestamp: timestamp,
@@ -53,19 +53,20 @@ class RecordingProvider {
     } else {
       if (kDebugMode) {
         print('error creating recording');
+        return null;
       }
     }
     return recording;
   }
 
-  Future<List<Recording>> getRecordings() async {
+  Future<List<Recording>> getAll() async {
     Database db = await DatabaseHelper().database;
     List<Map<String, Object?>> maps = await db.query(recordingTable);
     List<Recording> recordings = [];
     for (var map in maps) {
       recordings.add(Recording(
         id: map[idColumn] as int,
-        filePath: map[filePathColumn] as String,
+        path: map[filePathColumn] as String,
         comment: map[commentColumn] as String,
         length: map[lengthColumn] as String,
         timestamp: map[timestampColumn] as String,
