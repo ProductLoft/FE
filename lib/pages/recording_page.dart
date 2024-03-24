@@ -129,13 +129,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      showPlayer
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: getRecorder(),
-                            )
-                          : getRecorder(),
+                      getRecorder(),
                       const SizedBox(height: 20),
                       const Text(
                         'Previous Recordings:',
