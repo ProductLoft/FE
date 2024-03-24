@@ -165,26 +165,37 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     late Icon icon;
     late Color color;
 
-    if (_recordState != RecordState.stop) {
-      icon = const Icon(Icons.stop, color: Colors.red, size: 30);
-      color = Colors.red.withOpacity(0.1);
-    } else {
-      final theme = Theme.of(context);
-      icon = Icon(Icons.mic, color: theme.primaryColor, size: 30);
-      color = theme.primaryColor.withOpacity(0.1);
-    }
+    // if (_recordState != RecordState.stop) {
+    //   icon = const Icon(Icons.stop, color: Colors.red, size: 30);
+    //   color = Colors.red.withOpacity(0.1);
+    // } else {
+    //   final theme = Theme.of(context);
+    //   icon = Icon(Icons.mic, color: theme.primaryColor, size: 30);
+    //   color = theme.primaryColor.withOpacity(0.1);
+    // }
 
-    return ClipOval(
-      child: Material(
-        color: color,
-        child: InkWell(
-          child: SizedBox(width: 56, height: 56, child: icon),
-          onTap: () {
-            (_recordState != RecordState.stop) ? _stop() : _start();
-          },
-        ),
-      ),
+    return IconButton(
+      // isSelected: playProgressIndicator,
+      selectedIcon: const Icon(Icons.pause),
+      icon: (_recordState != RecordState.stop)? const Icon(Icons.stop): const Icon(Icons.mic),
+      onPressed: () {
+        setState(() {
+          (_recordState != RecordState.stop) ? _stop() : _start();
+        });
+      },
     );
+
+    // return ClipOval(
+    //   child: Material(
+    //     color: color,
+    //     child: InkWell(
+    //       child: SizedBox(width: 56, height: 56, child: icon),
+    //       onTap: () {
+    //         (_recordState != RecordState.stop) ? _stop() : _start();
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildPauseResumeControl() {
@@ -195,26 +206,37 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     late Icon icon;
     late Color color;
 
-    if (_recordState == RecordState.record) {
-      icon = const Icon(Icons.pause, color: Colors.red, size: 30);
-      color = Colors.red.withOpacity(0.1);
-    } else {
-      final theme = Theme.of(context);
-      icon = const Icon(Icons.play_arrow, color: Colors.red, size: 30);
-      color = theme.primaryColor.withOpacity(0.1);
-    }
-
-    return ClipOval(
-      child: Material(
-        color: color,
-        child: InkWell(
-          child: SizedBox(width: 56, height: 56, child: icon),
-          onTap: () {
-            (_recordState == RecordState.pause) ? _resume() : _pause();
-          },
-        ),
-      ),
+    // if (_recordState == RecordState.record) {
+    //   icon = const Icon(Icons.pause, color: Colors.red, size: 30);
+    //   color = Colors.red.withOpacity(0.1);
+    // } else {
+    //   final theme = Theme.of(context);
+    //   icon = const Icon(Icons.play_arrow, color: Colors.red, size: 30);
+    //   color = theme.primaryColor.withOpacity(0.1);
+    // }
+    //
+    return IconButton(
+      // isSelected: playProgressIndicator,
+      selectedIcon: const Icon(Icons.pause),
+      icon: (_recordState == RecordState.record)? const Icon(Icons.pause): const Icon(Icons.play_arrow),
+      onPressed: () {
+        setState(() {
+          (_recordState == RecordState.pause) ? _resume() : _pause();
+        });
+      },
     );
+
+    // return ClipOval(
+    //   child: Material(
+    //     color: color,
+    //     child: InkWell(
+    //       child: SizedBox(width: 56, height: 56, child: icon),
+    //       onTap: () {
+    //         (_recordState == RecordState.pause) ? _resume() : _pause();
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildText() {
@@ -231,7 +253,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
     return Text(
       '$minutes : $seconds',
-      style: const TextStyle(color: Colors.red),
     );
   }
 

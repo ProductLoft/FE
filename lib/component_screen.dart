@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:lang_fe/pages/recording_page.dart';
 
 const rowDivider = SizedBox(width: 20);
 const colDivider = SizedBox(height: 10);
@@ -203,12 +204,43 @@ class BuildSlivers extends SliverChildBuilderDelegate {
   }
 }
 
+
+class Recordings extends StatefulWidget {
+  const Recordings({super.key});
+
+  @override
+  State<Recordings> createState() => _RecordingsState();
+}
+
+class _RecordingsState extends State<Recordings> {
+  @override
+  Widget build(BuildContext context) {
+    return const ComponentDecoration(
+      label: 'Recordings sdhjfbakjhsdfbasd asd asd f asdfa sdfasdfasdf Recordings sdhjfbakjhsdfbasd asd asd f asdfa sdfasdfasdf ',
+      tooltipMessage:
+      'Use ElevatedButton, FilledButton, FilledButton.tonal, OutlinedButton, or TextButton',
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            RecordingPage(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class Actions extends StatelessWidget {
   const Actions({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const ComponentGroupDecoration(label: 'Actions', children: <Widget>[
+      // RecordingPage(),
+      Recordings(),
       Buttons(),
       FloatingActionButtons(),
       IconToggleButtons(),
@@ -394,7 +426,7 @@ class ButtonsWithIcon extends StatelessWidget {
             colDivider,
             FilledButton.icon(
               onPressed: () {},
-              label: const Text('Icon'),
+              label: const Text('Icon12'),
               icon: const Icon(Icons.add),
             ),
             colDivider,
@@ -2507,11 +2539,12 @@ class ComponentGroupDecoration extends StatelessWidget {
     return FocusTraversalGroup(
       child: Card(
         margin: EdgeInsets.zero,
-        elevation: 0,
+        elevation: 3,
         color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: Center(
+            widthFactor: 10,
             child: Column(
               children: [
                 Text(label, style: Theme.of(context).textTheme.titleLarge),
