@@ -33,14 +33,14 @@ class FirstComponentList extends StatelessWidget {
       const Communication(),
       colDivider,
       const Containment(),
-      if (!showSecondList) ...[
-        colDivider,
-        Navigation(scaffoldKey: scaffoldKey),
-        colDivider,
-        const Selection(),
-        colDivider,
-        const TextInputs()
-      ],
+      // if (!showSecondList) ...[
+      //   colDivider,
+      //   Navigation(scaffoldKey: scaffoldKey),
+      //   colDivider,
+      //   const Selection(),
+      //   colDivider,
+      //   const TextInputs()
+      // ],
     ];
     List<double?> heights = List.filled(children.length, null);
 

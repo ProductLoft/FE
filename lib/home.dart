@@ -113,7 +113,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   ) =>
       switch (screenSelected) {
         ScreenSelected.component => Expanded(
-            child: OneTwoTransition(
+            child:  OneTwoTransition(
               animation: railAnimation,
               one: FirstComponentList(
                   showNavBottomBar: showNavBarExample,
@@ -856,15 +856,15 @@ class _OneTwoTransitionState extends State<OneTwoTransition> {
           flex: mediumWidthBreakpoint.toInt(),
           child: widget.one,
         ),
-        if (widthAnimation.value.toInt() > 0) ...[
-          Flexible(
-            flex: widthAnimation.value.toInt(),
-            child: FractionalTranslation(
-              translation: offsetAnimation.value,
-              child: widget.two,
-            ),
-          )
-        ],
+        // if (widthAnimation.value.toInt() > 0) ...[
+        //   Flexible(
+        //     flex: widthAnimation.value.toInt(),
+        //     child: FractionalTranslation(
+        //       translation: offsetAnimation.value,
+        //       child: widget.two,
+        //     ),
+        //   )
+        // ],
       ],
     );
   }
