@@ -33,55 +33,55 @@ class _RecordingPageState extends State<RecordingPage> {
       audioPlayers.add(Text(previousrecording.comment));
       audioPlayers.add(AudioPlayer(
         source: previousrecording.path,
-        onDelete: () {},
+        onDelete: () {
+          RecordingProvider().deleteRecording(previousrecording.id!);
+          setState(() {
+            refreshRecordings = true;
+          });
+        },
       ));
     }
     return audioPlayers;
   }
 
-  Widget getRecorder() {
-    return Column(children: [
+  void _showCommentModal(BuildContext context, String path) {
+    TextEditingController _controller = TextEditingController(); // Controller for input
 
-    ]);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add context'),
+          content: TextField(
+            controller: _controller,
+            autofocus: true,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Don\'t save'),
+              onPressed: () {
+                Navigator.pop(context); // Close the modal
+              },
+            ),
+            TextButton(
+              child: const Text('Save audio'),
+              onPressed: () {
+                setState(() {
+                  commentText = _controller.text;
+                  RecordingProvider()
+                      .createRecording(path, commentText, "", getCurrentTime());
+                });
+                Navigator.pop(context); // Close the modal after submission
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // return const Text("data");
-
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('Recording Page'),
-    //     leading: IconButton(
-    //         icon: const Icon(
-    //           CupertinoIcons.sidebar_left,
-    //           size: 20.0,
-    //         ),
-    //         onPressed: () {
-    //           // MacosWindowScope.of(context).toggleSidebar();
-    //         },
-    //         // onPressed: () => MacosWindowScope.of(context).toggleSidebar(),
-    //       ),
-    //     ),
-
-    // children: [
-    //   return ContentArea(
-    //     builder: (context, ScrollController scrollController) {
-
-    // return       Recorder(
-    //   onStop: (path) {
-    //     if (kDebugMode) {
-    //       print('Recorded file path: $path');
-    //     }
-    //     setState(() {
-    //       // _showCommentModal(context);
-    //       RecordingProvider()
-    //           .createRecording(path, commentText, "", getCurrentTime());
-    //       audioPath = path;
-    //       showPlayer = true;
-    //     });
-    //   },
-    // );
     return Column( children: [
       Recorder(
         onStop: (path) {
@@ -89,9 +89,7 @@ class _RecordingPageState extends State<RecordingPage> {
             print('Recorded file path: $path');
           }
           setState(() {
-            // _showCommentModal(context);
-            RecordingProvider()
-                .createRecording(path, commentText, "", getCurrentTime());
+            _showCommentModal(context, path);
             audioPath = path;
             showPlayer = true;
           });
@@ -121,10 +119,5 @@ class _RecordingPageState extends State<RecordingPage> {
               }),
         ]);
 
-    //               ]));
-    //     },
-    //   ),
-    // ],
-    // );
   }
 }

@@ -1,7 +1,3 @@
-// Copyright 2021 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -1137,9 +1133,9 @@ class _ProgressIndicatorsState extends State<ProgressIndicators> {
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
     tooltip: '',
-    icon: Icon(Icons.widgets_outlined),
+    icon: Icon(Icons.record_voice_over_outlined),
     label: 'Record',
-    selectedIcon: Icon(Icons.record_voice_over_outlined),
+    selectedIcon: Icon(Icons.record_voice_over),
   ),
   NavigationDestination(
     tooltip: '',

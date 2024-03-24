@@ -15,10 +15,10 @@ const double transitionLength = 500;
 
 // Whether the user has chosen a theme color via a direct [ColorSeed] selection,
 // or an image [ColorImageProvider].
-enum ColorSelectionMethod {
-  colorSeed,
-  image,
-}
+// enum ColorSelectionMethod {
+//   colorSeed,
+//   image,
+// }
 
 enum ColorSeed {
   baseColor('M3 Baseline', Color(0xff6750a4)),
