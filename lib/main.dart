@@ -66,6 +66,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _myFocusNode = FocusNode();
 
   late final searchFieldController = TextEditingController();
 
@@ -209,6 +210,14 @@ class _WidgetGalleryState extends State<WidgetGallery> {
     }
   }
 
+  @override
+  void dispose() {
+    // Dispose of the FocusNode when the widget is removed
+    _myFocusNode.dispose();
+    super.dispose();
+  }
+
+
   // Handle user login
   MacosScaffold getLogin() {
     return MacosScaffold(
@@ -222,6 +231,7 @@ class _WidgetGalleryState extends State<WidgetGallery> {
                 controller: scrollController,
                 padding: const EdgeInsets.all(20),
                 child: Form(
+
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -277,6 +287,17 @@ class _WidgetGalleryState extends State<WidgetGallery> {
       child: FutureBuilder(
           future: checkLoggedIn(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            _myFocusNode.addListener(() {
+              if (_myFocusNode.hasFocus &&
+                  !_myFocusNode.hasPrimaryFocus &&
+                  FocusManager.instance.primaryFocus!.context!.widget
+                      is! TextFormField) {
+                if (_formKey.currentState!.validate()) {
+                  // Submit your form
+                }
+              }
+            });
+
             if (snapshot.hasData && snapshot.data == true) {
               return FutureBuilder(
                 future: getMacosWindow(), // Await the result here

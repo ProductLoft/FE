@@ -46,16 +46,7 @@ class RecordingProvider {
     print(recording.toMap());
     var r = await db.insert(recordingTable, recording.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    if (r == 1) {
-      if (kDebugMode) {
-        print('recording created');
-      }
-    } else {
-      if (kDebugMode) {
-        print('error creating recording');
-        return null;
-      }
-    }
+    recording.id = r;
     return recording;
   }
 
