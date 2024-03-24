@@ -162,17 +162,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   }
 
   Widget _buildRecordStopControl() {
-    late Icon icon;
-    late Color color;
-
-    // if (_recordState != RecordState.stop) {
-    //   icon = const Icon(Icons.stop, color: Colors.red, size: 30);
-    //   color = Colors.red.withOpacity(0.1);
-    // } else {
-    //   final theme = Theme.of(context);
-    //   icon = Icon(Icons.mic, color: theme.primaryColor, size: 30);
-    //   color = theme.primaryColor.withOpacity(0.1);
-    // }
 
     return IconButton(
       // isSelected: playProgressIndicator,
@@ -185,17 +174,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
       },
     );
 
-    // return ClipOval(
-    //   child: Material(
-    //     color: color,
-    //     child: InkWell(
-    //       child: SizedBox(width: 56, height: 56, child: icon),
-    //       onTap: () {
-    //         (_recordState != RecordState.stop) ? _stop() : _start();
-    //       },
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _buildPauseResumeControl() {
@@ -203,18 +181,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
       return const SizedBox.shrink();
     }
 
-    late Icon icon;
-    late Color color;
-
-    // if (_recordState == RecordState.record) {
-    //   icon = const Icon(Icons.pause, color: Colors.red, size: 30);
-    //   color = Colors.red.withOpacity(0.1);
-    // } else {
-    //   final theme = Theme.of(context);
-    //   icon = const Icon(Icons.play_arrow, color: Colors.red, size: 30);
-    //   color = theme.primaryColor.withOpacity(0.1);
-    // }
-    //
     return IconButton(
       // isSelected: playProgressIndicator,
       selectedIcon: const Icon(Icons.pause),
@@ -225,18 +191,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         });
       },
     );
-
-    // return ClipOval(
-    //   child: Material(
-    //     color: color,
-    //     child: InkWell(
-    //       child: SizedBox(width: 56, height: 56, child: icon),
-    //       onTap: () {
-    //         (_recordState == RecordState.pause) ? _resume() : _pause();
-    //       },
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _buildText() {

@@ -68,20 +68,20 @@ class _RecordingPageState extends State<RecordingPage> {
     //   return ContentArea(
     //     builder: (context, ScrollController scrollController) {
 
-    return       Recorder(
-      onStop: (path) {
-        if (kDebugMode) {
-          print('Recorded file path: $path');
-        }
-        setState(() {
-          // _showCommentModal(context);
-          RecordingProvider()
-              .createRecording(path, commentText, "", getCurrentTime());
-          audioPath = path;
-          showPlayer = true;
-        });
-      },
-    );
+    // return       Recorder(
+    //   onStop: (path) {
+    //     if (kDebugMode) {
+    //       print('Recorded file path: $path');
+    //     }
+    //     setState(() {
+    //       // _showCommentModal(context);
+    //       RecordingProvider()
+    //           .createRecording(path, commentText, "", getCurrentTime());
+    //       audioPath = path;
+    //       showPlayer = true;
+    //     });
+    //   },
+    // );
     return Column( children: [
       Recorder(
         onStop: (path) {

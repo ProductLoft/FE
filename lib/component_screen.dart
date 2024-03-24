@@ -5,7 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:lang_fe/pages/audio_player.dart';
 import 'package:lang_fe/pages/recording_page.dart';
+
+import 'db/recording_models.dart';
 
 const rowDivider = SizedBox(width: 20);
 const colDivider = SizedBox(height: 10);
@@ -161,7 +164,9 @@ class _RenderCacheHeight extends RenderProxyBox {
         super();
 
   List<double?> _heights;
+
   List<double?> get heights => _heights;
+
   set heights(List<double?> value) {
     if (value == _heights) {
       return;
@@ -171,7 +176,9 @@ class _RenderCacheHeight extends RenderProxyBox {
   }
 
   int _index;
+
   int get index => _index;
+
   set index(int value) {
     if (value == index) {
       return;
@@ -204,7 +211,6 @@ class BuildSlivers extends SliverChildBuilderDelegate {
   }
 }
 
-
 class Recordings extends StatefulWidget {
   const Recordings({super.key});
 
@@ -213,39 +219,76 @@ class Recordings extends StatefulWidget {
 }
 
 class _RecordingsState extends State<Recordings> {
+
+  String? audioPath;
+  String commentText = '';
+
+  Future<List<Widget>> getAudioplayers() async {
+    List<Recording> previousrecordings = await RecordingProvider().getAll();
+    List<Widget> audioPlayers = [];
+
+    for (Recording previousrecording in previousrecordings) {
+      audioPlayers.add(Text(previousrecording.comment));
+      audioPlayers.add(
+          AudioPlayer(
+            source: previousrecording.path,
+            onDelete: () {},
+          ));
+    }
+    return audioPlayers;
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return const ComponentDecoration(
-      label: 'Recordings sdhjfbakjhsdfbasd asd asd f asdfa sdfasdfasdf Recordings sdhjfbakjhsdfbasd asd asd f asdfa sdfasdfasdf ',
-      tooltipMessage:
-      'Use ElevatedButton, FilledButton, FilledButton.tonal, OutlinedButton, or TextButton',
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            RecordingPage(),
-          ],
-        ),
-      ),
+    return const Column(
+      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        RecordingPage(),
+        // const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        //   // getRecorder(),
+        //   SizedBox(height: 20),
+        //   Text(
+        //     'Previous Recordings:',
+        //     style: TextStyle(
+        //       fontSize: 15,
+        //     ),
+        //   ),
+        //
+        // ]),
+        // FutureBuilder<List<Widget>>(
+        //   future: getAudioplayers(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.connectionState ==
+        //         ConnectionState.waiting) {
+        //       return const Center(
+        //         child: CircularProgressIndicator(),
+        //       );
+        //     } else if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     } else {
+        //       return Column(
+        //         children: snapshot.data!,
+        //       );
+        //     }
+        //   },
+        // ),
+      ],
     );
   }
 }
-
 
 class Actions extends StatelessWidget {
   const Actions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const ComponentGroupDecoration(label: 'Actions', children: <Widget>[
-      // RecordingPage(),
-      Recordings(),
-      Buttons(),
-      FloatingActionButtons(),
-      IconToggleButtons(),
-      SegmentedButtons(),
-    ]);
+    return const ComponentGroupDecoration(
+        label: 'Start Recording',
+        children: <Widget>[
+          // RecordingPage(),
+          Recordings(),
+        ]);
   }
 }
 
@@ -1918,6 +1961,7 @@ class ButtonAnchorExample extends StatelessWidget {
 
 class NavigationDrawers extends StatelessWidget {
   const NavigationDrawers({super.key, required this.scaffoldKey});
+
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
@@ -2291,6 +2335,7 @@ enum ColorLabel {
   grey('Grey', Colors.grey);
 
   const ColorLabel(this.label, this.color);
+
   final String label;
   final Color color;
 }
@@ -2305,6 +2350,7 @@ enum IconLabel {
   heart('Heart', Icons.favorite);
 
   const IconLabel(this.label, this.icon);
+
   final String label;
   final IconData icon;
 }
@@ -2578,6 +2624,7 @@ enum ColorItem {
   white('white', Colors.white);
 
   const ColorItem(this.label, this.color);
+
   final String label;
   final Color color;
 }
