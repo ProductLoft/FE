@@ -4,12 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'user_models.dart'; // Import your data model
 import 'package:lang_fe/const/consts.dart';
 
-
-
 // Create and manage database from here. Creation of new models need to be registered here.
 //
 class DatabaseHelper {
-  static const _databaseName = DB_PATH;
+  static const _databaseName = dbPath;
   static const _databaseVersion = 1;
 
   Future<Database> get database async {
@@ -30,5 +28,14 @@ class DatabaseHelper {
       $emailColumn text not null
       );
     ''');
-      }
+    await db.execute('''
+      create table $recordingTable (
+        $idColumn integer primary key autoincrement,
+        $filePathColumn text not null,
+        $commentColumn text not null,
+        $lengthColumn text not null,
+        $timestampColumn text not null
+      );
+    ''');
+  }
 }

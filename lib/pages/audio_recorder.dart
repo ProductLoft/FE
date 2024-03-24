@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:record/record.dart';
 
 import 'platform/audio_recorder_platform.dart';
@@ -21,12 +22,12 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   late final AudioRecorder _audioRecorder = AudioRecorder();
   StreamSubscription<RecordState>? _recordSub;
   RecordState _recordState = RecordState.stop;
+  bool _textBoxIsVisible = false;
   StreamSubscription<Amplitude>? _amplitudeSub;
   Amplitude? _amplitude;
 
   @override
   void initState() {
-
     _recordSub = _audioRecorder.onStateChanged().listen((recordState) {
       _updateRecordState(recordState);
     });
@@ -43,7 +44,9 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   Future<void> _start() async {
     try {
       if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.hasPermission()?debugPrint("true"):debugPrint("False");
+        await _audioRecorder.hasPermission()
+            ? debugPrint("true")
+            : debugPrint("False");
         const encoder = AudioEncoder.aacLc;
 
         if (!await _isEncoderSupported(encoder)) {
@@ -81,7 +84,7 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
   Future<void> _stop() async {
     final path = await _audioRecorder.stop();
-
+    _textBoxIsVisible = true;
     if (path != null) {
       widget.onStop(path);
 
@@ -132,15 +135,22 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   @override
   Widget build(BuildContext context) {
     return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _buildRecordStopControl(),
-                const SizedBox(width: 20),
-                _buildPauseResumeControl(),
-                const SizedBox(width: 20),
-                _buildText(),
-              ],
-            );
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        _buildRecordStopControl(),
+       // if (_textBoxIsVisible) const Padding(
+       //   padding: EdgeInsets.all(8.0),
+       //    child: MacosTextField(
+       //      placeholder: "Enter your text here",
+       //      maxLines: 1,
+       //      ),
+       //    ),
+        const SizedBox(width: 20),
+        _buildPauseResumeControl(),
+        const SizedBox(width: 20),
+        _buildText(),
+      ],
+    );
   }
 
   @override
