@@ -220,13 +220,13 @@ class _RecordingsState extends State<Recordings> {
   String commentText = '';
 
   Future<List<Widget>> getAudioplayers() async {
-    List<Recording> previousrecordings = await RecordingProvider().getAll();
+    List<AudioRecord> previousrecordings = await AudioRecordingProvider().getAll();
     List<Widget> audioPlayers = [];
 
-    for (Recording previousrecording in previousrecordings) {
+    for (AudioRecord previousrecording in previousrecordings) {
       audioPlayers.add(Text(previousrecording.comment));
       audioPlayers.add(
-          AudioPlayer(
+          CustomAudioPlayer(
             source: previousrecording.path,
             onDelete: () {},
           ));

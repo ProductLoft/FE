@@ -14,12 +14,12 @@ const String cookieColumn = "cookie";
 
 // names of columns for recording table
 const String recordingTable = "recording";
-const String idColumn = "id";
+const String recordingIdColumn = "id";
 const String filePathColumn = "filePath";
 const String commentColumn = "comment";
-const String lengthColumn = "length";
 const String timestampColumn = "timestamp";
-
+const String isProcessedColumn = "isProcessed";
+const String zipPathColumn = "zipPath";
 
 // consts for network calls
 const String baseUrl = "http://127.0.0.1:8000";
