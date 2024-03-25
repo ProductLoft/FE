@@ -9,7 +9,7 @@ class AudioRecord {
   final String path;
   final String comment;
   final String timestamp;
-  final bool isProcessed;
+  final int isProcessed;
   final String zipPath;
 
   AudioRecord({
@@ -43,7 +43,7 @@ class AudioRecordingProvider {
     AudioRecord recording = AudioRecord(
       path: filePath,
       comment: comment,
-      isProcessed: false,
+      isProcessed: 0,
       zipPath: '',
       timestamp: timestamp,
     );
@@ -63,7 +63,7 @@ class AudioRecordingProvider {
         id: maps[0][recordingIdColumn] as int,
         path: maps[0][filePathColumn] as String,
         comment: maps[0][commentColumn] as String,
-        isProcessed: maps[0][isProcessedColumn] as int == 1 ? true : false,
+        isProcessed: maps[0][isProcessedColumn] as int,
         zipPath: maps[0][zipPathColumn] as String,
         timestamp: maps[0][timestampColumn] as String,
       );
@@ -80,8 +80,8 @@ class AudioRecordingProvider {
         id: map[recordingIdColumn] as int,
         path: map[filePathColumn] as String,
         comment: map[commentColumn] as String,
-        isProcessed: maps[0][isProcessedColumn] as int == 1 ? true : false,
-        zipPath: maps[0][zipPathColumn] as String,
+        isProcessed: map[isProcessedColumn] as int,
+        zipPath: map[zipPathColumn] as String,
         timestamp: map[timestampColumn] as String,
       ));
     }
