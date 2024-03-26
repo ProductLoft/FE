@@ -158,7 +158,7 @@ jobs:
       - name: Upload Release
         uses: ncipollo/release-action@v1
         with:
-          token: ${{ secrets.GIT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
