@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:lang_fe/const/utils.dart';
-import 'package:lang_fe/pages/audio_page.dart';
+import 'package:lang_fe/utils/misc.dart';
 
 import '../db/recording_models.dart';
 import 'audio_player.dart';
@@ -29,13 +28,15 @@ class _RecordingPageState extends State<RecordingPage> {
   int showInsightsRecordId = -1;
 
   Future<List<Widget>> getAudioplayers() async {
-    List<AudioRecord> previousrecordings = await AudioRecordingProvider().getAll();
+    List<AudioRecord> previousrecordings =
+        await AudioRecordingProvider().getAll();
     List<Widget> audioPlayers = [
       Recorder(
         onStop: (path) {
           if (kDebugMode) {
             print('Recorded file path: $path');
           }
+
           setState(() {
             _showCommentModal(context, path);
             audioPath = path;
@@ -65,13 +66,9 @@ class _RecordingPageState extends State<RecordingPage> {
                 onTap: () {
                   debugPrint('Card tapped.${previousRecording.id}');
                   setState(() {
-                    showInsightsRecordId = previousRecording.id??-1;
+                    showInsightsRecordId = previousRecording.id ?? -1;
                     showInsights = true;
                   });
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => AudioPageWidget(audioID: previousRecording.id??-1)),
-                  // );
                 },
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Row(
@@ -81,30 +78,15 @@ class _RecordingPageState extends State<RecordingPage> {
                         Padding(
                             padding: const EdgeInsets.all(16.0),
                             // Example: 16 pixels on all sides
-                            child: Column(
-                                // mainAxisSize: MainAxisSize.max,
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Date: ${previousRecording.timestamp}"),
-                                  Text(previousRecording.comment),
-                                ])),
+                            child: Column(children: [
+                              Text("Date: ${previousRecording.timestamp}"),
+                              Text(previousRecording.comment),
+                            ])),
                       ])
                 ])),
           ),
-          // Container(
-          //     width: double.infinity,
-          //     child:
-          //
-          //
-          //     InputChip(
-          //       label: const Text('Input'),
-          //       onPressed: () {},
-          //       onDeleted: () {},
-          //     )),
-          // Your existing player widget
         ],
       );
-
 
       audioPlayers.add(customPlayer);
     }
@@ -113,7 +95,71 @@ class _RecordingPageState extends State<RecordingPage> {
 
   Future<List<Widget>> getInsights() async {
     List<Widget> insights = [];
+    AudioRecord? recordingInfo = await AudioRecordingProvider().getRecording(showInsightsRecordId);
 
+    if (recordingInfo != null) {
+      if (recordingInfo.isProcessed == 0) {
+        insights.add(const Text("Insights are being processed. Please check back later."));
+        return insights;
+      }
+      insights.add(Text("Date: ${recordingInfo.timestamp}", textAlign: TextAlign.left,));
+      insights.add(Text("Comment: ${recordingInfo.comment}", textAlign: TextAlign.left,));
+    } else {
+      insights.add(Text("No insights found"));
+    }
+
+
+
+    return insights;
+  }
+
+  Future<List<Widget>> getInsightsPage() async {
+    AudioRecord? audioRecord =
+    await AudioRecordingProvider().getRecording(showInsightsRecordId);
+    List<Widget> insights = [
+      const Center(
+        child: Text(
+          // TODO, this should be in the appbar
+          'Conversation Insights',
+          style: TextStyle(
+            fontSize: 15,
+          ),
+        ),
+      ),
+      CustomAudioPlayer(
+        source: audioRecord?.path ?? 'Audio Not Found',
+        onDelete: () {
+          // TODO modal confirmation on Delete
+          AudioRecordingProvider().deleteRecording(showInsightsRecordId);
+          setState(() {
+            refreshRecordings = true;
+            showInsights = false;
+          });
+        },
+      ),
+      Column(children: [
+        FutureBuilder<List<Widget>>(
+            future: getInsights(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: snapshot.data!,
+                    ));
+              }
+            }),
+      ]),
+    ];
+
+
+    // insights.add();
 
     return insights;
   }
@@ -158,9 +204,8 @@ class _RecordingPageState extends State<RecordingPage> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-
       FutureBuilder<List<Widget>>(
-          future: showInsights?getInsights(): getAudioplayers(),
+          future: showInsights ? getInsightsPage() : getAudioplayers(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -169,9 +214,11 @@ class _RecordingPageState extends State<RecordingPage> {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              return Column(
-                children: snapshot.data!,
-              );
+              return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: snapshot.data!,
+                  ));
             }
           }),
     ]);

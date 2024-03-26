@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:lang_fe/db/user_models.dart';
 
 import 'color_palettes_screen.dart';
 import 'component_screen.dart';
@@ -59,7 +60,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery
+        .of(context)
+        .size
+        .width;
     final AnimationStatus status = controller.status;
     if (width > mediumWidthBreakpoint) {
       if (width > largeWidthBreakpoint) {
@@ -93,55 +97,56 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  Widget createScreenFor(
-    ScreenSelected screenSelected,
-    bool showNavBarExample,
-  ) =>
-      switch (screenSelected) {
-        ScreenSelected.component => Expanded(
-            child:  OneTwoTransition(
+  Widget createScreenFor(ScreenSelected screenSelected,
+      bool showNavBarExample,) {
+    switch (screenSelected) {
+      case ScreenSelected.component:
+        {
+          return Expanded(
+            child: OneTwoTransition(
               animation: railAnimation,
               one: FirstComponentList(
                   showNavBottomBar: showNavBarExample,
                   scaffoldKey: scaffoldKey,
-                  showSecondList: showMediumSizeLayout || showLargeSizeLayout),
+                  showSecondList:
+                  showMediumSizeLayout || showLargeSizeLayout),
               two: SecondComponentList(
                 scaffoldKey: scaffoldKey,
               ),
             ),
-          ),
-        ScreenSelected.color => const ColorPalettesScreen(),
-        ScreenSelected.typography => const TypographyScreen(),
-        ScreenSelected.elevation => const ElevationScreen()
-      };
+          );
+        }
+      case ScreenSelected.color:
+        {
+          return const ColorPalettesScreen();
+        }
+      case ScreenSelected.typography:
+        {
+          return const TypographyScreen();
+        }
+      case ScreenSelected.elevation:
+        {
+          return const ElevationScreen();
+        }
+    }
+  }
+
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
       title: const Text(''),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
-              _BrightnessButton(
-                handleBrightnessChange: widget.handleBrightnessChange,
-              ),
-              // _Material3Button(
-              //   handleMaterialVersionChange: widget.handleMaterialVersionChange,
-              // ),
-              // _ColorSeedButton(
-              //   handleColorSelect: widget.handleColorSelect,
-              //   colorSelected: widget.colorSelected,
-              //   colorSelectionMethod: widget.colorSelectionMethod,
-              // ),
-              // _ColorImageButton(
-              //   handleImageSelect: widget.handleImageSelect,
-              //   imageSelected: widget.imageSelected,
-              //   colorSelectionMethod: widget.colorSelectionMethod,
-              // )
-            ]
+        _BrightnessButton(
+          handleBrightnessChange: widget.handleBrightnessChange,
+        ),
+      ]
           : [Container()],
     );
   }
 
-  Widget _trailingActions() => Column(
+  Widget _trailingActions() =>
+      Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Flexible(
@@ -150,28 +155,57 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               showTooltipBelow: false,
             ),
           ),
-          // Flexible(
-          //   child: _Material3Button(
-          //     handleMaterialVersionChange: widget.handleMaterialVersionChange,
-          //     showTooltipBelow: false,
-          //   ),
-          // ),
-          // Flexible(
-          //   child: _ColorSeedButton(
-          //     handleColorSelect: widget.handleColorSelect,
-          //     colorSelected: widget.colorSelected,
-          //     colorSelectionMethod: widget.colorSelectionMethod,
-          //   ),
-          // ),
-          // Flexible(
-          //   child: _ColorImageButton(
-          //     handleImageSelect: widget.handleImageSelect,
-          //     imageSelected: widget.imageSelected,
-          //     colorSelectionMethod: widget.colorSelectionMethod,
-          //   ),
-          // ),
         ],
       );
+
+  bool isLoggedIn() {
+    UserProvider().getUser().then((user) {
+      if (user == null) {
+        // Navigator.pushReplacementNamed(context, '/login');
+        debugPrint('User is not logged in');
+        return false;
+      }
+      return true;
+    });
+    return true;
+  }
+
+  void _showLoginModal() {
+    TextEditingController _controller =
+    TextEditingController(); // Controller for input
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add context'),
+          content: TextField(
+            controller: _controller,
+            autofocus: true,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Don\'t save'),
+              onPressed: () {
+                Navigator.pop(context); // Close the modal
+              },
+            ),
+            TextButton(
+              child: const Text('Save audio'),
+              onPressed: () {
+                setState(() {
+                  // commentText = _controller.text;
+                  // AudioRecordingProvider()
+                  //     .createRecording(path, commentText, "", getCurrentTime());
+                });
+                Navigator.pop(context); // Close the modal after submission
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,17 +234,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.only(bottom: 20),
                 child: showLargeSizeLayout
                     ? _ExpandedTrailingActions(
-                        useLightMode: widget.useLightMode,
-                        handleBrightnessChange: widget.handleBrightnessChange,
-                        // useMaterial3: widget.useMaterial3,
-                        // handleMaterialVersionChange:
-                        //     widget.handleMaterialVersionChange,
-                        // handleImageSelect: widget.handleImageSelect,
-                        // handleColorSelect: widget.handleColorSelect,
-                        // colorSelectionMethod: widget.colorSelectionMethod,
-                        // imageSelected: widget.imageSelected,
-                        // colorSelected: widget.colorSelected,
-                      )
+                  useLightMode: widget.useLightMode,
+                  handleBrightnessChange: widget.handleBrightnessChange,
+                )
                     : _trailingActions(),
               ),
             ),
@@ -242,7 +268,9 @@ class _BrightnessButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBright = Theme.of(context).brightness == Brightness.light;
+    final isBright = Theme
+        .of(context)
+        .brightness == Brightness.light;
     return Tooltip(
       preferBelow: showTooltipBelow,
       message: 'Toggle brightness',
@@ -256,60 +284,23 @@ class _BrightnessButton extends StatelessWidget {
   }
 }
 
-class _Material3Button extends StatelessWidget {
-  const _Material3Button({
-    required this.handleMaterialVersionChange,
-    this.showTooltipBelow = true,
-  });
-
-  final void Function() handleMaterialVersionChange;
-  final bool showTooltipBelow;
-
-  @override
-  Widget build(BuildContext context) {
-    final useMaterial3 = Theme.of(context).useMaterial3;
-    return Tooltip(
-      preferBelow: showTooltipBelow,
-      message: 'Switch to Material ${useMaterial3 ? 2 : 3}',
-      child: IconButton(
-        icon: useMaterial3
-            ? const Icon(Icons.filter_2)
-            : const Icon(Icons.filter_3),
-        onPressed: handleMaterialVersionChange,
-      ),
-    );
-  }
-}
-
 
 class _ExpandedTrailingActions extends StatelessWidget {
   const _ExpandedTrailingActions({
     required this.useLightMode,
     required this.handleBrightnessChange,
-    // required this.useMaterial3,
-    // required this.handleMaterialVersionChange,
-    // required this.handleColorSelect,
-    // required this.handleImageSelect,
-    // required this.imageSelected,
-    // required this.colorSelected,
-    // required this.colorSelectionMethod,
   });
 
   final void Function(bool) handleBrightnessChange;
-  // final void Function() handleMaterialVersionChange;
-  // final void Function(int) handleImageSelect;
-  // final void Function(int) handleColorSelect;
 
   final bool useLightMode;
-  // final bool useMaterial3;
-  //
-  // final ColorImageProvider imageSelected;
-  // final ColorSeed colorSelected;
-  // final ColorSelectionMethod colorSelectionMethod;
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     final trailingActionsBody = Container(
       constraints: const BoxConstraints.tightFor(width: 250),
       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -328,31 +319,6 @@ class _ExpandedTrailingActions extends StatelessWidget {
                   })
             ],
           ),
-          // Row(
-          //   children: [
-          //     useMaterial3
-          //         ? const Text('')
-          //         : const Text('Material 2'),
-          //     Expanded(child: Container()),
-          //     Switch(
-          //         value: useMaterial3,
-          //         onChanged: (_) {
-          //           // handleMaterialVersionChange();
-          //         })
-          //   ],
-          // ),
-          // const Divider(),
-          // _ExpandedColorSeedAction(
-          //   handleColorSelect: handleColorSelect,
-          //   colorSelected: colorSelected,
-          //   colorSelectionMethod: colorSelectionMethod,
-          // ),
-          // const Divider(),
-          // _ExpandedImageColorAction(
-          //   handleImageSelect: handleImageSelect,
-          //   imageSelected: imageSelected,
-          //   colorSelectionMethod: colorSelectionMethod,
-          // ),
         ],
       ),
     );
@@ -362,104 +328,15 @@ class _ExpandedTrailingActions extends StatelessWidget {
   }
 }
 
-class _ExpandedColorSeedAction extends StatelessWidget {
-  const _ExpandedColorSeedAction({
-    required this.handleColorSelect,
-    required this.colorSelected,
-    // required this.colorSelectionMethod,
-  });
-
-  final void Function(int) handleColorSelect;
-  final ColorSeed colorSelected;
-  // final ColorSelectionMethod colorSelectionMethod;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 200.0),
-      child: GridView.count(
-        crossAxisCount: 3,
-        children: List.generate(
-          ColorSeed.values.length,
-          (i) => IconButton(
-            icon: const Icon(Icons.radio_button_unchecked),
-            color: ColorSeed.values[i].color,
-            isSelected: colorSelected.color == ColorSeed.values[i].color,
-            selectedIcon: const Icon(Icons.circle),
-            onPressed: () {
-              handleColorSelect(i);
-            },
-            tooltip: ColorSeed.values[i].label,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ExpandedImageColorAction extends StatelessWidget {
-  const _ExpandedImageColorAction({
-    required this.handleImageSelect,
-    required this.imageSelected,
-    // required this.colorSelectionMethod,
-  });
-
-  final void Function(int) handleImageSelect;
-  final ColorImageProvider imageSelected;
-  // final ColorSelectionMethod colorSelectionMethod;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 150.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: GridView.count(
-          crossAxisCount: 3,
-          children: List.generate(
-            ColorImageProvider.values.length,
-            (i) => Tooltip(
-              message: ColorImageProvider.values[i].name,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(4.0),
-                onTap: () => handleImageSelect(i),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(4.0),
-                    elevation: imageSelected == ColorImageProvider.values[i]
-                        ? 3
-                        : 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4.0),
-                        child: Image(
-                          image: NetworkImage(ColorImageProvider.values[i].url),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class NavigationTransition extends StatefulWidget {
-  const NavigationTransition(
-      {super.key,
-      required this.scaffoldKey,
-      required this.animationController,
-      required this.railAnimation,
-      required this.navigationRail,
-      required this.navigationBar,
-      required this.appBar,
-      required this.body});
+  const NavigationTransition({super.key,
+    required this.scaffoldKey,
+    required this.animationController,
+    required this.railAnimation,
+    required this.navigationRail,
+    required this.navigationBar,
+    required this.appBar,
+    required this.body});
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final AnimationController animationController;
@@ -497,7 +374,9 @@ class _NavigationTransitionState extends State<NavigationTransition> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme
+        .of(context)
+        .colorScheme;
 
     return Scaffold(
       key: widget.scaffoldKey,
@@ -524,7 +403,8 @@ class _NavigationTransitionState extends State<NavigationTransition> {
 
 final List<NavigationRailDestination> navRailDestinations = appBarDestinations
     .map(
-      (destination) => NavigationRailDestination(
+      (destination) =>
+      NavigationRailDestination(
         icon: Tooltip(
           message: destination.label,
           child: destination.icon,
@@ -535,49 +415,48 @@ final List<NavigationRailDestination> navRailDestinations = appBarDestinations
         ),
         label: Text(destination.label),
       ),
-    )
+)
     .toList();
 
 class SizeAnimation extends CurvedAnimation {
   SizeAnimation(Animation<double> parent)
       : super(
-          parent: parent,
-          curve: const Interval(
-            0.2,
-            0.8,
-            curve: Curves.easeInOutCubicEmphasized,
-          ),
-          reverseCurve: Interval(
-            0,
-            0.2,
-            curve: Curves.easeInOutCubicEmphasized.flipped,
-          ),
-        );
+    parent: parent,
+    curve: const Interval(
+      0.2,
+      0.8,
+      curve: Curves.easeInOutCubicEmphasized,
+    ),
+    reverseCurve: Interval(
+      0,
+      0.2,
+      curve: Curves.easeInOutCubicEmphasized.flipped,
+    ),
+  );
 }
 
 class OffsetAnimation extends CurvedAnimation {
   OffsetAnimation(Animation<double> parent)
       : super(
-          parent: parent,
-          curve: const Interval(
-            0.4,
-            1.0,
-            curve: Curves.easeInOutCubicEmphasized,
-          ),
-          reverseCurve: Interval(
-            0,
-            0.2,
-            curve: Curves.easeInOutCubicEmphasized.flipped,
-          ),
-        );
+    parent: parent,
+    curve: const Interval(
+      0.4,
+      1.0,
+      curve: Curves.easeInOutCubicEmphasized,
+    ),
+    reverseCurve: Interval(
+      0,
+      0.2,
+      curve: Curves.easeInOutCubicEmphasized.flipped,
+    ),
+  );
 }
 
 class RailTransition extends StatefulWidget {
-  const RailTransition(
-      {super.key,
-      required this.animation,
-      required this.backgroundColor,
-      required this.child});
+  const RailTransition({super.key,
+    required this.animation,
+    required this.backgroundColor,
+    required this.child});
 
   final Animation<double> animation;
   final Widget child;
@@ -629,11 +508,10 @@ class _RailTransition extends State<RailTransition> {
 }
 
 class BarTransition extends StatefulWidget {
-  const BarTransition(
-      {super.key,
-      required this.animation,
-      required this.backgroundColor,
-      required this.child});
+  const BarTransition({super.key,
+    required this.animation,
+    required this.backgroundColor,
+    required this.child});
 
   final Animation<double> animation;
   final Color backgroundColor;
@@ -723,15 +601,6 @@ class _OneTwoTransitionState extends State<OneTwoTransition> {
           flex: mediumWidthBreakpoint.toInt(),
           child: widget.one,
         ),
-        // if (widthAnimation.value.toInt() > 0) ...[
-        //   Flexible(
-        //     flex: widthAnimation.value.toInt(),
-        //     child: FractionalTranslation(
-        //       translation: offsetAnimation.value,
-        //       child: widget.two,
-        //     ),
-        //   )
-        // ],
       ],
     );
   }

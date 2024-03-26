@@ -1,6 +1,6 @@
-import 'package:archive/archive_io.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 
 Future<String> downloadZip(String zipUrl, String outPath) async {

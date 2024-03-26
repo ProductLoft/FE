@@ -11,6 +11,7 @@ const String nameColumn = "name";
 const String usernameColumn = "username";
 const String emailColumn = "email";
 const String cookieColumn = "cookie";
+const String csrfTokenColumn = "csrfToken";
 
 // names of columns for recording table
 const String recordingTable = "recording";

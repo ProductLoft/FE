@@ -102,7 +102,4 @@ class AudioRecordingProvider {
     }
     return true;
   }
-
-
-
 }
