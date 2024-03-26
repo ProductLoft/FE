@@ -92,7 +92,7 @@ jobs:
       - name: path
         run: cd
       - name: list files
-        run: dir ..
+        run: dir FE
       - name: create evb file
         run: dart FE\dev\windows_evb_config_generator.dart
       - name: build single exe file
