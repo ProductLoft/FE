@@ -21,10 +21,12 @@ const String commentColumn = "comment";
 const String timestampColumn = "timestamp";
 const String isProcessedColumn = "isProcessed";
 const String insightsDirPathColumn = "zipPath";
+const String audioIdColumn = "audioId";
 
 // consts for network calls
 const String baseUrl = "http://52.72.143.117:8000";
 const String loginUri = "/auth/login/";
+const String uploadUri = "/audio-record/upload/";
 
 
 // FilePaths

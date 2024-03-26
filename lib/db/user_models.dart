@@ -3,33 +3,35 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:lang_fe/const/consts.dart';
 import 'package:lang_fe/db/db_helper.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:collection/collection.dart';
 
 // Open the database and store the reference.
 
 class User {
   int? id;
   final String name;
-  final String userName;
+  final String username;
   final String email;
   // TODO maybe everything below needs to be in a different table
-  final String cookie;
-  final String csrfToken;
+  String? cookie;
+  String? csrfToken;
 
   User({
     this.id,
     required this.name,
-    required this.userName,
+    required this.username,
     required this.email,
-    required this.cookie,
-    required this.csrfToken,
+    this.cookie,
+    this.csrfToken,
   });
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       userIdColumn: id,
       nameColumn: name,
-      usernameColumn: userName,
+      usernameColumn: username,
       emailColumn: email,
       cookieColumn: cookie,
       csrfTokenColumn: csrfToken,
@@ -42,7 +44,7 @@ class UserProvider {
   UserProvider();
 
   //get csrf token from cookie
-  String parseCookie(String cookie) {
+  String getCSRFFromCookie(String cookie) {
     List<String> cookies = cookie.split(';');
     for (var c in cookies) {
       if (c.contains('csrftoken')) {
@@ -52,17 +54,47 @@ class UserProvider {
     return '';
   }
 
-  Future<User> createUser(String name,String username,String email,String cookie) async {
+  String getCookieFromResponse(Map<String, String> headers) {
+    return headers['set-cookie'] ?? '';
+  }
+
+
+
+  String extractCookies(String setCookieString) {
+    final cookieSegments = setCookieString.split('; ');
+    List<String> cookieList = [];
+    for (var c in cookieSegments) {
+      cookieList = [...cookieList,...c.split(',')];
+    }
+    print('cookieList: $cookieList');
+    final desiredCookies = cookieList.map((segment) {
+      final parts = segment.split('=');
+      debugPrint('parts: $parts');
+      final cookieName = parts[0].toLowerCase();
+
+      // // Handle SameSite and other attributes
+      String cookieValue = (parts.length>1) ? parts[1]: '';
+
+      return {cookieName: cookieValue};
+    }).where((map) =>
+    map.containsKey('csrftoken') || map.containsKey('sessionid')
+    );
+
+    return desiredCookies.map((map) => map.entries.first.key + '=' + map.entries.first.value).join('; ');
+  }
+
+
+  Future<User?> createUser(String name,String username,String email,String cookie) async {
 
     Database db = await DatabaseHelper().database;
-    String csrfToken = parseCookie(cookie);
+    String csrfToken = getCSRFFromCookie(cookie);
     debugPrint('csrfToken: $csrfToken');
     User user = User(
       // TODO : check if id is autoincremented
       name: name,
-      userName: username,
+      username: username,
       email: email,
-      cookie: cookie,
+      cookie: extractCookies(cookie),
       csrfToken: csrfToken,
     );
     print(user.toMap());
@@ -74,6 +106,7 @@ class UserProvider {
     } else {
       if (kDebugMode) {
         print('error creating user');
+        return null;
       }
     }
     return user;
@@ -93,7 +126,7 @@ class UserProvider {
         return User(
           id: maps[0][userIdColumn] as int,
           name: maps[0][nameColumn] as String,
-          userName: maps[0][usernameColumn] as String,
+          username: maps[0][usernameColumn] as String,
           email: maps[0][emailColumn] as String,
           cookie: maps[0][cookieColumn] as String,
           csrfToken: maps[0][csrfTokenColumn] as String,

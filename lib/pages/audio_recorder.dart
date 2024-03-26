@@ -7,7 +7,7 @@ import 'package:record/record.dart';
 import 'platform/audio_recorder_platform.dart';
 
 class Recorder extends StatefulWidget {
-  final void Function(String path) onStop;
+  final Future<void> Function(String path) onStop;
 
   const Recorder({super.key, required this.onStop});
 

@@ -27,7 +27,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
 
-  final _cuatomAudioPlayer = ap.AudioPlayer()..setReleaseMode(ap.ReleaseMode.stop);
+  final _customAudioPlayer = ap.AudioPlayer()..setReleaseMode(ap.ReleaseMode.stop);
   late StreamSubscription<void> _playerStateChangedSubscription;
   late StreamSubscription<Duration?> _durationChangedSubscription;
   late StreamSubscription<Duration> _positionChangedSubscription;
@@ -37,21 +37,21 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   @override
   void initState() {
     _playerStateChangedSubscription =
-        _cuatomAudioPlayer.onPlayerComplete.listen((state) async {
+        _customAudioPlayer.onPlayerComplete.listen((state) async {
           await stop();
         });
-    _positionChangedSubscription = _cuatomAudioPlayer.onPositionChanged.listen(
+    _positionChangedSubscription = _customAudioPlayer.onPositionChanged.listen(
           (position) => setState(() {
         _position = position;
       }),
     );
-    _durationChangedSubscription = _cuatomAudioPlayer.onDurationChanged.listen(
+    _durationChangedSubscription = _customAudioPlayer.onDurationChanged.listen(
           (duration) => setState(() {
         _duration = duration;
       }),
     );
 
-    _cuatomAudioPlayer.setSource(_source);
+    _customAudioPlayer.setSource(_source);
 
     super.initState();
   }
@@ -61,7 +61,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     _playerStateChangedSubscription.cancel();
     _positionChangedSubscription.cancel();
     _durationChangedSubscription.cancel();
-    _cuatomAudioPlayer.dispose();
+    _customAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -84,7 +84,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
                   icon: const Icon(Icons.delete,
                       color: Color(0xFF73748D), size: _deleteBtnSize),
                   onPressed: () {
-                    if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
+                    if (_customAudioPlayer.state == ap.PlayerState.playing) {
                       stop().then((value) => widget.onDelete());
                     } else {
                       widget.onDelete();
@@ -104,7 +104,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     Icon icon;
     Color color;
 
-    if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
+    if (_customAudioPlayer.state == ap.PlayerState.playing) {
       icon = const Icon(Icons.pause, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
@@ -120,7 +120,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
           child:
           SizedBox(width: _controlSize, height: _controlSize, child: icon),
           onTap: () {
-            if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
+            if (_customAudioPlayer.state == ap.PlayerState.playing) {
               pause();
             } else {
               play();
@@ -151,7 +151,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
         onChanged: (v) {
           if (duration != null) {
             final position = v * duration.inMilliseconds;
-            _cuatomAudioPlayer.seek(Duration(milliseconds: position.round()));
+            _customAudioPlayer.seek(Duration(milliseconds: position.round()));
           }
         },
         value: canSetValue && duration != null && position != null
@@ -161,15 +161,15 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     );
   }
 
-  Future<void> play() => _cuatomAudioPlayer.play(_source);
+  Future<void> play() => _customAudioPlayer.play(_source);
 
   Future<void> pause() async {
-    await _cuatomAudioPlayer.pause();
+    await _customAudioPlayer.pause();
     setState(() {});
   }
 
   Future<void> stop() async {
-    await _cuatomAudioPlayer.stop();
+    await _customAudioPlayer.stop();
     setState(() {});
   }
 

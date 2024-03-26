@@ -11,6 +11,7 @@ class AudioRecord {
   final String timestamp;
   final int isProcessed;
   final String insightsDirPath;
+  int? audioId;
 
   AudioRecord({
     this.id,
@@ -19,6 +20,7 @@ class AudioRecord {
     required this.timestamp,
     required this.isProcessed,
     required this.insightsDirPath,
+    this.audioId,
   });
 
   Map<String, Object?> toMap() {
@@ -29,6 +31,7 @@ class AudioRecord {
       timestampColumn: timestamp,
       isProcessedColumn: isProcessed,
       insightsDirPathColumn: insightsDirPath,
+      audioIdColumn: audioId,
     };
     return map;
   }
@@ -38,7 +41,7 @@ class AudioRecordingProvider {
   AudioRecordingProvider();
 
   Future<AudioRecord?> createRecording(
-      String filePath,String comment,String length,String timestamp) async {
+      String filePath,String comment,String length,String timestamp, int audioId) async {
     Database db = await DatabaseHelper().database;
     AudioRecord recording = AudioRecord(
       path: filePath,
@@ -46,6 +49,7 @@ class AudioRecordingProvider {
       isProcessed: 0,
       insightsDirPath: '',
       timestamp: timestamp,
+      audioId: audioId,
     );
     print(recording.toMap());
     var r = await db.insert(recordingTable, recording.toMap(),
@@ -90,6 +94,27 @@ class AudioRecordingProvider {
       ));
     }
     return recordings;
+  }
+
+  Future<bool> updateAudioId(String recordingId,String audioId) async {
+    Database db = await DatabaseHelper().database;
+    await db.update(
+        recordingTable, // The name of your table
+        {recordingIdColumn: audioId},  // The column and new value
+        where: 'id = ?',      // Selection criteria
+        whereArgs: [recordingId]       // Arguments to prevent SQL injection
+    );
+    return true;
+  }
+
+  Future<bool> updateRecording(AudioRecord recording) async {
+    Database db = await DatabaseHelper().database;
+    int r = await db.update(recordingTable, recording.toMap(),
+        where: '$recordingIdColumn = ?', whereArgs: [recording.id]);
+    if (r < 1) {
+      return false;
+    }
+    return true;
   }
 
 

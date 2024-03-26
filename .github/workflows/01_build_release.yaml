@@ -141,7 +141,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-latest
-
+    permissions: write-all
     needs:
 #      - build-and-release-linux
 #      - build-and-release-windows
@@ -151,7 +151,7 @@ jobs:
         with:
           path: ./lang-fe-release
           merge-multiple: true
-      - name: Install dependencies
+      - name: Install dependenciesw
         run: sudo apt-get install tree -y
       - name: Upload Release
         uses: ncipollo/release-action@v1

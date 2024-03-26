@@ -3,20 +3,19 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lang_fe/req/login_req.dart';
 import 'package:lang_fe/utils/misc.dart';
 
 import 'db/user_models.dart';
 
-
 class LoginScreen extends StatefulWidget {
   final void Function() callback;
+
   const LoginScreen({super.key, required this.callback});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
-
-
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -28,44 +27,33 @@ class _LoginScreenState extends State<LoginScreen> {
       // Show loading indicator
 
       try {
-        final response = await http.post(
-          Uri.parse(getAuthUrl()),
-          body: {
-            'username': _emailController.text,
-            'password': _passwordController.text
-          },
-        );
+        User? userInfo =
+            await loginReq(_emailController.text, _passwordController.text);
 
-        if (response.statusCode == 200) {
+        if (userInfo == null) {
+          // Failed! Handle error
           if (kDebugMode) {
-            print('Response: ${response.body}');
-            print('cookie: ${response.headers['set-cookie']}');
+            print('Login failed');
           }
-          response.headers.forEach((key, value) {
-            if (kDebugMode) {
-              print('$key: $value');
-            }
-          });
+          return;
+        }
 
-          final body = json.decode(response.body);
-          String name = body["user"]["name"] as String;
-          String username = body["user"]["username"] as String;
-          String email = body["user"]["email"] as String;
-          String? cookie = response.headers['set-cookie'] as String;
+        UserProvider up = UserProvider();
 
-          UserProvider up = UserProvider();
+        User? u = await up.createUser(userInfo.name, userInfo.username,
+            userInfo.email, userInfo.cookie ?? "");
 
-          User u = await up.createUser(name, username, email, cookie);
-
+        if (u != null) {
           // Success! Handle login
-          print('Login successful!');
+          debugPrint('Login successful!');
           setState(() {
             widget.callback();
           });
           return;
         } else {
           // Failed! Handle error
-          print('Login failed: ${response.body}');
+          debugPrint('Login failed: ');
+          return;
         }
       } catch (e) {
         // Handle network errors
@@ -75,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context)
