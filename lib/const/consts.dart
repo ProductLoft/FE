@@ -19,8 +19,13 @@ const String filePathColumn = "filePath";
 const String commentColumn = "comment";
 const String timestampColumn = "timestamp";
 const String isProcessedColumn = "isProcessed";
-const String zipPathColumn = "zipPath";
+const String insightsDirPathColumn = "zipPath";
 
 // consts for network calls
 const String baseUrl = "http://127.0.0.1:8000";
 const String loginUri = "/auth/login/";
+
+
+// FilePaths
+const String audioPath = "audio";
+const String zipPath = "zip";

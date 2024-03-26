@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lang_fe/const/utils.dart';
+import 'package:lang_fe/pages/audio_page.dart';
 
 import '../db/recording_models.dart';
 import 'audio_player.dart';
@@ -24,10 +25,32 @@ class _RecordingPageState extends State<RecordingPage> {
   bool refreshRecordings = false;
   String? audioPath;
   String commentText = '';
+  bool showInsights = false;
+  int showInsightsRecordId = -1;
 
   Future<List<Widget>> getAudioplayers() async {
     List<AudioRecord> previousrecordings = await AudioRecordingProvider().getAll();
-    List<Widget> audioPlayers = [];
+    List<Widget> audioPlayers = [
+      Recorder(
+        onStop: (path) {
+          if (kDebugMode) {
+            print('Recorded file path: $path');
+          }
+          setState(() {
+            _showCommentModal(context, path);
+            audioPath = path;
+            showPlayer = true;
+          });
+        },
+      ),
+      const SizedBox(height: 20),
+      const Text(
+        'Previous Recordings:',
+        style: TextStyle(
+          fontSize: 15,
+        ),
+      ),
+    ];
 
     for (AudioRecord previousRecording in previousrecordings) {
       debugPrint(previousRecording.comment);
@@ -40,7 +63,15 @@ class _RecordingPageState extends State<RecordingPage> {
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
-                  debugPrint('Card tapped.');
+                  debugPrint('Card tapped.${previousRecording.id}');
+                  setState(() {
+                    showInsightsRecordId = previousRecording.id??-1;
+                    showInsights = true;
+                  });
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => AudioPageWidget(audioID: previousRecording.id??-1)),
+                  // );
                 },
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Row(
@@ -73,29 +104,18 @@ class _RecordingPageState extends State<RecordingPage> {
           // Your existing player widget
         ],
       );
-      // child: AudioPlayer(
-      //   source: previousrecording.path,
-      //   onDelete: () {
-      //     RecordingProvider().deleteRecording(previousrecording.id!);
-      //     setState(() {
-      //       refreshRecordings = true;
-      //     });
-      //   },
-      // ),
-      // );
+
 
       audioPlayers.add(customPlayer);
-      // audioPlayers.add(AudioPlayer(
-      //   source: previousrecording.path,
-      //   onDelete: () {
-      //     RecordingProvider().deleteRecording(previousrecording.id!);
-      //     setState(() {
-      //       refreshRecordings = true;
-      //     });
-      //   },
-      // ));
     }
     return audioPlayers;
+  }
+
+  Future<List<Widget>> getInsights() async {
+    List<Widget> insights = [];
+
+
+    return insights;
   }
 
   void _showCommentModal(BuildContext context, String path) {
@@ -138,27 +158,9 @@ class _RecordingPageState extends State<RecordingPage> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Recorder(
-        onStop: (path) {
-          if (kDebugMode) {
-            print('Recorded file path: $path');
-          }
-          setState(() {
-            _showCommentModal(context, path);
-            audioPath = path;
-            showPlayer = true;
-          });
-        },
-      ),
-      const SizedBox(height: 20),
-      const Text(
-        'Previous Recordings:',
-        style: TextStyle(
-          fontSize: 15,
-        ),
-      ),
+
       FutureBuilder<List<Widget>>(
-          future: getAudioplayers(),
+          future: showInsights?getInsights(): getAudioplayers(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(

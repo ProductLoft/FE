@@ -34,7 +34,7 @@ class DatabaseHelper {
         $filePathColumn TEXT NOT NULL,
         $commentColumn TEXT NOT NULL,
         $isProcessedColumn INTEGER NOT NULL DEFAULT 0,
-        $zipPathColumn TEXT NOT NULL,
+        $insightsDirPathColumn TEXT NOT NULL,
         $timestampColumn TEXT NOT NULL
       );
     ''');

@@ -10,7 +10,7 @@ class AudioRecord {
   final String comment;
   final String timestamp;
   final int isProcessed;
-  final String zipPath;
+  final String insightsDirPath;
 
   AudioRecord({
     this.id,
@@ -18,7 +18,7 @@ class AudioRecord {
     required this.comment,
     required this.timestamp,
     required this.isProcessed,
-    required this.zipPath,
+    required this.insightsDirPath,
   });
 
   Map<String, Object?> toMap() {
@@ -28,7 +28,7 @@ class AudioRecord {
       commentColumn: comment,
       timestampColumn: timestamp,
       isProcessedColumn: isProcessed,
-      zipPathColumn: zipPath,
+      insightsDirPathColumn: insightsDirPath,
     };
     return map;
   }
@@ -44,7 +44,7 @@ class AudioRecordingProvider {
       path: filePath,
       comment: comment,
       isProcessed: 0,
-      zipPath: '',
+      insightsDirPath: '',
       timestamp: timestamp,
     );
     print(recording.toMap());
@@ -54,8 +54,12 @@ class AudioRecordingProvider {
     return recording;
   }
 
-  Future<AudioRecord?>getRecording(String id) async {
+  Future<AudioRecord?>getRecording(int id) async {
     Database db = await DatabaseHelper().database;
+    if (id == -1) {
+      return null;
+    }
+
     List<Map<String, Object?>> maps = await db.query(recordingTable,
         where: '$recordingIdColumn = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
@@ -64,7 +68,7 @@ class AudioRecordingProvider {
         path: maps[0][filePathColumn] as String,
         comment: maps[0][commentColumn] as String,
         isProcessed: maps[0][isProcessedColumn] as int,
-        zipPath: maps[0][zipPathColumn] as String,
+        insightsDirPath: maps[0][insightsDirPathColumn] as String,
         timestamp: maps[0][timestampColumn] as String,
       );
     }
@@ -81,7 +85,7 @@ class AudioRecordingProvider {
         path: map[filePathColumn] as String,
         comment: map[commentColumn] as String,
         isProcessed: map[isProcessedColumn] as int,
-        zipPath: map[zipPathColumn] as String,
+        insightsDirPath: map[insightsDirPathColumn] as String,
         timestamp: map[timestampColumn] as String,
       ));
     }
