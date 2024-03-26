@@ -79,14 +79,14 @@ jobs:
         run: flutter pub get
       - name: Enable windows build
         run: flutter config --enable-windows-desktop
-      - name: Build artifacts
-        run: flutter build windows --release
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: install evb
-        run: npm install enigmavirtualbox -g
+#      - name: Build artifacts
+#        run: flutter build windows --release
+#      - name: Setup Node
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 20
+#      - name: install evb
+#        run: npm install enigmavirtualbox -g
       - name: list files
         run: dir /A
       - name: path
