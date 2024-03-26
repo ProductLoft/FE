@@ -23,7 +23,7 @@ const String isProcessedColumn = "isProcessed";
 const String insightsDirPathColumn = "zipPath";
 
 // consts for network calls
-const String baseUrl = "http://127.0.0.1:8000";
+const String baseUrl = "http://52.72.143.117:8000";
 const String loginUri = "/auth/login/";
 
 

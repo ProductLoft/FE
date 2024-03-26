@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 // Open the database and store the reference.
 
 class User {
-  final int id;
+  int? id;
   final String name;
   final String userName;
   final String email;
@@ -17,7 +17,7 @@ class User {
   final String csrfToken;
 
   User({
-    required this.id,
+    this.id,
     required this.name,
     required this.userName,
     required this.email,
@@ -40,17 +40,30 @@ class User {
 
 class UserProvider {
   UserProvider();
+
+  //get csrf token from cookie
+  String parseCookie(String cookie) {
+    List<String> cookies = cookie.split(';');
+    for (var c in cookies) {
+      if (c.contains('csrftoken')) {
+        return c.split('=')[1];
+      }
+    }
+    return '';
+  }
+
   Future<User> createUser(String name,String username,String email,String cookie) async {
 
     Database db = await DatabaseHelper().database;
+    String csrfToken = parseCookie(cookie);
+    debugPrint('csrfToken: $csrfToken');
     User user = User(
       // TODO : check if id is autoincremented
-      id: 1,
       name: name,
       userName: username,
       email: email,
       cookie: cookie,
-      csrfToken: '',
+      csrfToken: csrfToken,
     );
     print(user.toMap());
     var r = await db.insert(userTable, user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
@@ -74,7 +87,8 @@ class UserProvider {
     try {
       Database db = await DatabaseHelper().database;
       List<Map> maps = await db.query(userTable,
-          columns: [userIdColumn, nameColumn, usernameColumn, emailColumn, cookieColumn]);
+          columns: [userIdColumn, nameColumn, usernameColumn, emailColumn, cookieColumn, csrfTokenColumn]);
+      debugPrint('maps: $maps');
       if (maps.isNotEmpty) {
         return User(
           id: maps[0][userIdColumn] as int,

@@ -25,7 +25,8 @@ class DatabaseHelper {
       $nameColumn TEXT NOT NULL,
       $usernameColumn TEXT NOT NULL,
       $cookieColumn TEXT NOT NULL,
-      $emailColumn TEXT NOT NULL
+      $emailColumn TEXT NOT NULL,
+      $csrfTokenColumn TEXT NOT NULL
       );
     ''');
     await db.execute('''

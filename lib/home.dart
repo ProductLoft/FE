@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:lang_fe/db/user_models.dart';
+import 'package:lang_fe/login_screen.dart';
 
 import 'color_palettes_screen.dart';
 import 'component_screen.dart';
@@ -108,8 +109,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               one: FirstComponentList(
                   showNavBottomBar: showNavBarExample,
                   scaffoldKey: scaffoldKey,
-                  showSecondList:
-                  showMediumSizeLayout || showLargeSizeLayout),
+                  showSecondList: showMediumSizeLayout || showLargeSizeLayout),
               two: SecondComponentList(
                 scaffoldKey: scaffoldKey,
               ),
@@ -130,7 +130,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
     }
   }
-
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
@@ -158,53 +157,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ],
       );
 
-  bool isLoggedIn() {
-    UserProvider().getUser().then((user) {
-      if (user == null) {
+  Future<bool> isLoggedIn() async {
+    return await UserProvider().getUser().then((user) {
+      if (user != null) {
         // Navigator.pushReplacementNamed(context, '/login');
-        debugPrint('User is not logged in');
-        return false;
+        debugPrint('true user');
+        return true;
       }
-      return true;
+      debugPrint('false user');
+      return false;
     });
-    return true;
   }
 
-  void _showLoginModal() {
-    TextEditingController _controller =
-    TextEditingController(); // Controller for input
+  void homeRenderCallback() {
+    debugPrint("Home render callback");
+    setState(() {});
+  }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add context'),
-          content: TextField(
-            controller: _controller,
-            autofocus: true,
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Don\'t save'),
-              onPressed: () {
-                Navigator.pop(context); // Close the modal
-              },
-            ),
-            TextButton(
-              child: const Text('Save audio'),
-              onPressed: () {
-                setState(() {
-                  // commentText = _controller.text;
-                  // AudioRecordingProvider()
-                  //     .createRecording(path, commentText, "", getCurrentTime());
-                });
-                Navigator.pop(context); // Close the modal after submission
-              },
-            ),
-          ],
-        );
-      },
+  Widget LoginPage() {
+
+    return LoginScreen(
+      callback: homeRenderCallback,
     );
+  }
+
+  Future<Widget> createScreen() async {
+    bool loggedin = await isLoggedIn();
+    return loggedin ? createScreenFor(ScreenSelected.values[screenIndex], false) : LoginPage();
   }
 
   @override
@@ -213,44 +192,56 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       animation: controller,
       builder: (context, child) {
         return NavigationTransition(
-          scaffoldKey: scaffoldKey,
-          animationController: controller,
-          railAnimation: railAnimation,
-          appBar: createAppBar(),
-          body: createScreenFor(
-              ScreenSelected.values[screenIndex], controller.value == 1),
-          navigationRail: NavigationRail(
-            extended: showLargeSizeLayout,
-            destinations: navRailDestinations,
-            selectedIndex: screenIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                screenIndex = index;
-                handleScreenChanged(screenIndex);
-              });
-            },
-            trailing: Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: showLargeSizeLayout
-                    ? _ExpandedTrailingActions(
-                  useLightMode: widget.useLightMode,
-                  handleBrightnessChange: widget.handleBrightnessChange,
-                )
-                    : _trailingActions(),
-              ),
-            ),
-          ),
-          navigationBar: NavigationBars(
-            onSelectItem: (index) {
-              setState(() {
-                screenIndex = index;
-                handleScreenChanged(screenIndex);
-              });
-            },
-            selectedIndex: screenIndex,
-            isExampleBar: false,
-          ),
+            scaffoldKey: scaffoldKey,
+            animationController: controller,
+            railAnimation: railAnimation,
+            appBar: createAppBar(),
+            body: FutureBuilder(
+                future: createScreen(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return snapshot.data!;
+                  }
+                }),
+
+        navigationRail: NavigationRail(
+        extended: showLargeSizeLayout,
+        destinations: navRailDestinations,
+        selectedIndex: screenIndex,
+        onDestinationSelected: (index) {
+        setState(() {
+        screenIndex = index;
+        handleScreenChanged(screenIndex);
+        });
+        },
+        trailing: Expanded(
+        child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: showLargeSizeLayout
+        ? _ExpandedTrailingActions(
+        useLightMode: widget.useLightMode,
+        handleBrightnessChange: widget.handleBrightnessChange,
+        )
+            : _trailingActions(),
+        ),
+        ),
+        ),
+        navigationBar: NavigationBars(
+        onSelectItem: (index) {
+        setState(() {
+        screenIndex = index;
+        handleScreenChanged(screenIndex);
+        });
+        },
+        selectedIndex: screenIndex,
+        isExampleBar: false,
+        ),
         );
       },
     );
@@ -283,7 +274,6 @@ class _BrightnessButton extends StatelessWidget {
     );
   }
 }
-
 
 class _ExpandedTrailingActions extends StatelessWidget {
   const _ExpandedTrailingActions({
