@@ -1,0 +1,38 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on main branch pushes
+    tags:
+      - 'v*'  # Trigger workflow on new version tags
+
+jobs:
+  build-and-release:
+    runs-on: macos-12  # Use the latest macOS runner
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: xcode-select --install  # Install Xcode tools if needed
+        # ... other dependency installation commands
+
+      - name: Build macOS App
+        run: xcodebuild -project YourProject.xcodeproj -scheme YourScheme -configuration Release
+
+      - name: Codesign the App
+        run: codesign --force --deep --sign "Your Signing Identity" ./YourApp.app
+
+      - name: Create DMG
+        run: create-dmg YourApp.app
+
+      - name: Release the App
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./YourApp.dmg
+          asset_name: YourApp.dmg
+          asset_content_type: application/x-apple-diskimage
