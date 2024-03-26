@@ -90,9 +90,9 @@ jobs:
       - name: list files
         run: dir /A
       - name: path
-        run: cd
+        run: cd FE
       - name: list files
-        run: dir FE
+        run: dir /A
       - name: create evb file
         run: dart FE\dev\windows_evb_config_generator.dart
       - name: build single exe file
