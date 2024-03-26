@@ -1,38 +1,160 @@
-name: Build and Release macOS App
+name: Flutter CI
 
 on:
   push:
     branches:
-      - main  # Trigger workflow on main branch pushes
+      - main
     tags:
-      - 'v*'  # Trigger workflow on new version tags
+      - "*"
 
 jobs:
-  build-and-release:
-    runs-on: macos-12  # Use the latest macOS runner
+  build-and-release-linux:
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: xcode-select --install  # Install Xcode tools if needed
-        # ... other dependency installation commands
-
-      - name: Build macOS App
-        run: xcodebuild -project YourProject.xcodeproj -scheme YourScheme -configuration Release
-
-      - name: Codesign the App
-        run: codesign --force --deep --sign "Your Signing Identity" ./YourApp.app
-
-      - name: Create DMG
-        run: create-dmg YourApp.app
-
-      - name: Release the App
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./YourApp.dmg
-          asset_name: YourApp.dmg
-          asset_content_type: application/x-apple-diskimage
+          channel: 'stable'
+          architecture: x64
+      - name: Update dependencies
+        run: sudo apt-get update
+      - name: Install dependencies
+        run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-0 libgtk-3-dev libblkid1 liblzma5
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Enable linux build
+        run: flutter config --enable-linux-desktop
+      - name: Build artifacts
+        run: flutter build linux --release
+      - name: Build Appimage
+        run: bash ./github_appimage_build.sh
+      - name: Compress action step
+        run:  tar  -C build/linux/x64/release/bundle -cf lang-fe-linux.tar.gz ./
+      - name: Linux Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-linux
+          path: lang-fe-linux.tar.gz
+      - name: Linux Appimage Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-appimage
+          path: Flut_Renamer-x86_64.AppImage
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17.x'
+      - name: decode key base64
+        run: echo $KEYSTORE_BASE64 | base64 -di > ./android/app/lang-fe.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Build android
+        run: |
+          flutter build apk --release
+          flutter build apk --release --split-per-abi
+        env:
+          KEYSTORE: lang-fe.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
+      - name: Android Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-android
+          path: build/app/outputs/flutter-apk
+
+  build-and-release-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: check current path
+        run: cd
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Enable windows build
+        run: flutter config --enable-windows-desktop
+      - name: Build artifacts
+        run: flutter build windows --release
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: install evb
+        run: npm install enigmavirtualbox -g
+      - name: create evb file
+        run: dart .\dev\windows_evb_config_generator.dart
+      - name: build single exe file
+        run: enigmavirtualbox cli "lang-fe.evb"
+      - name: Windows Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-win
+          path: lang-fe.exe
+
+  build-and-release-macos:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: arm64
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Enable macOS build
+        run: flutter config --enable-macos-desktop
+      - name: Build artifacts
+        run: flutter build macos --release
+      - name: install npm
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: install appdmg
+        run: npm install -g appdmg
+      - name: build dmg
+        run: appdmg ./dmg/config.json ./build/macos/Build/Products/Release/lang-fe.dmg
+      - name: macOS Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-macos
+          path: build/macos/Build/Products/Release/lang-fe.dmg
+      - name: Build ios
+        run: |
+          flutter build ios --release --no-codesign
+          ln -sf ./build/ios/iphoneos Payload
+          zip -r9 lang-fe-release.ipa Payload/runner.app
+      - name: ios Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-ios
+          path: lang-fe-release.ipa
+
+
+  upload:
+    runs-on: ubuntu-latest
+
+    needs:
+      - build-and-release-linux
+      - build-and-release-windows
+      - build-and-release-macos
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./lang-fe-release
+          merge-multiple: true
+      - name: Install dependencies
+        run: sudo apt-get install tree -y
+      - name: Upload Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          allowUpdates: true
+          artifacts: lang-fe-release/*
