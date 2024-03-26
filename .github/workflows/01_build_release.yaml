@@ -94,7 +94,7 @@ jobs:
       - name: list files
         run: dir ..
       - name: create evb file
-        run: dart dev\windows_evb_config_generator.dart
+        run: dart FE\dev\windows_evb_config_generator.dart
       - name: build single exe file
         run: enigmavirtualbox cli "lang-fe.evb"
       - name: Windows Release
