@@ -64,21 +64,21 @@ jobs:
 #          name: lang-fe-android
 #          path: build/app/outputs/flutter-apk
 
-  build-and-release-windows:
-    runs-on: windows-latest
-
-    steps:
-      - name: check current path
-        run: cd
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          architecture: x64
-      - name: Install project dependencies
-        run: flutter pub get
-      - name: Enable windows build
-        run: flutter config --enable-windows-desktop
+#  build-and-release-windows:
+#    runs-on: windows-latest
+#
+#    steps:
+#      - name: check current path
+#        run: cd
+#      - uses: actions/checkout@v4
+#      - uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#          architecture: x64
+#      - name: Install project dependencies
+#        run: flutter pub get
+#      - name: Enable windows build
+#        run: flutter config --enable-windows-desktop
 #      - name: Build artifacts
 #        run: flutter build windows --release
 #      - name: Setup Node
@@ -87,58 +87,58 @@ jobs:
 #          node-version: 20
 #      - name: install evb
 #        run: npm install enigmavirtualbox -g
-      - name: list files
-        run: dir /A
-      - name: path
-        run: cd FE
-      - name: list files
-        run: dir /A
-      - name: create evb file
-        run: dart FE\dev\windows_evb_config_generator.dart
-      - name: build single exe file
-        run: enigmavirtualbox cli "lang-fe.evb"
-      - name: Windows Release
+#      - name: list files
+#        run: dir /A
+#      - name: path
+#        run: cd FE
+#      - name: list files
+#        run: dir /A
+#      - name: create evb file
+#        run: dart FE\dev\windows_evb_config_generator.dart
+#      - name: build single exe file
+#        run: enigmavirtualbox cli "lang-fe.evb"
+#      - name: Windows Release
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: lang-fe-win
+#          path: lang-fe.exe
+
+  build-and-release-macos:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: arm64
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Enable macOS build
+        run: flutter config --enable-macos-desktop
+      - name: Build artifacts
+        run: flutter build macos --release
+      - name: install npm
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: install appdmg
+        run: npm install -g appdmg
+      - name: build dmg
+        run: appdmg ./dmg/config.json ./build/macos/Build/Products/Release/lang-fe.dmg
+      - name: macOS Release
         uses: actions/upload-artifact@v4
         with:
-          name: lang-fe-win
-          path: lang-fe.exe
-
-#  build-and-release-macos:
-#    runs-on: macos-14
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          channel: 'stable'
-#          architecture: arm64
-#      - name: Install project dependencies
-#        run: flutter pub get
-#      - name: Enable macOS build
-#        run: flutter config --enable-macos-desktop
-#      - name: Build artifacts
-#        run: flutter build macos --release
-#      - name: install npm
-#        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-#      - name: install appdmg
-#        run: npm install -g appdmg
-#      - name: build dmg
-#        run: appdmg ./dmg/config.json ./build/macos/Build/Products/Release/lang-fe.dmg
-#      - name: macOS Release
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: lang-fe-macos
-#          path: build/macos/Build/Products/Release/lang-fe.dmg
-#      - name: Build ios
-#        run: |
-#          flutter build ios --release --no-codesign
-#          ln -sf ./build/ios/iphoneos Payload
-#          zip -r9 lang-fe-release.ipa Payload/runner.app
-#      - name: ios Release
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: lang-fe-ios
-#          path: lang-fe-release.ipa
+          name: lang-fe-macos
+          path: build/macos/Build/Products/Release/lang-fe.dmg
+      - name: Build ios
+        run: |
+          flutter build ios --release --no-codesign
+          ln -sf ./build/ios/iphoneos Payload
+          zip -r9 lang-fe-release.ipa Payload/runner.app
+      - name: ios Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-ios
+          path: lang-fe-release.ipa
 
 
   upload:
@@ -146,8 +146,8 @@ jobs:
 
     needs:
 #      - build-and-release-linux
-      - build-and-release-windows
-#      - build-and-release-macos
+#      - build-and-release-windows
+      - build-and-release-macos
     steps:
       - uses: actions/download-artifact@v4
         with:
