@@ -88,11 +88,11 @@ jobs:
       - name: install evb
         run: npm install enigmavirtualbox -g
       - name: list files
-        run: ls -la
+        run: dir /A
       - name: path
-        run: pwd
+        run: cd
       - name: list files
-        run: ls ../
+        run: dir ..
       - name: create evb file
         run: dart dev\windows_evb_config_generator.dart
       - name: build single exe file
