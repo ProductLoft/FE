@@ -21,20 +21,21 @@ class DatabaseHelper {
   Future _onCreate(Database db, int version) async {
     await db.execute('''
     create table $userTable ( 
-      $userIdColumn integer primary key autoincrement, 
-      $nameColumn text not null,
-      $usernameColumn text not null,
-      $cookieColumn text not null,
-      $emailColumn text not null
+      $userIdColumn INTEGER PRIMARY KEY AUTOINCREMENT, 
+      $nameColumn TEXT NOT NULL,
+      $usernameColumn TEXT NOT NULL,
+      $cookieColumn TEXT NOT NULL,
+      $emailColumn TEXT NOT NULL
       );
     ''');
     await db.execute('''
       create table $recordingTable (
-        $idColumn integer primary key autoincrement,
-        $filePathColumn text not null,
-        $commentColumn text not null,
-        $lengthColumn text not null,
-        $timestampColumn text not null
+        $recordingIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+        $filePathColumn TEXT NOT NULL,
+        $commentColumn TEXT NOT NULL,
+        $isProcessedColumn INTEGER NOT NULL DEFAULT 0,
+        $insightsDirPathColumn TEXT NOT NULL,
+        $timestampColumn TEXT NOT NULL
       );
     ''');
   }

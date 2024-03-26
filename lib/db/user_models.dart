@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:lang_fe/const/consts.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:lang_fe/db/db_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 // Open the database and store the reference.
 
@@ -13,7 +12,9 @@ class User {
   final String name;
   final String userName;
   final String email;
+  // TODO maybe everything below needs to be in a different table
   final String cookie;
+  final String csrfToken;
 
   User({
     required this.id,
@@ -21,6 +22,7 @@ class User {
     required this.userName,
     required this.email,
     required this.cookie,
+    required this.csrfToken,
   });
 
   Map<String, Object?> toMap() {
@@ -30,6 +32,7 @@ class User {
       usernameColumn: userName,
       emailColumn: email,
       cookieColumn: cookie,
+      csrfTokenColumn: csrfToken,
     };
     return map;
   }
@@ -37,7 +40,7 @@ class User {
 
 class UserProvider {
   UserProvider();
-  Future<User> createUser(name, username, email, cookie) async {
+  Future<User> createUser(String name,String username,String email,String cookie) async {
 
     Database db = await DatabaseHelper().database;
     User user = User(
@@ -47,6 +50,7 @@ class UserProvider {
       userName: username,
       email: email,
       cookie: cookie,
+      csrfToken: '',
     );
     print(user.toMap());
     var r = await db.insert(userTable, user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
@@ -73,11 +77,12 @@ class UserProvider {
           columns: [userIdColumn, nameColumn, usernameColumn, emailColumn, cookieColumn]);
       if (maps.isNotEmpty) {
         return User(
-          id: maps[0][userIdColumn],
-          name: maps[0][nameColumn],
-          userName: maps[0][usernameColumn],
-          email: maps[0][emailColumn],
-          cookie: maps[0][cookieColumn],
+          id: maps[0][userIdColumn] as int,
+          name: maps[0][nameColumn] as String,
+          userName: maps[0][usernameColumn] as String,
+          email: maps[0][emailColumn] as String,
+          cookie: maps[0][cookieColumn] as String,
+          csrfToken: maps[0][csrfTokenColumn] as String,
         );
       }
       return null;

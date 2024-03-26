@@ -4,43 +4,47 @@ import 'package:sqflite/sqflite.dart';
 import '../const/consts.dart';
 import 'db_helper.dart';
 
-class Recording {
+class AudioRecord {
   int? id;
   final String path;
   final String comment;
-  final String length;
   final String timestamp;
+  final int isProcessed;
+  final String insightsDirPath;
 
-  Recording({
+  AudioRecord({
     this.id,
     required this.path,
     required this.comment,
-    required this.length,
     required this.timestamp,
+    required this.isProcessed,
+    required this.insightsDirPath,
   });
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
-      idColumn: id,
+      recordingIdColumn: id,
       filePathColumn: path,
       commentColumn: comment,
-      lengthColumn: length,
       timestampColumn: timestamp,
+      isProcessedColumn: isProcessed,
+      insightsDirPathColumn: insightsDirPath,
     };
     return map;
   }
 }
 
-class RecordingProvider {
-  RecordingProvider();
+class AudioRecordingProvider {
+  AudioRecordingProvider();
 
-  Future<Recording?> createRecording(
-      filePath, comment, length, timestamp) async {
+  Future<AudioRecord?> createRecording(
+      String filePath,String comment,String length,String timestamp) async {
     Database db = await DatabaseHelper().database;
-    Recording recording = Recording(
+    AudioRecord recording = AudioRecord(
       path: filePath,
       comment: comment,
-      length: length,
+      isProcessed: 0,
+      insightsDirPath: '',
       timestamp: timestamp,
     );
     print(recording.toMap());
@@ -50,32 +54,52 @@ class RecordingProvider {
     return recording;
   }
 
-  Future<List<Recording>> getAll() async {
+  Future<AudioRecord?>getRecording(int id) async {
+    Database db = await DatabaseHelper().database;
+    if (id == -1) {
+      return null;
+    }
+
+    List<Map<String, Object?>> maps = await db.query(recordingTable,
+        where: '$recordingIdColumn = ?', whereArgs: [id]);
+    if (maps.isNotEmpty) {
+      return AudioRecord(
+        id: maps[0][recordingIdColumn] as int,
+        path: maps[0][filePathColumn] as String,
+        comment: maps[0][commentColumn] as String,
+        isProcessed: maps[0][isProcessedColumn] as int,
+        insightsDirPath: maps[0][insightsDirPathColumn] as String,
+        timestamp: maps[0][timestampColumn] as String,
+      );
+    }
+    return null;
+  }
+
+  Future<List<AudioRecord>> getAll() async {
     Database db = await DatabaseHelper().database;
     List<Map<String, Object?>> maps = await db.query(recordingTable);
-    List<Recording> recordings = [];
+    List<AudioRecord> recordings = [];
     for (var map in maps) {
-      recordings.add(Recording(
-        id: map[idColumn] as int,
+      recordings.add(AudioRecord(
+        id: map[recordingIdColumn] as int,
         path: map[filePathColumn] as String,
         comment: map[commentColumn] as String,
-        length: map[lengthColumn] as String,
+        isProcessed: map[isProcessedColumn] as int,
+        insightsDirPath: map[insightsDirPathColumn] as String,
         timestamp: map[timestampColumn] as String,
       ));
     }
     return recordings;
   }
 
+
   Future<bool> deleteRecording(int id) async {
     Database db = await DatabaseHelper().database;
     int r = await db
-        .delete(recordingTable, where: '$idColumn = ?', whereArgs: [id]);
+        .delete(recordingTable, where: '$recordingIdColumn = ?', whereArgs: [id]);
     if (r < 1) {
       return false;
     }
     return true;
   }
-
-
-
 }

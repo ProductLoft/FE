@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart' as ap;
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:macos_ui/macos_ui.dart';
 
-class AudioPlayer extends StatefulWidget {
+class CustomAudioPlayer extends StatefulWidget {
   /// Path from where to play recorded audio
   final String source;
 
@@ -14,21 +13,21 @@ class AudioPlayer extends StatefulWidget {
   /// Setting this to null hides the delete button
   final VoidCallback onDelete;
 
-  const AudioPlayer({
+  const CustomAudioPlayer({
     super.key,
     required this.source,
     required this.onDelete,
   });
 
   @override
-  AudioPlayerState createState() => AudioPlayerState();
+  CustomAudioPlayerState createState() => CustomAudioPlayerState();
 }
 
-class AudioPlayerState extends State<AudioPlayer> {
+class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
 
-  final _audioPlayer = ap.AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+  final _cuatomAudioPlayer = ap.AudioPlayer()..setReleaseMode(ap.ReleaseMode.stop);
   late StreamSubscription<void> _playerStateChangedSubscription;
   late StreamSubscription<Duration?> _durationChangedSubscription;
   late StreamSubscription<Duration> _positionChangedSubscription;
@@ -38,21 +37,21 @@ class AudioPlayerState extends State<AudioPlayer> {
   @override
   void initState() {
     _playerStateChangedSubscription =
-        _audioPlayer.onPlayerComplete.listen((state) async {
+        _cuatomAudioPlayer.onPlayerComplete.listen((state) async {
           await stop();
         });
-    _positionChangedSubscription = _audioPlayer.onPositionChanged.listen(
+    _positionChangedSubscription = _cuatomAudioPlayer.onPositionChanged.listen(
           (position) => setState(() {
         _position = position;
       }),
     );
-    _durationChangedSubscription = _audioPlayer.onDurationChanged.listen(
+    _durationChangedSubscription = _cuatomAudioPlayer.onDurationChanged.listen(
           (duration) => setState(() {
         _duration = duration;
       }),
     );
 
-    _audioPlayer.setSource(_source);
+    _cuatomAudioPlayer.setSource(_source);
 
     super.initState();
   }
@@ -62,7 +61,7 @@ class AudioPlayerState extends State<AudioPlayer> {
     _playerStateChangedSubscription.cancel();
     _positionChangedSubscription.cancel();
     _durationChangedSubscription.cancel();
-    _audioPlayer.dispose();
+    _cuatomAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -85,7 +84,7 @@ class AudioPlayerState extends State<AudioPlayer> {
                   icon: const Icon(Icons.delete,
                       color: Color(0xFF73748D), size: _deleteBtnSize),
                   onPressed: () {
-                    if (_audioPlayer.state == ap.PlayerState.playing) {
+                    if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
                       stop().then((value) => widget.onDelete());
                     } else {
                       widget.onDelete();
@@ -105,12 +104,12 @@ class AudioPlayerState extends State<AudioPlayer> {
     Icon icon;
     Color color;
 
-    if (_audioPlayer.state == ap.PlayerState.playing) {
-      icon = const Icon(Icons.pause, color: Colors.red, size: 30);
+    if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
+      icon = const Icon(Icons.pause, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
       final theme = Theme.of(context);
-      icon = Icon(Icons.play_arrow, color: theme.primaryColor, size: 30);
+      icon = Icon(Icons.play_arrow, size: 30);
       color = theme.primaryColor.withOpacity(0.1);
     }
 
@@ -121,7 +120,7 @@ class AudioPlayerState extends State<AudioPlayer> {
           child:
           SizedBox(width: _controlSize, height: _controlSize, child: icon),
           onTap: () {
-            if (_audioPlayer.state == ap.PlayerState.playing) {
+            if (_cuatomAudioPlayer.state == ap.PlayerState.playing) {
               pause();
             } else {
               play();
@@ -147,13 +146,12 @@ class AudioPlayerState extends State<AudioPlayer> {
 
     return SizedBox(
       width: width,
-      child: MacosSlider(
-        color: Theme.of(context).primaryColor,
+      child: Slider(
         // inactiveColor: Theme.of(context).colorScheme.secondary,
         onChanged: (v) {
           if (duration != null) {
             final position = v * duration.inMilliseconds;
-            _audioPlayer.seek(Duration(milliseconds: position.round()));
+            _cuatomAudioPlayer.seek(Duration(milliseconds: position.round()));
           }
         },
         value: canSetValue && duration != null && position != null
@@ -163,18 +161,18 @@ class AudioPlayerState extends State<AudioPlayer> {
     );
   }
 
-  Future<void> play() => _audioPlayer.play(_source);
+  Future<void> play() => _cuatomAudioPlayer.play(_source);
 
   Future<void> pause() async {
-    await _audioPlayer.pause();
+    await _cuatomAudioPlayer.pause();
     setState(() {});
   }
 
   Future<void> stop() async {
-    await _audioPlayer.stop();
+    await _cuatomAudioPlayer.stop();
     setState(() {});
   }
 
-  Source get _source =>
+  ap.Source get _source =>
       kIsWeb ? ap.UrlSource(widget.source) : ap.DeviceFileSource(widget.source);
 }
