@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
 
+import '../const/consts.dart';
 import '../db/recording_models.dart';
 import 'audio_player.dart';
 import 'audio_recorder.dart';
@@ -101,9 +105,53 @@ class _RecordingPageState extends State<RecordingPage> {
     String insightsDirPath = await checkAudioIdStatus(showInsightsRecordId);
     List<Widget> insights = [Text("Insights: $insightsDirPath")];
 
+    List<dynamic> speakerTurns = jsonDecode(
+            await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson')) as List<dynamic>;
+
+    for (dynamic speakerTurn in speakerTurns) {
+      Map<String, dynamic> speakerTurnStart = speakerTurn as Map<String, dynamic>;
+      insights.add(
+        Card(
+          clipBehavior: Clip.hardEdge,
+          child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
+                // debugPrint('Card tapped.${previousRecording.id}');
+                // setState(() {
+                //   showInsightsRecordId = previousRecording.id ?? -1;
+                //   showInsights = true;
+                // });
+              },
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          // Example: 16 pixels on all sides
+                          child: Column(
+                              children: [
+                            Text("You said: ${speakerTurnStart['original_sentence']}"),
+                            Text("Improved Sentence: ${speakerTurnStart['improved_sentence']}"),
+                                CustomAudioPlayer(
+                                  source: '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                  onDelete: () {},
+                                )
+                            // Text(previousRecording.comment),
+                          ])),
+                    ])
+              ])),
+        ),
+      );
+      // insights.add(Text('Speaker Turn: $speakerTurn'));
+
+      // debugPrint('Speaker Turn: $speakerTurn');
+    }
+
+
     return insights;
   }
-
 
   Future<List<Widget>> getInsightsPage() async {
     AudioRecord? audioRecord =
@@ -181,11 +229,10 @@ class _RecordingPageState extends State<RecordingPage> {
               onPressed: () async {
                 int? audioRecordId = await uploadAudio(path);
                 debugPrint('Audio record id: $audioRecordId');
-                await AudioRecordingProvider().createRecording(path, commentText,
-                    "", getCurrentTime(), audioRecordId ?? -1);
+                await AudioRecordingProvider().createRecording(path,
+                    commentText, "", getCurrentTime(), audioRecordId ?? -1);
                 setState(() {
                   commentText = _controller.text;
-
                 });
                 Navigator.pop(context); // Close the modal after submission
               },

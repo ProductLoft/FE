@@ -30,3 +30,4 @@ const String audioPath = "audio";
 const String zipPath = "zip";
 const String insightPath = "insights";
 const dbPath = "db/lang.db";
+const String speakerTurnsJson = "speaker_turns.json";

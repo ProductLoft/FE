@@ -61,26 +61,6 @@ class _AppState extends State<App> {
     });
   }
 
-  //
-  // void handleColorSelect(int value) {
-  //   setState(() {
-  //     colorSelectionMethod = ColorSelectionMethod.colorSeed;
-  //     colorSelected = ColorSeed.values[value];
-  //   });
-  // }
-
-  // void handleImageSelect(int value) {
-  //   final String url = ColorImageProvider.values[value].url;
-  //   ColorScheme.fromImageProvider(provider: NetworkImage(url))
-  //       .then((newScheme) {
-  //     setState(() {
-  //       colorSelectionMethod = ColorSelectionMethod.image;
-  //       imageSelected = ColorImageProvider.values[value];
-  //       imageColorScheme = newScheme;
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

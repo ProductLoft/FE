@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1608,
+    "index": 1,
+    "file_name": "speaker_turn_1.wav",
+    "user_id": 1,
+    "audio_record_id": 357,
+    "speaker": 0,
+    "start_time": "0:00:00.140000",
+    "end_time": "0:00:03.616000",
+    "original_sentence": "This is the last time I am trying it.",
+    "improved_sentence": "This is my final attempt.",
+    "improve_reason": "Simplified and more concise version of the original sentence."
+  },
+  {
+    "id": 1609,
+    "index": 2,
+    "file_name": "speaker_turn_2.wav",
+    "user_id": 1,
+    "audio_record_id": 357,
+    "speaker": 0,
+    "start_time": "0:00:03.636000",
+    "end_time": "0:00:08.124000",
+    "original_sentence": "if it does not work I will give up on the project.",
+    "improved_sentence": "If it doesn't work, I'll abandon the project.",
+    "improve_reason": "Simplified the expression 'give up on' to 'abandon' for clarity and conciseness."
+  },
+  {
+    "id": 1610,
+    "index": 3,
+    "file_name": "speaker_turn_3.wav",
+    "user_id": 1,
+    "audio_record_id": 357,
+    "speaker": 0,
+    "start_time": "0:00:08.625000",
+    "end_time": "0:00:09.366000",
+    "original_sentence": "are you fine with that?",
+    "improved_sentence": "Are you okay with that?",
+    "improve_reason": "Using 'okay' instead of 'fine' increases clarity and naturalness in informal language."
+  }
+]

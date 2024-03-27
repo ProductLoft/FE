@@ -140,12 +140,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
       canSetValue = position.inMilliseconds > 0;
       canSetValue &= position.inMilliseconds < duration.inMilliseconds;
     }
-
-    double width = widgetWidth - _controlSize - _deleteBtnSize;
-    width -= _deleteBtnSize;
-
-    return SizedBox(
-      width: width,
+    return Container(
       child: Slider(
         // inactiveColor: Theme.of(context).colorScheme.secondary,
         onChanged: (v) {
