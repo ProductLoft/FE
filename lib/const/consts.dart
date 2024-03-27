@@ -1,9 +1,3 @@
-
-
-const dbPath = "db/lang.db";
-
-
-
 // names of columns for user table
 const String userTable = "user";
 const String userIdColumn = "id";
@@ -27,8 +21,12 @@ const String audioIdColumn = "audioId";
 const String baseUrl = "http://52.72.143.117:8000";
 const String loginUri = "/auth/login/";
 const String uploadUri = "/audio-record/upload/";
+const String jobStatusUri = "/check_job_status/";
+const String downloadZipUri = "/speaker-turn/download/";
 
 
 // FilePaths
 const String audioPath = "audio";
 const String zipPath = "zip";
+const String insightPath = "insights";
+const dbPath = "db/lang.db";

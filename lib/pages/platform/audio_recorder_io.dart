@@ -42,7 +42,7 @@ mixin AudioRecorderMixin {
     final dir = await getApplicationDocumentsDirectory();
     return p.join(
       dir.path,
-      'audio_${DateTime.now().millisecondsSinceEpoch}.m4a',
+      'audio_${DateTime.now().millisecondsSinceEpoch}.wav',
     );
   }
 }

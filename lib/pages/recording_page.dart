@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
 
@@ -35,11 +36,9 @@ class _RecordingPageState extends State<RecordingPage> {
           if (kDebugMode) {
             print('Recorded file path: $path');
           }
-          int? audioRecordId = await uploadAudio(path);
-          print('Audio record id: $audioRecordId');
 
           setState(() {
-            _showCommentModal(context, path, audioRecordId ?? -1);
+            _showCommentModal(context, path);
             audioPath = path;
             showPlayer = true;
           });
@@ -94,35 +93,22 @@ class _RecordingPageState extends State<RecordingPage> {
     return audioPlayers;
   }
 
-  Future<List<Widget>> getInsights() async {
-    List<Widget> insights = [];
-    AudioRecord? recordingInfo =
-        await AudioRecordingProvider().getRecording(showInsightsRecordId);
+  // Future<String> getInsightsDirPath(int audioRecordId) async {
+  //       return  checkAudioIdStatus(audioRecordId);
+  // }
 
-    if (recordingInfo != null) {
-      if (recordingInfo.isProcessed == 0) {
-        insights.add(const Text(
-            "Insights are being processed. Please check back later."));
-        return insights;
-      }
-      insights.add(Text(
-        "Date: ${recordingInfo.timestamp}",
-        textAlign: TextAlign.left,
-      ));
-      insights.add(Text(
-        "Comment: ${recordingInfo.comment}",
-        textAlign: TextAlign.left,
-      ));
-    } else {
-      insights.add(Text("No insights found"));
-    }
+  Future<List<Widget>> getAllInsights() async {
+    String insightsDirPath = await checkAudioIdStatus(showInsightsRecordId);
+    List<Widget> insights = [Text("Insights: $insightsDirPath")];
 
     return insights;
   }
 
+
   Future<List<Widget>> getInsightsPage() async {
     AudioRecord? audioRecord =
         await AudioRecordingProvider().getRecording(showInsightsRecordId);
+    debugPrint('Audio Record high level: ${audioRecord?.toMap()}');
     List<Widget> insights = [
       const Center(
         child: Text(
@@ -146,7 +132,7 @@ class _RecordingPageState extends State<RecordingPage> {
       ),
       Column(children: [
         FutureBuilder<List<Widget>>(
-            future: getInsights(),
+            future: getAllInsights(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -161,7 +147,7 @@ class _RecordingPageState extends State<RecordingPage> {
                       children: snapshot.data!,
                     ));
               }
-            }),
+            })
       ]),
     ];
 
@@ -170,7 +156,7 @@ class _RecordingPageState extends State<RecordingPage> {
     return insights;
   }
 
-  void _showCommentModal(BuildContext context, String path, int audioId) {
+  void _showCommentModal(BuildContext context, String path) {
     TextEditingController _controller =
         TextEditingController(); // Controller for input
 
@@ -192,11 +178,14 @@ class _RecordingPageState extends State<RecordingPage> {
             ),
             TextButton(
               child: const Text('Save audio'),
-              onPressed: () {
+              onPressed: () async {
+                int? audioRecordId = await uploadAudio(path);
+                debugPrint('Audio record id: $audioRecordId');
+                await AudioRecordingProvider().createRecording(path, commentText,
+                    "", getCurrentTime(), audioRecordId ?? -1);
                 setState(() {
                   commentText = _controller.text;
-                  AudioRecordingProvider()
-                      .createRecording(path, commentText, "", getCurrentTime(), audioId??-1);
+
                 });
                 Navigator.pop(context); // Close the modal after submission
               },

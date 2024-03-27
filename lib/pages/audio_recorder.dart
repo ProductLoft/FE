@@ -46,7 +46,7 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         await _audioRecorder.hasPermission()
             ? debugPrint("true")
             : debugPrint("False");
-        const encoder = AudioEncoder.aacLc;
+        const encoder = AudioEncoder.wav;
 
         if (!await _isEncoderSupported(encoder)) {
           return;
@@ -56,13 +56,14 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         debugPrint(devs.toString());
 
         const config = RecordConfig(
-            encoder: AudioEncoder.aacLc,
+            encoder: AudioEncoder.wav,
             bitRate: 320000,
             sampleRate: 44100,
             numChannels: 2,
             autoGain: true,
             echoCancel: false,
-            noiseSuppress: false);
+            noiseSuppress: false
+        );
 
         // Record to file
         await recordFile(_audioRecorder, config);

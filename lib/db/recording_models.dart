@@ -74,6 +74,7 @@ class AudioRecordingProvider {
         isProcessed: maps[0][isProcessedColumn] as int,
         insightsDirPath: maps[0][insightsDirPathColumn] as String,
         timestamp: maps[0][timestampColumn] as String,
+        audioId: maps[0][audioIdColumn] as int,
       );
     }
     return null;
@@ -91,6 +92,7 @@ class AudioRecordingProvider {
         isProcessed: map[isProcessedColumn] as int,
         insightsDirPath: map[insightsDirPathColumn] as String,
         timestamp: map[timestampColumn] as String,
+        audioId: maps[0][audioIdColumn] as int,
       ));
     }
     return recordings;
@@ -100,7 +102,7 @@ class AudioRecordingProvider {
     Database db = await DatabaseHelper().database;
     await db.update(
         recordingTable, // The name of your table
-        {recordingIdColumn: audioId},  // The column and new value
+        {audioIdColumn: audioId},  // The column and new value
         where: 'id = ?',      // Selection criteria
         whereArgs: [recordingId]       // Arguments to prevent SQL injection
     );

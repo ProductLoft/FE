@@ -37,7 +37,7 @@ class DatabaseHelper {
         $isProcessedColumn INTEGER NOT NULL DEFAULT 0,
         $insightsDirPathColumn TEXT NOT NULL,
         $timestampColumn TEXT NOT NULL,
-        $audioIdColumn TEXT NOT NULL
+        $audioIdColumn INTEGER NOT NULL
       );
     ''');
   }
