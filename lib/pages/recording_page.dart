@@ -133,7 +133,7 @@ class _RecordingPageState extends State<RecordingPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children:[
-                            Text("You said3: ${speakerTurnStart['original_sentence']}"),
+                            Text("You said: ${speakerTurnStart['original_sentence']}"),
                             Text("Improved Sentence: ${speakerTurnStart['improved_sentence']}"),
                             Container(
                               padding: EdgeInsets.only(top: 10.0),
@@ -180,16 +180,22 @@ class _RecordingPageState extends State<RecordingPage> {
           ),
         ),
       ),
-      CustomAudioPlayer(
-        source: audioRecord?.path ?? 'Audio Not Found',
-        onDelete: () {
-          // TODO modal confirmation on Delete
-          AudioRecordingProvider().deleteRecording(showInsightsRecordId);
-          setState(() {
-            refreshRecordings = true;
-            showInsights = false;
-          });
-        },
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:[
+          CustomAudioPlayer(
+            source: audioRecord?.path ?? 'Audio Not Found',
+            onDelete: () {
+              // TODO modal confirmation on Delete
+              AudioRecordingProvider().deleteRecording(showInsightsRecordId);
+              setState(() {
+                refreshRecordings = true;
+                showInsights = false;
+              });
+            },
+          ),
+        ]
       ),
       Column(children: [
         FutureBuilder<List<Widget>>(
