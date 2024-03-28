@@ -28,6 +28,7 @@ Future<String> checkAudioIdStatus(int audioId) async {
     } catch (e) {
       print('Error during network request: $e');
     }
+    debugPrint('Audio processed: $audioProcessed');
     // Wait for a specified duration
     if (!audioProcessed) await Future.delayed(const Duration(seconds: 5));
   }
@@ -49,9 +50,10 @@ Future<bool> makeStatusCheckRequest(int audioId) async {
 
   http.StreamedResponse response = await request.send();
 
-  if (response.statusCode > 200 && response.statusCode < 300) {
+  if (response.statusCode >= 200 && response.statusCode < 300) {
     var resp = jsonDecode(await response.stream.bytesToString());
-    if (resp['status'] as int == 1) {
+    if (resp['could_download'] as bool) {
+      debugPrint('Audio processed!!!: ${resp['could_download']}');
       return true;
     } else {
       return false;
@@ -61,5 +63,5 @@ Future<bool> makeStatusCheckRequest(int audioId) async {
     print(response.reasonPhrase);
   }
 
-  return true;
+  return false;
 }

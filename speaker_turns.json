@@ -1,41 +1,41 @@
 [
   {
-    "id": 1608,
+    "id": 1651,
     "index": 1,
     "file_name": "speaker_turn_1.wav",
     "user_id": 1,
-    "audio_record_id": 357,
+    "audio_record_id": 401,
     "speaker": 0,
-    "start_time": "0:00:00.140000",
-    "end_time": "0:00:03.616000",
-    "original_sentence": "This is the last time I am trying it.",
-    "improved_sentence": "This is my final attempt.",
-    "improve_reason": "Simplified and more concise version of the original sentence."
+    "start_time": "0:00:03.580000",
+    "end_time": "0:00:04.286000",
+    "original_sentence": "Would this work?",
+    "improved_sentence": "Would this approach work?",
+    "improve_reason": "The original sentence is a bit vague, so adding 'approach' makes it more specific."
   },
   {
-    "id": 1609,
+    "id": 1652,
     "index": 2,
     "file_name": "speaker_turn_2.wav",
     "user_id": 1,
-    "audio_record_id": 357,
+    "audio_record_id": 401,
     "speaker": 0,
-    "start_time": "0:00:03.636000",
-    "end_time": "0:00:08.124000",
-    "original_sentence": "if it does not work I will give up on the project.",
-    "improved_sentence": "If it doesn't work, I'll abandon the project.",
-    "improve_reason": "Simplified the expression 'give up on' to 'abandon' for clarity and conciseness."
+    "start_time": "0:00:04.306000",
+    "end_time": "0:00:06.467000",
+    "original_sentence": "What do you think I mean?",
+    "improved_sentence": "What do you mean by that?",
+    "improve_reason": "The original sentence is a bit abrupt and could be made more conversational."
   },
   {
-    "id": 1610,
+    "id": 1653,
     "index": 3,
     "file_name": "speaker_turn_3.wav",
     "user_id": 1,
-    "audio_record_id": 357,
+    "audio_record_id": 401,
     "speaker": 0,
-    "start_time": "0:00:08.625000",
-    "end_time": "0:00:09.366000",
-    "original_sentence": "are you fine with that?",
-    "improved_sentence": "Are you okay with that?",
-    "improve_reason": "Using 'okay' instead of 'fine' increases clarity and naturalness in informal language."
+    "start_time": "0:00:08.509000",
+    "end_time": "0:00:09.429000",
+    "original_sentence": "If it works here...",
+    "improved_sentence": "If it works here, it should work elsewhere as well.",
+    "improve_reason": "The original sentence is incomplete and lacks context. The improved version provides a more complete and logical statement."
   }
 ]

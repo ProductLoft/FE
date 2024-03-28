@@ -103,13 +103,16 @@ class _RecordingPageState extends State<RecordingPage> {
 
   Future<List<Widget>> getAllInsights() async {
     String insightsDirPath = await checkAudioIdStatus(showInsightsRecordId);
-    List<Widget> insights = [Text("Insights: $insightsDirPath")];
+    List<Widget> insights = [];
 
     List<dynamic> speakerTurns = jsonDecode(
-            await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson')) as List<dynamic>;
-
+            await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
+        as List<dynamic>;
+//80% of screen width
+    double c_width = MediaQuery.of(context).size.width * 0.8;
     for (dynamic speakerTurn in speakerTurns) {
-      Map<String, dynamic> speakerTurnStart = speakerTurn as Map<String, dynamic>;
+      Map<String, dynamic> speakerTurnStart =
+          speakerTurn as Map<String, dynamic>;
       insights.add(
         Card(
           clipBehavior: Clip.hardEdge,
@@ -162,7 +165,6 @@ class _RecordingPageState extends State<RecordingPage> {
       // debugPrint('Speaker Turn: $speakerTurn');
     }
 
-
     return insights;
   }
 
@@ -197,8 +199,9 @@ class _RecordingPageState extends State<RecordingPage> {
           ),
         ]
       ),
-      Column(children: [
-        FutureBuilder<List<Widget>>(
+      Padding(
+          padding: const EdgeInsets.all(16.0),
+      child:FutureBuilder<List<Widget>>(
             future: getAllInsights(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -208,14 +211,13 @@ class _RecordingPageState extends State<RecordingPage> {
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
+                return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: snapshot.data!,
-                    ));
+                    );
               }
             })
-      ]),
+      ),
     ];
 
     // insights.add();
