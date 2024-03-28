@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-0 libgtk-3-dev libblkid1 liblzma5
       - name: uninstall old gstreamer
-        run: sudo apt autoremove
+        run: sudo apt-get install libgstreamer1.0-0 gstreamer1.0-plugins-base
       - name: Install gstreamer
         run: sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
       - name: Install project dependencies
@@ -40,33 +40,7 @@ jobs:
         with:
           name: lang-fe-linux
           path: lang-fe-linux.tar.gz
-      - name: Linux Appimage Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: lang-fe-appimage
-          path: Flut_Renamer-x86_64.AppImage
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '17.x'
-      - name: decode key base64
-        run: echo $KEYSTORE_BASE64 | base64 -di > ./android/app/lang-fe.jks
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-      - name: Build android
-        run: |
-          flutter build apk --release
-          flutter build apk --release --split-per-abi
-        env:
-          KEYSTORE: lang-fe.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
-      - name: Android Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: lang-fe-android
-          path: build/app/outputs/flutter-apk
+
 
   build-and-release-windows:
     runs-on: windows-latest
@@ -100,51 +74,73 @@ jobs:
           name: lang-fe-win
           path: lang-fe.exe
 
-#  build-and-release-macos:
-#    runs-on: macos-14
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          channel: 'stable'
-#          architecture: arm64
-#      - name: Install project dependencies
-#        run: flutter pub get
-#      - name: Enable macOS build
-#        run: flutter config --enable-macos-desktop
-#      - name: Build artifacts
-#        run: flutter build macos --release
-#      - name: install npm
-#        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-#      - name: install appdmg
-#        run: npm install -g appdmg
-#      - name: build dmg
-#        run: appdmg ./dmg/config.json ./build/macos/Build/Products/Release/lang-fe.dmg
-#      - name: macOS Release
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: lang-fe-macos
-#          path: build/macos/Build/Products/Release/lang-fe.dmg
-#      - name: Build ios
-#        run: |
-#          flutter build ios --release --no-codesign
-#          ln -sf ./build/ios/iphoneos Payload
-#          zip -r9 lang-fe-release.ipa Payload/runner.app
-#      - name: ios Release
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: lang-fe-ios
-#          path: lang-fe-release.ipa
+  build-and-release-macos:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: arm64
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Enable macOS build
+        run: flutter config --enable-macos-desktop
+      - name: Build artifacts
+        run: flutter build macos --release
+      - name: install npm
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: install appdmg
+        run: npm install -g appdmg
+      - name: build dmg
+        run: appdmg ./dmg/config.json ./build/macos/Build/Products/Release/lang-fe.dmg
+      - name: macOS Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-macos
+          path: build/macos/Build/Products/Release/lang-fe.dmg
+      - name: Build ios
+        run: |
+          flutter build ios --release --no-codesign
+          ln -sf ./build/ios/iphoneos Payload
+          zip -r9 lang-fe-release.ipa Payload/runner.app
+      - name: ios Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-ios
+          path: lang-fe-release.ipa
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17.x'
+      - name: decode key base64
+        run: echo $KEYSTORE_BASE64 | base64 -di > ./android/app/lang-fe.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Build android
+        run: |
+          flutter build apk --release
+          flutter build apk --release --split-per-abi
+        env:
+          KEYSTORE: lang-fe.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
+      - name: Android Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-android
+          path: build/app/outputs/flutter-apk
 
 
   upload:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions: write-all
     needs:
       - build-and-release-linux
       - build-and-release-windows
-#      - build-and-release-macos
+      - build-and-release-macos
     steps:
       - uses: actions/download-artifact@v4
         with:
