@@ -20,7 +20,9 @@ jobs:
       - name: Update dependencies
         run: sudo apt-get update && sudo add-apt-repository universe
       - name: Install dependencies
-        run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-0 libgtk-3-dev libblkid1 liblzma5 libunwind-dev libgstreamer1.0-dev gstreamer1.0-tools gstreamer1.0-plugins-base
+        run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-0 libgtk-3-dev libblkid1 liblzma5
+      - name: Install gstreamer
+        run: apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
       - name: Install project dependencies
         run: flutter pub get
       - name: Enable linux build
@@ -75,22 +77,22 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
-      - name: Install project dependencies
-        run: flutter pub get
-      - name: Enable windows build
-        run: flutter config --enable-windows-desktop
-      - name: Build artifacts
-        run: flutter build windows --release
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: install evb
-        run: npm install enigmavirtualbox -g
+#      - name: Install project dependencies
+#        run: flutter pub get
+#      - name: Enable windows build
+#        run: flutter config --enable-windows-desktop
+#      - name: Build artifacts
+#        run: flutter build windows --release
+#      - name: Setup Node
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 20
+#      - name: install evb
+#        run: npm install enigmavirtualbox -g
       - name: list files
-        run: dir /A
+        run: dir
       - name: path
-        run: cd FE
+        run: dir /A
       - name: list files
         run: dir /A
       - name: create evb file
