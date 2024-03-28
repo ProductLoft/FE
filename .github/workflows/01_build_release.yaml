@@ -70,7 +70,6 @@ jobs:
 
   build-and-release-windows:
     runs-on: windows-latest
-
     steps:
       - name: check current path
         run: cd
@@ -91,16 +90,10 @@ jobs:
           node-version: 20
       - name: install dev
         run: npm install enigmavirtualbox -g
-      - name: list files
-        run: dir
-      - name: path
-        run: dir /A
-      - name: list files
-        run: dir /A
       - name: create dev file
         run: dart dev\windows_evb_config_generator.dart
       - name: build single exe file
-        run: enigmavirtualbox cli "lang-fe.dev"
+        run: enigmavirtualbox cli "lang-fe.evb"
       - name: Windows Release
         uses: actions/upload-artifact@v4
         with:
