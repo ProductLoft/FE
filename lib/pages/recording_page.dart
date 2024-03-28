@@ -122,26 +122,39 @@ class _RecordingPageState extends State<RecordingPage> {
                 //   showInsights = true;
                 // });
               },
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          // Example: 16 pixels on all sides
-                          child: Column(
-                              children: [
-                            Text("You said: ${speakerTurnStart['original_sentence']}"),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children:[
+                            Text("You said3: ${speakerTurnStart['original_sentence']}"),
                             Text("Improved Sentence: ${speakerTurnStart['improved_sentence']}"),
-                                CustomAudioPlayer(
-                                  source: '$insightsDirPath/${speakerTurnStart['file_name']}',
-                                  onDelete: () {},
-                                )
-                            // Text(previousRecording.comment),
-                          ])),
-                    ])
-              ])),
+                            Container(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children:[
+                                  CustomAudioPlayer(
+                                    source: '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                    onDelete: () {},
+                                  )
+                                ]
+                              ),
+                            )
+                          ]
+                        )
+                      ),
+                    ),
+                  ),
+                ]
+              )
+          ),
         ),
       );
       // insights.add(Text('Speaker Turn: $speakerTurn'));
