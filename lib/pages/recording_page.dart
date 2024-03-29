@@ -346,21 +346,21 @@ class _RecordingPageState extends State<RecordingPage> {
             TextButton(
               child: const Text('Save audio'),
               onPressed: () async {
-                setState(() {
-                  commentText = _controller.text;
-                });
-
-                debugPrint('commentText:$commentText');
+                debugPrint(_controller.text);
                 int? audioRecordId = await uploadAudio(path, isSampleRecord ? 'True' : '');
                 // debugPrint('Audio record id: $audioRecordId');
 
                 if(isSampleRecord){
                   await AudioSampleRecordingProvider().createRecording(path,
-                    commentText, "", getCurrentTime(), audioRecordId ?? -1);
+                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
                 }else{
                   await AudioRecordingProvider().createRecording(path,
-                    commentText, "", getCurrentTime(), audioRecordId ?? -1);
+                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
                 }
+
+                setState(() {
+                  commentText = _controller.text;
+                });
                 
                 Navigator.pop(context); // Close the modal after submission
               },
