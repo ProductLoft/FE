@@ -82,7 +82,7 @@ class AudioRecordingProvider {
 
   Future<List<AudioRecord>> getAll() async {
     Database db = await DatabaseHelper().database;
-    List<Map<String, Object?>> maps = await db.query(recordingTable);
+    List<Map<String, Object?>> maps = await db.query(recordingTable, orderBy: 'id DESC');
     List<AudioRecord> recordings = [];
     for (var map in maps) {
       recordings.add(AudioRecord(
