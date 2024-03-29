@@ -5,7 +5,7 @@ import 'package:xml/xml.dart';
 void main() {
   XmlBuilder builder = XmlBuilder();
   builder.processing('xml', 'version="1.0" encoding="windows-1252"');
-  // evb needs absolute dir, in fact the relative dir works in wine, but not work on
+  // dev needs absolute dir, in fact the relative dir works in wine, but not work on
   // Windows runner of Github Actions. I cannot test it on a physical Windows machine.
   final windowsBuildDir = Directory(r"build\windows\x64\runner\Release").absolute;
   // use this for test: "build/linux/x64/release/bundle"
@@ -72,7 +72,7 @@ void main() {
   },);
 
   final document = builder.buildDocument();
-  File('flut-renamer.evb').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
+  File('flut-renamer.dev').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
 }
 
 void buildFile(XmlBuilder builder, String name, String path) {

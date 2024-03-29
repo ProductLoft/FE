@@ -55,11 +55,10 @@ Future<int> extractZipFromBytes(List<int> bytes, String outpath) async {
       }
     }
   } catch (e) {
-    debugPrint('Error extracting zip: $e');
-    return 0;
+    throw Exception('Error extracting zip: $e');
   }
 
-  print("Extracted zip to $outpath");
+  debugPrint("Extracted zip to $outpath");
 
   return 1;
 }
