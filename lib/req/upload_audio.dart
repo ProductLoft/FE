@@ -43,32 +43,3 @@ Future<int?> uploadAudio(String filePath, String isSampleVoice) async{
 
   return null;
 }
-
-Future<int?> uploadSampleAudio(String filePath) async{
-  debugPrint('Uploading sample audio file: $filePath');
-  var headers = await getHeaders();
-  debugPrint('Headers: sample $headers');
-  debugPrint('Headers: sample ${getUploadUrl().toString()}');
-
-  var request = http.MultipartRequest('POST', getUploadUrl());
-  request.fields.addAll({
-    'records_starts_on': getCurrentTime(),
-  });
-
-  request.files.add(await http.MultipartFile.fromPath('audio_file', filePath));
-  request.headers.addAll(headers);
-  debugPrint('Request: ${request.toString()}');
-  http.StreamedResponse response = await request.send();
-  // debugPrint('Response: ${response.statusCode}');
-  // debugPrint('Response: ${await response.stream.bytesToString()}');
-  var resp = json.decode(await response.stream.bytesToString());
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    int audioRecordId = resp['audio_record_id'] as int;
-
-    return audioRecordId;
-    // return 1;
-  }
-
-  return null;
-}
-
