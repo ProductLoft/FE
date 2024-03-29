@@ -2579,9 +2579,9 @@ class ComponentGroupDecoration extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.zero,
         elevation: 0,
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        // color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 1.0),
           child: Center(
             widthFactor: 10,
             child: Column(

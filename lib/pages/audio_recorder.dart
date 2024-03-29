@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
-
+// import 'package:path_provider/path_provider.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'platform/audio_recorder_platform.dart';
 
 class Recorder extends StatefulWidget {
@@ -134,22 +136,56 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        _buildRecordStopControl(),
-       // if (_textBoxIsVisible) const Padding(
-       //   padding: EdgeInsets.all(8.0),
-       //    child: MacosTextField(
-       //      placeholder: "Enter your text here",
-       //      maxLines: 1,
-       //      ),
-       //    ),
-        const SizedBox(width: 20),
-        _buildPauseResumeControl(),
-        const SizedBox(width: 20),
-        _buildText(),
-      ],
+    return Container(
+      // color: Colors.red,
+      decoration: BoxDecoration(
+        color:Theme.of(context).primaryColor.withOpacity(0.1),
+        // border: Border.all(color: Colors.red, width: 2.0),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(8.0),
+          bottom: Radius.circular(8.0),
+        ),
+      ),
+      padding:  EdgeInsets.fromLTRB(24, 20, 24, 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children:[
+          Container(
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                _buildRecordStopControl(),
+                _buildPauseResumeControl(),
+                SizedBox(width: 8),
+                _buildText(),
+              ]
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                SizedBox(width: 4),
+                Text("OR",style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(width: 4),
+              ]
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                _buildRecordUploadControl(),
+                SizedBox(width: 8),
+                Text("upload own wav")
+              ]
+            ),
+          )
+        ]
+      )
     );
   }
 
@@ -162,20 +198,77 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     super.dispose();
   }
 
+  // void uploadWav() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['wav'],    //筛选文件类型
+  //   );
+
+  //     debugPrint('result===$result');
+  //   // final result = await FilePicker.platform.pickFiles(
+  //   //   type: FileType.custom,
+  //   //   allowedExtensions: ['wav'],
+  //   // );
+  //   // // FilePickerResult result = await FilePicker.platform.pickFiles();
+  //   // debugPrint('result===$result');
+
+  //   // if (result != null) {
+  //   //   String fileName = result.files.single.name;
+  //   //   String filePath = result.files.single.path;
+  //   //   FormData formData = FormData.fromMap({
+  //   //     "file": await MultipartFile.fromFile(filePath, filename: fileName),
+  //   //   });
+
+  //   //   try {
+  //   //     Response response = await Dio().post("YOUR_UPLOAD_URL", data: formData);
+  //   //     print(response.data);
+  //   //   } catch (e) {
+  //   //     print(e);
+  //   //   }
+  //   // }
+  // }
+
   Widget _buildRecordStopControl() {
-
-    return IconButton(
-      // isSelected: playProgressIndicator,
-      selectedIcon: const Icon(Icons.pause),
-      icon: (_recordState != RecordState.stop)? const Icon(Icons.stop): const Icon(Icons.mic),
-      onPressed: () {
-        setState(() {
-          (_recordState != RecordState.stop) ? _stop() : _start();
-        });
-      },
+    return Container(
+      width: 40.0,
+      height: 40.0,
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.1), // 设置背景色
+        borderRadius: BorderRadius.circular(20.0), // 设置圆角
+      ),
+      child: IconButton(
+        selectedIcon: const Icon(Icons.pause),
+        icon: (_recordState != RecordState.stop)? const Icon(Icons.stop): const Icon(Icons.mic),
+        onPressed: () {
+          setState(() {
+            (_recordState != RecordState.stop) ? _stop() : _start();
+          });
+        },
+      )
     );
-
   }
+
+  Widget _buildRecordUploadControl() {
+    return Container(
+      width: 40.0,
+      height: 40.0,
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.1), // 设置背景色
+        borderRadius: BorderRadius.circular(20.0), // 设置圆角
+      ),
+      child: IconButton(
+        // selectedIcon: const Icon(Icons.pause),
+        icon: Icon(Icons.file_upload),
+        onPressed: () {
+          // uploadWav();
+          // setState(() {
+          //   (_recordState != RecordState.stop) ? _stop() : _start();
+          // });
+        },
+      )
+    );
+  }
+
 
   Widget _buildPauseResumeControl() {
     if (_recordState == RecordState.stop) {

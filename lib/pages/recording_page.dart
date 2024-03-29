@@ -48,13 +48,15 @@ class _RecordingPageState extends State<RecordingPage> {
           });
         },
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height: 24),
       const Text(
         'Previous Recordings:',
         style: TextStyle(
-          fontSize: 15,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
+      const SizedBox(height: 12),
     ];
 
     for (AudioRecord previousRecording in previousrecordings) {
@@ -278,7 +280,7 @@ class _RecordingPageState extends State<RecordingPage> {
               return Text('Error: ${snapshot.error}');
             } else {
               return Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                   child: Column(
                     children: snapshot.data!,
                   ));
