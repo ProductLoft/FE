@@ -59,6 +59,29 @@ class _RecordingPageState extends State<RecordingPage> {
             });
           },
         ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+            Container(
+              height: 1.5, // 设置分割线的高度
+              width: 100.0, // 设置分割线的宽度为100逻辑像素
+              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+            SizedBox(width: 8),
+            Container(
+              height: 2, // 设置分割线的高度
+              width: 2, // 设置分割线的宽度为100逻辑像素
+              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+            SizedBox(width: 8),
+            Container(
+              height: 1.5, // 设置分割线的高度
+              width: 100.0, // 设置分割线的宽度为100逻辑像素
+              color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+          ]
+        ),
         const SizedBox(height: 24),
         const Text(
           'Previous Recordings:',

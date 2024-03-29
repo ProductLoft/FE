@@ -145,7 +145,7 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         //   bottom: Radius.circular(8.0),
         // ),
       ),
-      padding: widget.isSampleRecord ? ((_recordState != RecordState.stop) ? EdgeInsets.fromLTRB(24, 160, 24, 20) : EdgeInsets.fromLTRB(24, 80, 24, 20)) : EdgeInsets.fromLTRB(24, 20, 24, 20),
+      padding: widget.isSampleRecord ? ((_recordState != RecordState.stop) ? EdgeInsets.fromLTRB(24, 160, 24, 20) : EdgeInsets.fromLTRB(24, 80, 24, 20)) : EdgeInsets.fromLTRB(24, 20, 24, 0),
       child: (_recordState != RecordState.stop) ? Container(
         padding: EdgeInsets.only(bottom: 12.0),
         child: Column(
