@@ -43,6 +43,7 @@ class _RecordingPageState extends State<RecordingPage> {
         await AudioRecordingProvider().getAll();
       List<Widget> audioPlayers = [
         Recorder(
+          waitToText: 'Waiting to record',
           onStop: (path) async {
             if (kDebugMode) {
               print('Recorded file path: $path');
@@ -67,6 +68,7 @@ class _RecordingPageState extends State<RecordingPage> {
         const SizedBox(height: 12),
       ];
 
+      // debugPrint('previousrecordings:$previousrecordings');
       for (AudioRecord previousRecording in previousrecordings) {
         debugPrint(previousRecording.comment);
         Widget customPlayer = Column(
@@ -108,6 +110,7 @@ class _RecordingPageState extends State<RecordingPage> {
     }else{
       List<Widget> audioPlayers = [
         Recorder(
+          waitToText: "HERE'S A RECORDING SAMPLE",
           onStop: (path) async {
             if (kDebugMode) {
               print('Recorded file path: $path');
@@ -278,9 +281,13 @@ class _RecordingPageState extends State<RecordingPage> {
             TextButton(
               child: const Text('Save audio'),
               onPressed: () async {
-                debugPrint('isSampleRecord:$isSampleRecord');
+                setState(() {
+                  commentText = _controller.text;
+                });
+
+                debugPrint('commentText:$commentText');
                 int? audioRecordId = await uploadAudio(path, isSampleRecord ? 'True' : '');
-                debugPrint('Audio record id: $audioRecordId');
+                // debugPrint('Audio record id: $audioRecordId');
 
                 if(isSampleRecord){
                   await AudioSampleRecordingProvider().createRecording(path,
@@ -290,9 +297,6 @@ class _RecordingPageState extends State<RecordingPage> {
                     commentText, "", getCurrentTime(), audioRecordId ?? -1);
                 }
                 
-                setState(() {
-                  commentText = _controller.text;
-                });
                 Navigator.pop(context); // Close the modal after submission
               },
             ),
