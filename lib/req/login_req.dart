@@ -34,5 +34,10 @@ Future<User?> loginReq(String username, String password) async {
 
     return User(name: name, username: username, email: email, cookie: cookie);
   }
+  else{
+    if (kDebugMode) {
+      print('Failed to login: ${response.statusCode}');
+    }
+  }
   return null;
 }

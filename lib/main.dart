@@ -13,9 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  FirebaseApp firebase = await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
   var analyzer = WebStartupAnalyzer(additionalFrameCount: 10);
   debugPrint(json.encode(analyzer.startupTiming));
   analyzer.onFirstFrame.addListener(() {
