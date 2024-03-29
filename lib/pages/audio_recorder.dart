@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
-
 import 'platform/audio_recorder_platform.dart';
 
 class Recorder extends StatefulWidget {
   final Future<void> Function(String path) onStop;
+  final String waitToText;
+  final bool isSampleRecord;
 
-  const Recorder({super.key, required this.onStop});
+  const Recorder({super.key, required this.onStop, required this.waitToText, required this.isSampleRecord});
 
   @override
   State<Recorder> createState() => _RecorderState();
@@ -134,22 +135,65 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        _buildRecordStopControl(),
-       // if (_textBoxIsVisible) const Padding(
-       //   padding: EdgeInsets.all(8.0),
-       //    child: MacosTextField(
-       //      placeholder: "Enter your text here",
-       //      maxLines: 1,
-       //      ),
-       //    ),
-        const SizedBox(width: 20),
-        _buildPauseResumeControl(),
-        const SizedBox(width: 20),
-        _buildText(),
-      ],
+    return Container(
+      // color: Colors.red,
+      decoration: BoxDecoration(
+        // color:Theme.of(context).primaryColor.withOpacity(0.1),
+        // border: Border.all(color: Colors.red, width: 2.0),
+        // borderRadius: BorderRadius.vertical(
+        //   top: Radius.circular(8.0),
+        //   bottom: Radius.circular(8.0),
+        // ),
+      ),
+      padding: widget.isSampleRecord ? ((_recordState != RecordState.stop) ? EdgeInsets.fromLTRB(24, 160, 24, 20) : EdgeInsets.fromLTRB(24, 80, 24, 20)) : EdgeInsets.fromLTRB(24, 20, 24, 0),
+      child: (_recordState != RecordState.stop) ? Container(
+        padding: EdgeInsets.only(bottom: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children:[
+            Padding(
+              padding: widget.isSampleRecord ? EdgeInsets.only(bottom: 24.0) : EdgeInsets.only(bottom: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  _buildRecordStopControl(Theme.of(context).primaryColor.withOpacity(0.5),widget.isSampleRecord),
+                  SizedBox(width: 8),
+                  _buildPauseResumeControl(),
+                  SizedBox(width: 8),
+                  _buildTimer(),
+                ]
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                _buildText('DURING RECORDING'),
+              ]
+            )
+          ]
+        )
+      ): Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children:[
+          Padding(
+            padding: widget.isSampleRecord ? EdgeInsets.only(bottom: 24.0) : EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                _buildRecordStopControl(Theme.of(context).primaryColor.withOpacity(0.5),widget.isSampleRecord),
+              ]
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:[
+             _buildText(widget.waitToText),
+            ]
+          )
+        ]
+      )
     );
   }
 
@@ -162,19 +206,26 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     super.dispose();
   }
 
-  Widget _buildRecordStopControl() {
+  Widget _buildRecordStopControl(Color _color, bool isSampleRecord) {
+    debugPrint('isSampleRecord: $isSampleRecord');
 
-    return IconButton(
-      // isSelected: playProgressIndicator,
-      selectedIcon: const Icon(Icons.pause),
-      icon: (_recordState != RecordState.stop)? const Icon(Icons.stop): const Icon(Icons.mic),
-      onPressed: () {
-        setState(() {
-          (_recordState != RecordState.stop) ? _stop() : _start();
-        });
-      },
+    return Container(
+      width: (!isSampleRecord || _recordState != RecordState.stop) ? 60.0 : 120.0,
+      height: (!isSampleRecord || _recordState != RecordState.stop) ? 60.0 : 120.0,
+      decoration: BoxDecoration(
+        color:  (_recordState != RecordState.stop) ? Colors.black.withOpacity(0.05) :  _color, // 设置背景色
+        borderRadius: BorderRadius.circular((_recordState != RecordState.stop) ? 40.0 : 60.0), // 设置圆角
+      ),
+      child: IconButton(
+        selectedIcon: const Icon(Icons.pause, size: 80.0 ),
+        icon: (_recordState != RecordState.stop)? (isSampleRecord ? Icon(Icons.stop, size: 40.0, color: Color(0x806750a4)) :  Icon(Icons.stop, size: 40.0, color: Color(0x806750a4) )): (isSampleRecord ? Icon(Icons.mic, size: 80.0, color: Colors.white) :  Icon(Icons.mic, size: 40.0, color: Colors.white)),
+        onPressed: () {
+          setState(() {
+            (_recordState != RecordState.stop) ? _stop() : _start();
+          });
+        },
+      )
     );
-
   }
 
   Widget _buildPauseResumeControl() {
@@ -182,24 +233,29 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
       return const SizedBox.shrink();
     }
 
-    return IconButton(
-      // isSelected: playProgressIndicator,
-      selectedIcon: const Icon(Icons.pause),
-      icon: (_recordState == RecordState.record)? const Icon(Icons.pause): const Icon(Icons.play_arrow),
-      onPressed: () {
-        setState(() {
-          (_recordState == RecordState.pause) ? _resume() : _pause();
-        });
-      },
+    return Container(
+      width: 60.0,
+      height: 60.0,
+      child: IconButton(
+        // isSelected: playProgressIndicator,
+        selectedIcon: const Icon(Icons.pause, size: 80.0),
+        icon: (_recordState == RecordState.record)? const Icon(Icons.pause, size: 40.0, color: Color(0x806750a4)): const Icon(Icons.play_arrow, size: 40.0, color: Color(0x806750a4)),
+        onPressed: () {
+          setState(() {
+            (_recordState == RecordState.pause) ? _resume() : _pause();
+          });
+        },
+      )
     );
   }
 
-  Widget _buildText() {
-    if (_recordState != RecordState.stop) {
-      return _buildTimer();
-    }
+  Widget _buildText(String text) {
+    debugPrint(text);
+    // if (_recordState != RecordState.stop) {
+    //   return _buildTimer();
+    // }
 
-    return const Text("Waiting to record");
+    return Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18));
   }
 
   Widget _buildTimer() {

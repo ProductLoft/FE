@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
+import 'package:intl/intl.dart';
 
 import '../const/consts.dart';
 import '../db/recording_models.dart';
+import '../db/sample_recording_models.dart';
 import 'audio_player.dart';
 import 'audio_recorder.dart';
 
@@ -30,71 +32,167 @@ class _RecordingPageState extends State<RecordingPage> {
   String commentText = '';
   bool showInsights = false;
   int showInsightsRecordId = -1;
+  bool isSampleRecord = false;
 
-  Future<List<Widget>> getAudioplayers() async {
-    List<AudioRecord> previousrecordings =
+
+  Future<List<Widget>> getAudioplayers(bool isBright) async {
+    // AudioSampleRecordingProvider.getAll();
+    List<AudioSampleRecord> sampleRecords = await AudioSampleRecordingProvider().getAll();
+    debugPrint('isBright111:$isBright');
+    if(sampleRecords.length > 0){
+      List<AudioRecord> previousrecordings =
         await AudioRecordingProvider().getAll();
-    List<Widget> audioPlayers = [
-      Recorder(
-        onStop: (path) async {
-          if (kDebugMode) {
-            print('Recorded file path: $path');
-          }
+      List<Widget> audioPlayers = [
+        Recorder(
+          isSampleRecord: false,
+          waitToText: 'Waiting to record',
+          onStop: (path) async {
+            if (kDebugMode) {
+              print('Recorded file path: $path');
+            }
 
-          setState(() {
-            _showCommentModal(context, path);
-            audioPath = path;
-            showPlayer = true;
-          });
-        },
-      ),
-      const SizedBox(height: 20),
-      const Text(
-        'Previous Recordings:',
-        style: TextStyle(
-          fontSize: 15,
+            setState(() {
+              isSampleRecord = false;
+              _showCommentModal(context, path);
+              audioPath = path;
+              showPlayer = true;
+            });
+          },
         ),
-      ),
-    ];
-
-    for (AudioRecord previousRecording in previousrecordings) {
-      debugPrint(previousRecording.comment);
-      Widget customPlayer = Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          // Text(previousRecording.comment),
-          Card(
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {
-                  debugPrint('Card tapped.${previousRecording.id}');
-                  setState(() {
-                    showInsightsRecordId = previousRecording.id ?? -1;
-                    showInsights = true;
-                  });
-                },
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            // Example: 16 pixels on all sides
-                            child: Column(children: [
-                              Text("Date: ${previousRecording.timestamp}"),
-                              Text(previousRecording.comment),
-                            ])),
-                      ])
-                ])),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+            Container(
+              height: 1.5, // 设置分割线的高度
+              width: 100.0, // 设置分割线的宽度为100逻辑像素
+              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+            SizedBox(width: 8),
+            Container(
+              height: 2, // 设置分割线的高度
+              width: 2, // 设置分割线的宽度为100逻辑像素
+              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+            SizedBox(width: 8),
+            Container(
+              height: 1.5, // 设置分割线的高度
+              width: 100.0, // 设置分割线的宽度为100逻辑像素
+              color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+            ),
+          ]
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'Previous Recordings:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      );
+        ),
+        const SizedBox(height: 12),
+      ];
 
-      audioPlayers.add(customPlayer);
+      // debugPrint('previousrecordings:$previousrecordings');
+      for (AudioRecord previousRecording in previousrecordings) {
+        debugPrint(previousRecording.comment);
+
+        var _time = '';
+
+        try {
+          // 将字符串转换为DateTime对象
+          DateTime dateTime = DateTime.parse(previousRecording.timestamp);
+
+          // 创建一个格式化器
+          var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+          // 使用格式化器来格式化日期和时间
+          _time = formatter.format(dateTime);
+        } catch (e) {
+          // 处理解析错误
+          _time = previousRecording.timestamp;
+        }
+
+        // debugPrint(themeMode);
+
+        Widget customPlayer = Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            // Text(previousRecording.comment),
+            Card(
+              clipBehavior: Clip.hardEdge,
+              child: InkWell(
+                  splashColor: Colors.blue.withAlpha(30),
+                  onTap: () {
+                    debugPrint('Card tapped.${previousRecording.id}');
+                    setState(() {
+                      showInsightsRecordId = previousRecording.id ?? -1;
+                      showInsights = true;
+                    });
+                  },
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children:[
+                                      Text("COMMENT: ", style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold)),
+                                      Text(previousRecording.comment != '' ? previousRecording.comment : "Audio_${previousRecording.id}", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
+                                    ]
+                                  )
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children:[
+                                    Text("DATE-TIME: ", style: TextStyle(fontSize: 12.0, color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8))),
+                                    Text(_time, style: TextStyle(fontSize: 12.0,color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8)))
+                                  ]
+                                )
+                              ]
+                            )
+                          ),
+                        ])
+                  ])),
+            ),
+          ],
+        );
+
+        audioPlayers.add(customPlayer);
+      }
+      return audioPlayers;
+    }else{
+      List<Widget> audioPlayers = [
+        Recorder(
+          isSampleRecord: true,
+          waitToText: "HERE'S A RECORDING SAMPLE",
+          onStop: (path) async {
+            if (kDebugMode) {
+              print('Recorded file path: $path');
+            }
+
+            setState(() {
+              isSampleRecord = true;
+              _showCommentModal(context, path);
+              audioPath = path;
+              showPlayer = true;
+            });
+          },
+        ),
+      ];
+
+      return audioPlayers;
     }
-    return audioPlayers;
   }
 
   // Future<String> getInsightsDirPath(int audioRecordId) async {
@@ -248,13 +346,22 @@ class _RecordingPageState extends State<RecordingPage> {
             TextButton(
               child: const Text('Save audio'),
               onPressed: () async {
-                int? audioRecordId = await uploadAudio(path);
-                debugPrint('Audio record id: $audioRecordId');
-                await AudioRecordingProvider().createRecording(path,
-                    commentText, "", getCurrentTime(), audioRecordId ?? -1);
+                debugPrint(_controller.text);
+                int? audioRecordId = await uploadAudio(path, isSampleRecord ? 'True' : '');
+                // debugPrint('Audio record id: $audioRecordId');
+
+                if(isSampleRecord){
+                  await AudioSampleRecordingProvider().createRecording(path,
+                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
+                }else{
+                  await AudioRecordingProvider().createRecording(path,
+                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
+                }
+
                 setState(() {
                   commentText = _controller.text;
                 });
+                
                 Navigator.pop(context); // Close the modal after submission
               },
             ),
@@ -266,9 +373,14 @@ class _RecordingPageState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isBright = Theme
+        .of(context)
+        .brightness == Brightness.light;
+    debugPrint('isBright:$isBright');
+
     return Column(children: [
       FutureBuilder<List<Widget>>(
-          future: showInsights ? getInsightsPage() : getAudioplayers(),
+          future: showInsights ? getInsightsPage() : getAudioplayers(isBright),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -278,7 +390,7 @@ class _RecordingPageState extends State<RecordingPage> {
               return Text('Error: ${snapshot.error}');
             } else {
               return Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                   child: Column(
                     children: snapshot.data!,
                   ));

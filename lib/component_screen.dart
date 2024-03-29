@@ -238,37 +238,8 @@ class _RecordingsState extends State<Recordings> {
   @override
   Widget build(BuildContext context) {
     return const Column(
-      // mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         RecordingPage(),
-        // const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        //   // getRecorder(),
-        //   SizedBox(height: 20),
-        //   Text(
-        //     'Previous Recordings:',
-        //     style: TextStyle(
-        //       fontSize: 15,
-        //     ),
-        //   ),
-        //
-        // ]),
-        // FutureBuilder<List<Widget>>(
-        //   future: getAudioplayers(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.connectionState ==
-        //         ConnectionState.waiting) {
-        //       return const Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     } else if (snapshot.hasError) {
-        //       return Text('Error: ${snapshot.error}');
-        //     } else {
-        //       return Column(
-        //         children: snapshot.data!,
-        //       );
-        //     }
-        //   },
-        // ),
       ],
     );
   }
@@ -281,7 +252,6 @@ class Actions extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ComponentGroupDecoration(
         children: <Widget>[
-          // RecordingPage(),
           Recordings(),
         ]);
   }
@@ -2573,9 +2543,9 @@ class ComponentGroupDecoration extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.zero,
         elevation: 0,
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        // color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 1.0),
           child: Center(
             widthFactor: 10,
             child: Column(

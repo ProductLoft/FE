@@ -17,6 +17,16 @@ const String isProcessedColumn = "isProcessed";
 const String insightsDirPathColumn = "zipPath";
 const String audioIdColumn = "audioId";
 
+// names of columns for smaple recording table
+const String sampleRecordTable = "sampleRecording";
+const String sampleRecordIdColumn = "id";
+const String sampleRecordFilePathColumn = "filePath";
+const String sampleRecordCommentColumn = "comment";
+const String sampleRecordTimestampColumn = "timestamp";
+const String sampleRecordIsProcessedColumn = "isProcessed";
+const String sampleRecordInsightsDirPathColumn = "zipPath";
+const String sampleRecordAudioIdColumn = "audioId";
+
 // consts for network calls
 const String baseUrl = "http://52.72.143.117:8000";
 const String loginUri = "/auth/login/";
