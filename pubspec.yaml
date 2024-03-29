@@ -25,6 +25,7 @@ dependencies:
   http:
   web_startup_analyzer:
     path: web_startup_analyzer
+  firebase_core: ^2.27.2
 
 dev_dependencies:
   analysis_defaults:

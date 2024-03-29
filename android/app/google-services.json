@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1017030229896",
+    "project_id": "speaksharp-2decb",
+    "storage_bucket": "speaksharp-2decb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017030229896:android:383ad3f94c6239aa8c443d",
+        "android_client_info": {
+          "package_name": "com.example.lang_fe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhi2W7E5_FCNDT2XMG_FPme4lw64yMjyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
