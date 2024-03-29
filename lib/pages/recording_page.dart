@@ -9,6 +9,7 @@ import 'package:lang_fe/utils/misc.dart';
 
 import '../const/consts.dart';
 import '../db/recording_models.dart';
+import '../db/sample_recording_models.dart';
 import 'audio_player.dart';
 import 'audio_recorder.dart';
 
@@ -30,73 +31,100 @@ class _RecordingPageState extends State<RecordingPage> {
   String commentText = '';
   bool showInsights = false;
   int showInsightsRecordId = -1;
+  bool isSampleRecord = false;
+
 
   Future<List<Widget>> getAudioplayers() async {
-    List<AudioRecord> previousrecordings =
+    // AudioSampleRecordingProvider.getAll();
+    List<AudioSampleRecord> sampleRecords = await AudioSampleRecordingProvider().getAll();
+    debugPrint('AudioSampleRecord:$sampleRecords');
+    if(sampleRecords.length > 0){
+      List<AudioRecord> previousrecordings =
         await AudioRecordingProvider().getAll();
-    List<Widget> audioPlayers = [
-      Recorder(
-        onStop: (path) async {
-          if (kDebugMode) {
-            print('Recorded file path: $path');
-          }
+      List<Widget> audioPlayers = [
+        Recorder(
+          onStop: (path) async {
+            if (kDebugMode) {
+              print('Recorded file path: $path');
+            }
 
-          setState(() {
-            _showCommentModal(context, path);
-            audioPath = path;
-            showPlayer = true;
-          });
-        },
-      ),
-      const SizedBox(height: 24),
-      const Text(
-        'Previous Recordings:',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+            setState(() {
+              isSampleRecord = false;
+              _showCommentModal(context, path);
+              audioPath = path;
+              showPlayer = true;
+            });
+          },
         ),
-      ),
-      const SizedBox(height: 12),
-    ];
-
-    for (AudioRecord previousRecording in previousrecordings) {
-      debugPrint(previousRecording.comment);
-      Widget customPlayer = Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          // Text(previousRecording.comment),
-          Card(
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {
-                  debugPrint('Card tapped.${previousRecording.id}');
-                  setState(() {
-                    showInsightsRecordId = previousRecording.id ?? -1;
-                    showInsights = true;
-                  });
-                },
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            // Example: 16 pixels on all sides
-                            child: Column(children: [
-                              Text("Date: ${previousRecording.timestamp}"),
-                              Text(previousRecording.comment),
-                            ])),
-                      ])
-                ])),
+        const SizedBox(height: 24),
+        const Text(
+          'Previous Recordings:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      );
+        ),
+        const SizedBox(height: 12),
+      ];
 
-      audioPlayers.add(customPlayer);
+      for (AudioRecord previousRecording in previousrecordings) {
+        debugPrint(previousRecording.comment);
+        Widget customPlayer = Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            // Text(previousRecording.comment),
+            Card(
+              clipBehavior: Clip.hardEdge,
+              child: InkWell(
+                  splashColor: Colors.blue.withAlpha(30),
+                  onTap: () {
+                    debugPrint('Card tapped.${previousRecording.id}');
+                    setState(() {
+                      showInsightsRecordId = previousRecording.id ?? -1;
+                      showInsights = true;
+                    });
+                  },
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              // Example: 16 pixels on all sides
+                              child: Column(children: [
+                                Text("Date: ${previousRecording.timestamp}"),
+                                Text(previousRecording.comment),
+                              ])),
+                        ])
+                  ])),
+            ),
+          ],
+        );
+
+        audioPlayers.add(customPlayer);
+      }
+      return audioPlayers;
+    }else{
+      List<Widget> audioPlayers = [
+        Recorder(
+          onStop: (path) async {
+            if (kDebugMode) {
+              print('Recorded file path: $path');
+            }
+
+            setState(() {
+              isSampleRecord = true;
+              _showCommentModal(context, path);
+              audioPath = path;
+              showPlayer = true;
+            });
+          },
+        ),
+      ];
+
+      return audioPlayers;
     }
-    return audioPlayers;
   }
 
   // Future<String> getInsightsDirPath(int audioRecordId) async {
@@ -250,10 +278,18 @@ class _RecordingPageState extends State<RecordingPage> {
             TextButton(
               child: const Text('Save audio'),
               onPressed: () async {
-                int? audioRecordId = await uploadAudio(path);
+                debugPrint('isSampleRecord:$isSampleRecord');
+                int? audioRecordId = await uploadAudio(path, isSampleRecord ? 'True' : '');
                 debugPrint('Audio record id: $audioRecordId');
-                await AudioRecordingProvider().createRecording(path,
+
+                if(isSampleRecord){
+                  await AudioSampleRecordingProvider().createRecording(path,
                     commentText, "", getCurrentTime(), audioRecordId ?? -1);
+                }else{
+                  await AudioRecordingProvider().createRecording(path,
+                    commentText, "", getCurrentTime(), audioRecordId ?? -1);
+                }
+                
                 setState(() {
                   commentText = _controller.text;
                 });

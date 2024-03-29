@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import 'package:file_picker/file_picker.dart';
 import 'platform/audio_recorder_platform.dart';
 
 class Recorder extends StatefulWidget {
@@ -163,27 +160,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
               ]
             ),
           ),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:[
-                SizedBox(width: 4),
-                Text("OR",style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(width: 4),
-              ]
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:[
-                _buildRecordUploadControl(),
-                SizedBox(width: 8),
-                Text("upload own wav")
-              ]
-            ),
-          )
         ]
       )
     );
@@ -197,36 +173,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     _audioRecorder.dispose();
     super.dispose();
   }
-
-  // void uploadWav() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['wav'],    //筛选文件类型
-  //   );
-
-  //     debugPrint('result===$result');
-  //   // final result = await FilePicker.platform.pickFiles(
-  //   //   type: FileType.custom,
-  //   //   allowedExtensions: ['wav'],
-  //   // );
-  //   // // FilePickerResult result = await FilePicker.platform.pickFiles();
-  //   // debugPrint('result===$result');
-
-  //   // if (result != null) {
-  //   //   String fileName = result.files.single.name;
-  //   //   String filePath = result.files.single.path;
-  //   //   FormData formData = FormData.fromMap({
-  //   //     "file": await MultipartFile.fromFile(filePath, filename: fileName),
-  //   //   });
-
-  //   //   try {
-  //   //     Response response = await Dio().post("YOUR_UPLOAD_URL", data: formData);
-  //   //     print(response.data);
-  //   //   } catch (e) {
-  //   //     print(e);
-  //   //   }
-  //   // }
-  // }
 
   Widget _buildRecordStopControl() {
     return Container(
@@ -257,13 +203,12 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         borderRadius: BorderRadius.circular(20.0), // 设置圆角
       ),
       child: IconButton(
-        // selectedIcon: const Icon(Icons.pause),
-        icon: Icon(Icons.file_upload),
+        selectedIcon: const Icon(Icons.pause),
+        icon: (_recordState != RecordState.stop)? const Icon(Icons.stop): const Icon(Icons.mic),
         onPressed: () {
-          // uploadWav();
-          // setState(() {
-          //   (_recordState != RecordState.stop) ? _stop() : _start();
-          // });
+          setState(() {
+            (_recordState != RecordState.stop) ? _stop() : _start();
+          });
         },
       )
     );
