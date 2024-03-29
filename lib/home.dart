@@ -6,11 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:lang_fe/db/user_models.dart';
 import 'package:lang_fe/login_screen.dart';
 
-import 'color_palettes_screen.dart';
 import 'component_screen.dart';
 import 'constants.dart';
-import 'elevation_screen.dart';
-import 'typography_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -116,17 +113,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           );
         }
-      case ScreenSelected.color:
+      case ScreenSelected.insights:
         {
-          return const ColorPalettesScreen();
+          return LoginPage();
         }
-      case ScreenSelected.typography:
+      case ScreenSelected.profile:
         {
-          return const TypographyScreen();
-        }
-      case ScreenSelected.elevation:
-        {
-          return const ElevationScreen();
+          return LoginPage();
         }
     }
   }

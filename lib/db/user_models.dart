@@ -99,13 +99,13 @@ class UserProvider {
     );
     print(user.toMap());
     var r = await db.insert(userTable, user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
-    if (r == 1) {
+    if (r >= 1) {
       if (kDebugMode) {
         print('user created');
       }
     } else {
       if (kDebugMode) {
-        print('error creating user');
+        print('error creating user $r');
         return null;
       }
     }

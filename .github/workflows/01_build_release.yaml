@@ -32,7 +32,7 @@ jobs:
       - name: Build artifacts
         run: flutter build linux --release
       - name: Build Appimage
-        run: bash ./github_appimage_build.sh
+        run: bash ./dev/github_linux_appimage_build.sh
       - name: Compress action step
         run:  tar  -C build/linux/x64/release/bundle -cf lang-fe-linux.tar.gz ./
       - name: Linux Release
@@ -40,6 +40,24 @@ jobs:
         with:
           name: lang-fe-linux
           path: lang-fe-linux.tar.gz
+#      - name: decode key base64
+#        run: echo $KEYSTORE_BASE64 | base64 -di > ./android/app/lang-fe.jks
+#        env:
+#          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Build android
+        run: |
+          flutter build apk --release
+          flutter build apk --release --split-per-abi
+#        env:
+#          KEYSTORE: lang-fe.jks
+#          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+#          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+#          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
+      - name: Android Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lang-fe-android
+          path: build/app/outputs/flutter-apk
 
 
   build-and-release-windows:
@@ -114,24 +132,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17.x'
-      - name: decode key base64
-        run: echo $KEYSTORE_BASE64 | base64 -di > ./android/app/lang-fe.jks
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-      - name: Build android
-        run: |
-          flutter build apk --release
-          flutter build apk --release --split-per-abi
-        env:
-          KEYSTORE: lang-fe.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
-      - name: Android Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: lang-fe-android
-          path: build/app/outputs/flutter-apk
 
 
   upload:
