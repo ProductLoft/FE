@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
+import 'package:intl/intl.dart';
 
 import '../const/consts.dart';
 import '../db/recording_models.dart';
@@ -34,10 +35,10 @@ class _RecordingPageState extends State<RecordingPage> {
   bool isSampleRecord = false;
 
 
-  Future<List<Widget>> getAudioplayers() async {
+  Future<List<Widget>> getAudioplayers(bool isBright) async {
     // AudioSampleRecordingProvider.getAll();
     List<AudioSampleRecord> sampleRecords = await AudioSampleRecordingProvider().getAll();
-    debugPrint('AudioSampleRecord:$sampleRecords');
+    debugPrint('isBright111:$isBright');
     if(sampleRecords.length > 0){
       List<AudioRecord> previousrecordings =
         await AudioRecordingProvider().getAll();
@@ -71,6 +72,25 @@ class _RecordingPageState extends State<RecordingPage> {
       // debugPrint('previousrecordings:$previousrecordings');
       for (AudioRecord previousRecording in previousrecordings) {
         debugPrint(previousRecording.comment);
+
+        var _time = '';
+
+        try {
+          // 将字符串转换为DateTime对象
+          DateTime dateTime = DateTime.parse(previousRecording.timestamp);
+
+          // 创建一个格式化器
+          var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+          // 使用格式化器来格式化日期和时间
+          _time = formatter.format(dateTime);
+        } catch (e) {
+          // 处理解析错误
+          _time = previousRecording.timestamp;
+        }
+
+        // debugPrint(themeMode);
+
         Widget customPlayer = Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -92,12 +112,32 @@ class _RecordingPageState extends State<RecordingPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              // Example: 16 pixels on all sides
-                              child: Column(children: [
-                                Text("Date: ${previousRecording.timestamp}"),
-                                Text(previousRecording.comment),
-                              ])),
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children:[
+                                      Text("COMMENT: ", style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold)),
+                                      Text(previousRecording.comment != '' ? previousRecording.comment : "Audio_${previousRecording.id}", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
+                                    ]
+                                  )
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children:[
+                                    Text("DATE-TIME: ", style: TextStyle(fontSize: 12.0, color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8))),
+                                    Text(_time, style: TextStyle(fontSize: 12.0,color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8)))
+                                  ]
+                                )
+                              ]
+                            )
+                          ),
                         ])
                   ])),
             ),
@@ -308,9 +348,14 @@ class _RecordingPageState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isBright = Theme
+        .of(context)
+        .brightness == Brightness.light;
+    debugPrint('isBright:$isBright');
+
     return Column(children: [
       FutureBuilder<List<Widget>>(
-          future: showInsights ? getInsightsPage() : getAudioplayers(),
+          future: showInsights ? getInsightsPage() : getAudioplayers(isBright),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(

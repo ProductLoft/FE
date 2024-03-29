@@ -3,7 +3,7 @@ description:
   A Flutter project showcasing supported Material 3 components, typography, color system and elevation.
   Supports different light/dark mode, color seed, and comparison to Material 2.
 
-publish_to: "none"
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -21,6 +21,7 @@ dependencies:
   audioplayers:
   path: ^1.9.0
   path_provider: ^2.1.2
+  intl: ^0.19.0
   archive:
   http:
   web_startup_analyzer:
