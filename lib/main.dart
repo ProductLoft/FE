@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web_startup_analyzer/web_startup_analyzer.dart';
 
@@ -12,8 +13,15 @@ import 'home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+late final FirebaseApp app;
+late final FirebaseAuth auth;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  auth = FirebaseAuth.instanceFor(app: app);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

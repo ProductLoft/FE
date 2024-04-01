@@ -38,6 +38,20 @@ class AudioSampleRecord {
   }
 }
 
+Future<void> createSampleRecordingTable(Database db) async {
+  await db.execute('''
+        create table $sampleRecordTable (
+          $sampleRecordIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+          $sampleRecordFilePathColumn TEXT NOT NULL,
+          $sampleRecordCommentColumn TEXT NOT NULL,
+          $sampleRecordIsProcessedColumn INTEGER NOT NULL DEFAULT 0,
+          $sampleRecordInsightsDirPathColumn TEXT NOT NULL,
+          $sampleRecordTimestampColumn TEXT NOT NULL,
+          $sampleRecordAudioIdColumn INTEGER NOT NULL
+        );
+      ''');
+}
+
 class AudioSampleRecordingProvider {
   AudioSampleRecordingProvider();
 
