@@ -9,7 +9,7 @@ import 'package:collection/collection.dart';
 
 // Open the database and store the reference.
 
-class User {
+class CustomUser {
   int? id;
   final String name;
   final String username;
@@ -18,7 +18,7 @@ class User {
   String? cookie;
   String? csrfToken;
 
-  User({
+  CustomUser({
     this.id,
     required this.name,
     required this.username,
@@ -39,6 +39,21 @@ class User {
     return map;
   }
 }
+
+Future<void> createUserTable(Database db) async {
+  await db.execute('''
+    create table $userTable ( 
+      $userIdColumn INTEGER PRIMARY KEY AUTOINCREMENT, 
+      $nameColumn TEXT NOT NULL,
+      $usernameColumn TEXT NOT NULL,
+      $cookieColumn TEXT NOT NULL,
+      $emailColumn TEXT NOT NULL,
+      $csrfTokenColumn TEXT NOT NULL
+      );
+    ''');
+}
+
+
 
 class UserProvider {
   UserProvider();
@@ -84,12 +99,12 @@ class UserProvider {
   }
 
 
-  Future<User?> createUser(String name,String username,String email,String cookie) async {
+  Future<CustomUser?> createUser(String name,String username,String email,String cookie) async {
 
     Database db = await DatabaseHelper().database;
     String csrfToken = getCSRFFromCookie(cookie);
     debugPrint('csrfToken: $csrfToken');
-    User user = User(
+    CustomUser user = CustomUser(
       // TODO : check if id is autoincremented
       name: name,
       username: username,
@@ -116,14 +131,14 @@ class UserProvider {
     return getUser().then((value) => value?.cookie);
   }
 
-  Future<User?> getUser() async {
+  Future<CustomUser?> getUser() async {
     try {
       Database db = await DatabaseHelper().database;
       List<Map> maps = await db.query(userTable,
           columns: [userIdColumn, nameColumn, usernameColumn, emailColumn, cookieColumn, csrfTokenColumn]);
       debugPrint('maps: $maps');
       if (maps.isNotEmpty) {
-        return User(
+        return CustomUser(
           id: maps[0][userIdColumn] as int,
           name: maps[0][nameColumn] as String,
           username: maps[0][usernameColumn] as String,

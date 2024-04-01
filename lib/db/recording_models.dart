@@ -37,8 +37,24 @@ class AudioRecord {
   }
 }
 
+Future<void> createRecordingTable(Database db) async {
+  await db.execute('''
+      create table $recordingTable (
+        $recordingIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+        $filePathColumn TEXT NOT NULL,
+        $commentColumn TEXT NOT NULL,
+        $isProcessedColumn INTEGER NOT NULL DEFAULT 0,
+        $insightsDirPathColumn TEXT NOT NULL,
+        $timestampColumn TEXT NOT NULL,
+        $audioIdColumn INTEGER NOT NULL
+      );
+    ''');
+}
+
 class AudioRecordingProvider {
   AudioRecordingProvider();
+
+
 
   Future<AudioRecord?> createRecording(
       String filePath,String comment,String length,String timestamp, int audioId) async {

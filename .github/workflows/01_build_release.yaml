@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lang-fe-win
-          path: lang-fe.exe
+          path: lang_fe.exe
 
   build-and-release-macos:
     runs-on: macos-14
