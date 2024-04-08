@@ -2,15 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/db/user_models.dart';
 import 'package:lang_fe/login_screen.dart';
+import 'package:lang_fe/pages/auth.dart';
+import 'package:lang_fe/pages/profile_page.dart';
 
-import 'color_palettes_screen.dart';
 import 'component_screen.dart';
 import 'constants.dart';
-import 'elevation_screen.dart';
-import 'typography_screen.dart';
+import 'db/user_models.dart';
+import 'main.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -61,10 +62,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final double width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final double width = MediaQuery.of(context).size.width;
     final AnimationStatus status = controller.status;
     if (width > mediumWidthBreakpoint) {
       if (width > largeWidthBreakpoint) {
@@ -98,8 +96,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  Widget createScreenFor(ScreenSelected screenSelected,
-      bool showNavBarExample,) {
+  Widget createScreenFor(
+    ScreenSelected screenSelected,
+    bool showNavBarExample,
+  ) {
     switch (screenSelected) {
       case ScreenSelected.component:
         {
@@ -116,17 +116,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           );
         }
-      case ScreenSelected.color:
+      case ScreenSelected.insights:
         {
-          return const ColorPalettesScreen();
+          return Column(children: [ StreamBuilder<User?>(
+                      stream: auth.authStateChanges(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return const ProfilePage();
+                        }
+                        return const AuthGate();
+                      },
+                    ),
+              ]);
         }
-      case ScreenSelected.typography:
+      case ScreenSelected.profile:
         {
-          return const TypographyScreen();
-        }
-      case ScreenSelected.elevation:
-        {
-          return const ElevationScreen();
+          return LoginPage();
         }
     }
   }
@@ -136,16 +141,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       title: const Text(''),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
-        _BrightnessButton(
-          handleBrightnessChange: widget.handleBrightnessChange,
-        ),
-      ]
+              _BrightnessButton(
+                handleBrightnessChange: widget.handleBrightnessChange,
+              ),
+            ]
           : [Container()],
     );
   }
 
-  Widget _trailingActions() =>
-      Column(
+  Widget _trailingActions() => Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Flexible(
@@ -175,7 +179,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Widget LoginPage() {
-
     return LoginScreen(
       callback: homeRenderCallback,
     );
@@ -183,7 +186,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Future<Widget> createScreen() async {
     bool loggedin = await isLoggedIn();
-    return loggedin ? createScreenFor(ScreenSelected.values[screenIndex], false) : LoginPage();
+    return loggedin
+        ? createScreenFor(ScreenSelected.values[screenIndex], false)
+        : LoginPage();
   }
 
   @override
@@ -192,56 +197,55 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       animation: controller,
       builder: (context, child) {
         return NavigationTransition(
-            scaffoldKey: scaffoldKey,
-            animationController: controller,
-            railAnimation: railAnimation,
-            appBar: createAppBar(),
-            body: FutureBuilder(
-                future: createScreen(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return snapshot.data!;
-                  }
-                }),
-
-        navigationRail: NavigationRail(
-        extended: showLargeSizeLayout,
-        destinations: navRailDestinations,
-        selectedIndex: screenIndex,
-        onDestinationSelected: (index) {
-        setState(() {
-        screenIndex = index;
-        handleScreenChanged(screenIndex);
-        });
-        },
-        trailing: Expanded(
-        child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: showLargeSizeLayout
-        ? _ExpandedTrailingActions(
-        useLightMode: widget.useLightMode,
-        handleBrightnessChange: widget.handleBrightnessChange,
-        )
-            : _trailingActions(),
-        ),
-        ),
-        ),
-        navigationBar: NavigationBars(
-        onSelectItem: (index) {
-        setState(() {
-        screenIndex = index;
-        handleScreenChanged(screenIndex);
-        });
-        },
-        selectedIndex: screenIndex,
-        isExampleBar: false,
-        ),
+          scaffoldKey: scaffoldKey,
+          animationController: controller,
+          railAnimation: railAnimation,
+          appBar: createAppBar(),
+          body: FutureBuilder(
+              future: createScreen(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return snapshot.data!;
+                }
+              }),
+          navigationRail: NavigationRail(
+            extended: showLargeSizeLayout,
+            destinations: navRailDestinations,
+            selectedIndex: screenIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                screenIndex = index;
+                handleScreenChanged(screenIndex);
+              });
+            },
+            trailing: Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: showLargeSizeLayout
+                    ? _ExpandedTrailingActions(
+                        useLightMode: widget.useLightMode,
+                        handleBrightnessChange: widget.handleBrightnessChange,
+                      )
+                    : _trailingActions(),
+              ),
+            ),
+          ),
+          navigationBar: NavigationBars(
+            onSelectItem: (index) {
+              setState(() {
+                screenIndex = index;
+                handleScreenChanged(screenIndex);
+              });
+            },
+            selectedIndex: screenIndex,
+            isExampleBar: false,
+          ),
         );
       },
     );
@@ -259,9 +263,7 @@ class _BrightnessButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBright = Theme
-        .of(context)
-        .brightness == Brightness.light;
+    final isBright = Theme.of(context).brightness == Brightness.light;
     return Tooltip(
       preferBelow: showTooltipBelow,
       message: 'Toggle brightness',
@@ -287,10 +289,7 @@ class _ExpandedTrailingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenHeight = MediaQuery.of(context).size.height;
     final trailingActionsBody = Container(
       constraints: const BoxConstraints.tightFor(width: 250),
       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -319,14 +318,15 @@ class _ExpandedTrailingActions extends StatelessWidget {
 }
 
 class NavigationTransition extends StatefulWidget {
-  const NavigationTransition({super.key,
-    required this.scaffoldKey,
-    required this.animationController,
-    required this.railAnimation,
-    required this.navigationRail,
-    required this.navigationBar,
-    required this.appBar,
-    required this.body});
+  const NavigationTransition(
+      {super.key,
+      required this.scaffoldKey,
+      required this.animationController,
+      required this.railAnimation,
+      required this.navigationRail,
+      required this.navigationBar,
+      required this.appBar,
+      required this.body});
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final AnimationController animationController;
@@ -364,9 +364,7 @@ class _NavigationTransitionState extends State<NavigationTransition> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       key: widget.scaffoldKey,
@@ -393,8 +391,7 @@ class _NavigationTransitionState extends State<NavigationTransition> {
 
 final List<NavigationRailDestination> navRailDestinations = appBarDestinations
     .map(
-      (destination) =>
-      NavigationRailDestination(
+      (destination) => NavigationRailDestination(
         icon: Tooltip(
           message: destination.label,
           child: destination.icon,
@@ -405,48 +402,49 @@ final List<NavigationRailDestination> navRailDestinations = appBarDestinations
         ),
         label: Text(destination.label),
       ),
-)
+    )
     .toList();
 
 class SizeAnimation extends CurvedAnimation {
   SizeAnimation(Animation<double> parent)
       : super(
-    parent: parent,
-    curve: const Interval(
-      0.2,
-      0.8,
-      curve: Curves.easeInOutCubicEmphasized,
-    ),
-    reverseCurve: Interval(
-      0,
-      0.2,
-      curve: Curves.easeInOutCubicEmphasized.flipped,
-    ),
-  );
+          parent: parent,
+          curve: const Interval(
+            0.2,
+            0.8,
+            curve: Curves.easeInOutCubicEmphasized,
+          ),
+          reverseCurve: Interval(
+            0,
+            0.2,
+            curve: Curves.easeInOutCubicEmphasized.flipped,
+          ),
+        );
 }
 
 class OffsetAnimation extends CurvedAnimation {
   OffsetAnimation(Animation<double> parent)
       : super(
-    parent: parent,
-    curve: const Interval(
-      0.4,
-      1.0,
-      curve: Curves.easeInOutCubicEmphasized,
-    ),
-    reverseCurve: Interval(
-      0,
-      0.2,
-      curve: Curves.easeInOutCubicEmphasized.flipped,
-    ),
-  );
+          parent: parent,
+          curve: const Interval(
+            0.4,
+            1.0,
+            curve: Curves.easeInOutCubicEmphasized,
+          ),
+          reverseCurve: Interval(
+            0,
+            0.2,
+            curve: Curves.easeInOutCubicEmphasized.flipped,
+          ),
+        );
 }
 
 class RailTransition extends StatefulWidget {
-  const RailTransition({super.key,
-    required this.animation,
-    required this.backgroundColor,
-    required this.child});
+  const RailTransition(
+      {super.key,
+      required this.animation,
+      required this.backgroundColor,
+      required this.child});
 
   final Animation<double> animation;
   final Widget child;
@@ -498,10 +496,11 @@ class _RailTransition extends State<RailTransition> {
 }
 
 class BarTransition extends StatefulWidget {
-  const BarTransition({super.key,
-    required this.animation,
-    required this.backgroundColor,
-    required this.child});
+  const BarTransition(
+      {super.key,
+      required this.animation,
+      required this.backgroundColor,
+      required this.child});
 
   final Animation<double> animation;
   final Color backgroundColor;

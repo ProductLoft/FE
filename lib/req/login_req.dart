@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../db/user_models.dart';
 import '../utils/misc.dart';
 
-Future<User?> loginReq(String username, String password) async {
+Future<CustomUser?> loginReq(String username, String password) async {
 
   final response = await http.post(
     Uri.parse(getAuthUrl()),
@@ -32,7 +32,12 @@ Future<User?> loginReq(String username, String password) async {
     String email = body["user"]["email"] as String;
     String? cookie = response.headers['set-cookie'] as String;
 
-    return User(name: name, username: username, email: email, cookie: cookie);
+    return CustomUser(name: name, username: username, email: email, cookie: cookie);
+  }
+  else{
+    if (kDebugMode) {
+      print('Failed to login: ${response.statusCode}');
+    }
   }
   return null;
 }

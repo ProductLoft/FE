@@ -72,7 +72,7 @@ void main() {
   },);
 
   final document = builder.buildDocument();
-  File('flut-renamer.dev').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
+  File('lang-fe.evb').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
 }
 
 void buildFile(XmlBuilder builder, String name, String path) {

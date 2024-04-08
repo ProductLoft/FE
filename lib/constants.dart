@@ -57,9 +57,8 @@ enum ColorImageProvider {
 
 enum ScreenSelected {
   component(0),
-  color(1),
-  typography(2),
-  elevation(3);
+  insights(1),
+  profile(2);
 
   const ScreenSelected(this.value);
   final int value;

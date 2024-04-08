@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Show loading indicator
 
       try {
-        User? userInfo =
+        CustomUser? userInfo =
             await loginReq(_emailController.text, _passwordController.text);
 
         if (userInfo == null) {
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         UserProvider up = UserProvider();
 
-        User? u = await up.createUser(userInfo.name, userInfo.username,
+        CustomUser? u = await up.createUser(userInfo.name, userInfo.username,
             userInfo.email, userInfo.cookie ?? "");
 
         if (u != null) {
