@@ -21,6 +21,8 @@ void main() async {
   app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+
   auth = FirebaseAuth.instanceFor(app: app);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

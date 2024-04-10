@@ -1,7 +1,6 @@
 name: lang_fe
 description:
-  A Flutter project showcasing supported Material 3 components, typography, color system and elevation.
-  Supports different light/dark mode, color seed, and comparison to Material 2.
+  Language Learning App
 
 publish_to: 'none'
 
@@ -29,10 +28,11 @@ dependencies:
   firebase_core: ^2.27.2
   firebase_auth: ^4.18.0
   flutter_facebook_auth: ^6.1.1
-  google_sign_in: ^6.2.1
+  google_sign_in:
   firebase_messaging: ^14.7.21
   barcode_widget: ^2.0.4
   flutter_signin_button: ^2.0.0
+  provider: ^6.1.2
 
 dev_dependencies:
   analysis_defaults:

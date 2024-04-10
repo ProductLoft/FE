@@ -131,7 +131,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.profile:
         {
-          return LoginPage();
+          return const ProfilePage();
         }
     }
   }
@@ -178,17 +178,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setState(() {});
   }
 
-  Widget LoginPage() {
-    return LoginScreen(
-      callback: homeRenderCallback,
-    );
-  }
 
   Future<Widget> createScreen() async {
     bool loggedin = await isLoggedIn();
     return loggedin
         ? createScreenFor(ScreenSelected.values[screenIndex], false)
-        : LoginPage();
+        : const AuthGate();
   }
 
   @override

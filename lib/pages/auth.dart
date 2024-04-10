@@ -11,6 +11,9 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lang_fe/main.dart';
+import 'package:provider/provider.dart';
+
+import '../req/firebase_auth_methods.dart';
 
 typedef OAuthSignIn = void Function();
 
@@ -51,8 +54,8 @@ extension on AuthMode {
   String get label => this == AuthMode.login
       ? 'Sign in'
       : this == AuthMode.phone
-      ? 'Sign in'
-      : 'Register';
+          ? 'Sign in'
+          : 'Register';
 }
 
 /// Entrypoint example for various sign-in flows with Firebase.
@@ -60,6 +63,7 @@ class AuthGate extends StatefulWidget {
   // ignore: public_member_api_docs
   const AuthGate({Key? key}) : super(key: key);
   static String? appleAuthorizationCode;
+
   @override
   State<StatefulWidget> createState() => _AuthGateState();
 }
@@ -97,241 +101,110 @@ class _AuthGateState extends State<AuthGate> {
     if (!kIsWeb && Platform.isMacOS) {
       authButtons = {
         Buttons.Apple: () => _handleMultiFactorException(
-          _signInWithApple,
-        ),
+              _signInWithApple,
+            ),
       };
     } else {
       authButtons = {
         Buttons.Apple: () => _handleMultiFactorException(
-          _signInWithApple,
-        ),
+              _signInWithApple,
+            ),
         Buttons.Google: () => _handleMultiFactorException(
-          _signInWithGoogle,
-        ),
+              _signInWithGoogle,
+            ),
         Buttons.GitHub: () => _handleMultiFactorException(
-          _signInWithGitHub,
-        ),
+              _signInWithGitHub,
+            ),
         Buttons.Microsoft: () => _handleMultiFactorException(
-          _signInWithMicrosoft,
-        ),
+              _signInWithMicrosoft,
+            ),
         Buttons.Twitter: () => _handleMultiFactorException(
-          _signInWithTwitter,
-        ),
+              _signInWithTwitter,
+            ),
         Buttons.Yahoo: () => _handleMultiFactorException(
-          _signInWithYahoo,
-        ),
+              _signInWithYahoo,
+            ),
         Buttons.Facebook: () => _handleMultiFactorException(
-          _signInWithFacebook,
-        ),
+              _signInWithFacebook,
+            ),
       };
     }
+  }
+
+  void loginUser() {
+    FirebaseAuthMethods(auth).loginWithEmail(
+      email: emailController.text,
+      password: passwordController.text,
+      context: context,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child:  Center(
-          child:Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SafeArea(
-                  child: Form(
-                    key: formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 400),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Visibility(
-                            visible: error.isNotEmpty,
-                            child: MaterialBanner(
-                              backgroundColor:
-                              Theme.of(context).colorScheme.error,
-                              content: SelectableText(error),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      error = '';
-                                    });
-                                  },
-                                  child: const Text(
-                                    'dismiss',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                              contentTextStyle:
-                              const TextStyle(color: Colors.white),
-                              padding: const EdgeInsets.all(10),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          if (mode != AuthMode.phone)
-                            Column(
-                              children: [
-                                TextFormField(
-                                  controller: emailController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Email',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                  autofillHints: const [AutofillHints.email],
-                                  validator: (value) =>
-                                  value != null && value.isNotEmpty
-                                      ? null
-                                      : 'Required',
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  controller: passwordController,
-                                  obscureText: true,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Password',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  validator: (value) =>
-                                  value != null && value.isNotEmpty
-                                      ? null
-                                      : 'Required',
-                                ),
-                              ],
-                            ),
-                          if (mode == AuthMode.phone)
-                            TextFormField(
-                              controller: phoneController,
-                              decoration: const InputDecoration(
-                                hintText: '+12345678910',
-                                labelText: 'Phone number',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) =>
-                              value != null && value.isNotEmpty
-                                  ? null
-                                  : 'Required',
-                            ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: isLoading
-                                  ? null
-                                  : () => _handleMultiFactorException(
-                                _emailAndPassword,
-                              ),
-                              child: isLoading
-                                  ? const CircularProgressIndicator.adaptive()
-                                  : Text(mode.label),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: _resetPassword,
-                            child: const Text('Forgot password?'),
-                          ),
-                          ...authButtons.keys
-                              .map(
-                                (button) => Padding(
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 5),
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                child: isLoading
-                                    ? Container(
-                                  color: Colors.grey[200],
-                                  height: 50,
-                                  width: double.infinity,
-                                )
-                                    : SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: SignInButton(
-                                    button,
-                                    onPressed: authButtons[button]!,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                              .toList(),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: OutlinedButton(
-                              onPressed: isLoading
-                                  ? null
-                                  : () {
-                                if (mode != AuthMode.phone) {
-                                  setState(() {
-                                    mode = AuthMode.phone;
-                                  });
-                                } else {
-                                  setState(() {
-                                    mode = AuthMode.login;
-                                  });
-                                }
-                              },
-                              child: isLoading
-                                  ? const CircularProgressIndicator.adaptive()
-                                  : Text(
-                                mode != AuthMode.phone
-                                    ? 'Sign in with Phone Number'
-                                    : 'Sign in with Email and Password',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          if (mode != AuthMode.phone)
-                            RichText(
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                children: [
-                                  TextSpan(
-                                    text: mode == AuthMode.login
-                                        ? "Don't have an account? "
-                                        : 'You have an account? ',
-                                  ),
-                                  TextSpan(
-                                    text: mode == AuthMode.login
-                                        ? 'Register now'
-                                        : 'Click to login',
-                                    style: const TextStyle(color: Colors.blue),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        setState(() {
-                                          mode = mode == AuthMode.login
-                                              ? AuthMode.register
-                                              : AuthMode.login;
-                                        });
-                                      },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          const SizedBox(height: 10),
-                          RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              children: [
-                                const TextSpan(text: 'Or '),
-                                TextSpan(
-                                  text: 'continue as guest',
-                                  style: const TextStyle(color: Colors.blue),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = _anonymousAuth,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+        onTap: FocusScope.of(context).unfocus,
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SafeArea(
+            child: Form(
+              key: formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Login",
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'email',
+                          filled: true,
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'password',
+                          filled: true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: loginUser,
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(color: Colors.white),
+                        ),
+                        minimumSize: MaterialStateProperty.all(
+                          Size(MediaQuery.of(context).size.width / 2.5, 50),
+                        ),
+                      ),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ],
                 ),
-              ))
-    );
+              ),
+            ),
+          ),
+        )));
   }
 
   Future _resetPassword() async {
@@ -394,8 +267,8 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   Future<void> _handleMultiFactorException(
-      Future<void> Function() authFunction,
-      ) async {
+    Future<void> Function() authFunction,
+  ) async {
     setIsLoading();
     try {
       await authFunction();
@@ -487,7 +360,7 @@ class _AuthGateState extends State<AuthGate> {
     } else {
       if (kIsWeb) {
         final confirmationResult =
-        await auth.signInWithPhoneNumber(phoneController.text);
+            await auth.signInWithPhoneNumber(phoneController.text);
         final smsCode = await getSmsCodeFromUser(context);
 
         if (smsCode != null) {
@@ -670,9 +543,9 @@ Future<String?> getSmsCodeFromUser(BuildContext context) async {
 }
 
 Future<String?> getTotpFromUser(
-    BuildContext context,
-    TotpSecret totpSecret,
-    ) async {
+  BuildContext context,
+  TotpSecret totpSecret,
+) async {
   String? smsCode;
 
   final qrCodeUrl = await totpSecret.generateQrCodeUrl(
