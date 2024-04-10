@@ -1,12 +1,13 @@
 // Copyright 2021 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_fe/login_screen.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
@@ -50,6 +51,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       parent: controller,
       curve: const Interval(0.5, 1.0),
     );
+
+    if (!Provider.of<AppBasicInfoProvider>(context, listen: false).isInited) {
+      print('no init');
+      final _provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+      _provider.initData();
+    }
+
+    print('initState');
   }
 
   @override
@@ -166,6 +175,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       if (user != null) {
         // Navigator.pushReplacementNamed(context, '/login');
         debugPrint('true user');
+
+        // addActionContextLog();
         return true;
       }
       debugPrint('false user');

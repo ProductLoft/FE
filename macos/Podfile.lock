@@ -7,6 +7,9 @@ PODS:
     - AppAuth/Core
   - audioplayers_darwin (0.0.1):
     - FlutterMacOS
+  - connectivity_plus (0.0.1):
+    - FlutterMacOS
+    - ReachabilitySwift
   - facebook_auth_desktop (0.0.3):
     - FlutterMacOS
   - Firebase/Auth (10.22.0):
@@ -111,6 +114,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - PromisesObjC (2.4.0)
+  - ReachabilitySwift (5.2.1)
   - record_darwin (1.0.0):
     - Flutter
     - FlutterMacOS
@@ -122,6 +126,7 @@ PODS:
 
 DEPENDENCIES:
   - audioplayers_darwin (from `Flutter/ephemeral/.symlinks/plugins/audioplayers_darwin/macos`)
+  - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos`)
   - facebook_auth_desktop (from `Flutter/ephemeral/.symlinks/plugins/facebook_auth_desktop/macos`)
   - firebase_auth (from `Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
@@ -151,10 +156,13 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - ReachabilitySwift
 
 EXTERNAL SOURCES:
   audioplayers_darwin:
     :path: Flutter/ephemeral/.symlinks/plugins/audioplayers_darwin/macos
+  connectivity_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos
   facebook_auth_desktop:
     :path: Flutter/ephemeral/.symlinks/plugins/facebook_auth_desktop/macos
   firebase_auth:
@@ -181,6 +189,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: a13994980c1ec792f7e2e665acd4d4aa6be43240
   audioplayers_darwin: dcad41de4fbd0099cb3749f7ab3b0cb8f70b810c
+  connectivity_plus: 18d3c32514c886e046de60e9c13895109866c747
   facebook_auth_desktop: 0ec755e3b01669ec14776af18b6945671a788916
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
   firebase_auth: e25e78515f81c3ec50538bca552472cc6c03f718
@@ -203,6 +212,7 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  ReachabilitySwift: 5ae15e16814b5f9ef568963fb2c87aeb49158c66
   record_darwin: 1f6619f2abac4d1ca91d3eeab038c980d76f1517
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95

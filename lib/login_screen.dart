@@ -30,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
         CustomUser? userInfo =
             await loginReq(_emailController.text, _passwordController.text);
 
+        // add login info reporting
+
         if (userInfo == null) {
           // Failed! Handle error
           if (kDebugMode) {
