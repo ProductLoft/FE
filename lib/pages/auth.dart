@@ -11,6 +11,8 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lang_fe/main.dart';
+import 'package:lang_fe/pages/login_email_password_screen.dart';
+import 'package:lang_fe/pages/signup_email_password_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../req/firebase_auth_methods.dart';
@@ -48,20 +50,18 @@ class ScaffoldSnackbar {
 
 /// The mode of the current auth session, either [AuthMode.login] or [AuthMode.register].
 // ignore: public_member_api_docs
-enum AuthMode { login, register, phone }
+enum AuthMode { login, register }
 
 extension on AuthMode {
-  String get label => this == AuthMode.login
-      ? 'Sign in'
-      : this == AuthMode.phone
-          ? 'Sign in'
-          : 'Register';
+  String get label => this == AuthMode.login ? 'Sign in' : 'Register';
 }
 
 /// Entrypoint example for various sign-in flows with Firebase.
 class AuthGate extends StatefulWidget {
   // ignore: public_member_api_docs
-  const AuthGate({Key? key}) : super(key: key);
+  final void Function() callback;
+
+  const AuthGate({super.key, required this.callback});
   static String? appleAuthorizationCode;
 
   @override
@@ -131,12 +131,10 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  void loginUser() {
-    FirebaseAuthMethods(auth).loginWithEmail(
-      email: emailController.text,
-      password: passwordController.text,
-      context: context,
-    );
+  void authRenderCallback() {
+    debugPrint("auth render callback");
+    widget.callback();
+    setState(() {});
   }
 
   @override
@@ -152,118 +150,24 @@ class _AuthGateState extends State<AuthGate> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 400),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Login",
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TextField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'email',
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          labelText: 'password',
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: loginUser,
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.blue),
-                        textStyle: MaterialStateProperty.all(
-                          const TextStyle(color: Colors.white),
-                        ),
-                        minimumSize: MaterialStateProperty.all(
-                          Size(MediaQuery.of(context).size.width / 2.5, 50),
-                        ),
-                      ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ],
-                ),
+                child: Column(children: [
+                  mode==AuthMode.login? EmailPasswordLogin(callback: authRenderCallback): EmailPasswordSignup(
+                    callback: authRenderCallback,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                      onPressed: () {
+                    setState(() {
+                            mode = AuthMode.register;
+                        });
+
+                      },
+                      child: const Text("Signup"))
+                ]),
               ),
             ),
           ),
         )));
-  }
-
-  Future _resetPassword() async {
-    String? email;
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Send'),
-            ),
-          ],
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Enter your email'),
-              const SizedBox(height: 20),
-              TextFormField(
-                onChanged: (value) {
-                  email = value;
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (email != null) {
-      try {
-        await auth.sendPasswordResetEmail(email: email!);
-        ScaffoldSnackbar.of(context).show('Password reset email is sent');
-      } catch (e) {
-        ScaffoldSnackbar.of(context).show('Error resetting');
-      }
-    }
-  }
-
-  Future<void> _anonymousAuth() async {
-    setIsLoading();
-
-    try {
-      await auth.signInAnonymously();
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        error = '${e.message}';
-      });
-    } catch (e) {
-      setState(() {
-        error = '$e';
-      });
-    } finally {
-      setIsLoading();
-    }
   }
 
   Future<void> _handleMultiFactorException(
@@ -332,77 +236,6 @@ class _AuthGateState extends State<AuthGate> {
       });
     }
     setIsLoading();
-  }
-
-  Future<void> _emailAndPassword() async {
-    if (formKey.currentState?.validate() ?? false) {
-      if (mode == AuthMode.login) {
-        await auth.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-      } else if (mode == AuthMode.register) {
-        await auth.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-      } else {
-        await _phoneAuth();
-      }
-    }
-  }
-
-  Future<void> _phoneAuth() async {
-    if (mode != AuthMode.phone) {
-      setState(() {
-        mode = AuthMode.phone;
-      });
-    } else {
-      if (kIsWeb) {
-        final confirmationResult =
-            await auth.signInWithPhoneNumber(phoneController.text);
-        final smsCode = await getSmsCodeFromUser(context);
-
-        if (smsCode != null) {
-          await confirmationResult.confirm(smsCode);
-        }
-      } else {
-        await auth.verifyPhoneNumber(
-          phoneNumber: phoneController.text,
-          verificationCompleted: (_) {},
-          verificationFailed: (e) {
-            setState(() {
-              error = '${e.message}';
-            });
-          },
-          codeSent: (String verificationId, int? resendToken) async {
-            final smsCode = await getSmsCodeFromUser(context);
-
-            if (smsCode != null) {
-              // Create a PhoneAuthCredential with the code
-              final credential = PhoneAuthProvider.credential(
-                verificationId: verificationId,
-                smsCode: smsCode,
-              );
-
-              try {
-                // Sign the user in (or link) with the credential
-                await auth.signInWithCredential(credential);
-              } on FirebaseAuthException catch (e) {
-                setState(() {
-                  error = e.message ?? '';
-                });
-              }
-            }
-          },
-          codeAutoRetrievalTimeout: (String e) {
-            setState(() {
-              error = e;
-            });
-          },
-        );
-      }
-    }
   }
 
   Future<void> _signInWithGoogle() async {
