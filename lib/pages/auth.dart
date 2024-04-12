@@ -139,8 +139,7 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: FocusScope.of(context).unfocus,
+    return Expanded(
         child: Center(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

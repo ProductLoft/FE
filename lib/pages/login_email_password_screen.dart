@@ -65,21 +65,27 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
         ),
         const SizedBox(height: 40),
         ElevatedButton(
-          onPressed: loginUser,
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.blue),
-            textStyle: MaterialStateProperty.all(
-              const TextStyle(color: Colors.white),
-            ),
-            minimumSize: MaterialStateProperty.all(
-              Size(MediaQuery.of(context).size.width / 2.5, 50),
-            ),
-          ),
+          onPressed:loginUser,
           child: const Text(
-            "Login",
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            'Login',
           ),
         ),
+        // ElevatedButton(
+        //   onPressed: loginUser,
+        //   style: ButtonStyle(
+        //     backgroundColor: MaterialStateProperty.all(Colors.blue),
+        //     textStyle: MaterialStateProperty.all(
+        //       const TextStyle(color: Colors.white),
+        //     ),
+        //     minimumSize: MaterialStateProperty.all(
+        //       Size(MediaQuery.of(context).size.width / 2.5, 50),
+        //     ),
+        //   ),
+        //   child: const Text(
+        //     "Login",
+        //     style: TextStyle(color: Colors.white, fontSize: 16),
+        //   ),
+        // ),
       ],
     );
   }

@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
-import 'db/user_models.dart';
 import 'main.dart';
 
 class Home extends StatefulWidget {
@@ -123,7 +122,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               stream: auth.authStateChanges(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return const ProfilePage();
+                  return ProfilePage(callback: homeRenderCallback);
                 }
                 return AuthGate(callback: homeRenderCallback);
               },
@@ -132,7 +131,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.profile:
         {
-          return const ProfilePage();
+          return ProfilePage(callback: homeRenderCallback);
         }
     }
   }
@@ -179,14 +178,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Future<Widget> createScreen() async {
     bool loggedin = await isLoggedIn();
     debugPrint("Logged in: $loggedin");
-    return loggedin
-        ? createScreenFor(ScreenSelected.values[screenIndex], false)
-        : AuthGate(callback: homeRenderCallback );
+    return createScreenFor(ScreenSelected.values[screenIndex], false);
   }
 
   @override
   Widget build(BuildContext context) {
-    var firebaseUser = auth.currentUser!;
+    var firebaseUser = auth.currentUser;
     debugPrint("Firebase user: $firebaseUser");
     return AnimatedBuilder(
       animation: controller,
@@ -197,7 +194,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           railAnimation: railAnimation,
           appBar: createAppBar(),
           body:  (firebaseUser != null)
-              ? AuthGate(callback: homeRenderCallback) : createScreenFor(ScreenSelected.values[screenIndex], true),
+              ? createScreenFor(ScreenSelected.values[screenIndex], true): AuthGate(callback: homeRenderCallback),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: navRailDestinations,
