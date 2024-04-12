@@ -115,20 +115,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           );
         }
-      case ScreenSelected.insights:
-        {
-          return Column(children: [
-            StreamBuilder<User?>(
-              stream: auth.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ProfilePage(callback: homeRenderCallback);
-                }
-                return AuthGate(callback: homeRenderCallback);
-              },
-            ),
-          ]);
-        }
       case ScreenSelected.profile:
         {
           return ProfilePage(callback: homeRenderCallback);
@@ -138,7 +124,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
-      title: const Text(''),
+      title: const Text('SpeakSharp'),
+      leading:
+        _GoHomeButton(
+          handleBrightnessChange: widget.handleBrightnessChange,),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
               _BrightnessButton(
@@ -229,6 +218,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
         );
       },
+    );
+  }
+}
+
+class _GoHomeButton extends StatelessWidget {
+  const _GoHomeButton({
+    required this.handleBrightnessChange,
+    this.showTooltipBelow = true,
+  });
+
+  final Function handleBrightnessChange;
+  final bool showTooltipBelow;
+
+  @override
+  Widget build(BuildContext context) {
+    final isBright = Theme.of(context).brightness == Brightness.light;
+    return Tooltip(
+      preferBelow: showTooltipBelow,
+      message: 'Go Home',
+      child: IconButton(
+        icon: isBright
+            ? const Icon(Icons.home_outlined)
+            : const Icon(Icons.home_outlined),
+        onPressed: () => handleBrightnessChange(!isBright),
+      ),
     );
   }
 }

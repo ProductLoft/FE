@@ -1086,19 +1086,16 @@ class _ProgressIndicatorsState extends State<ProgressIndicators> {
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
-    tooltip: '',
     icon: Icon(Icons.record_voice_over_outlined),
     label: 'Record',
     selectedIcon: Icon(Icons.record_voice_over),
   ),
+  // NavigationDestination(
+  //   icon: Icon(Icons.dashboard_customize_outlined),
+  //   label: 'Insights',
+  //   selectedIcon: Icon(Icons.dashboard_customize_rounded),
+  // ),
   NavigationDestination(
-    tooltip: '',
-    icon: Icon(Icons.dashboard_customize_outlined),
-    label: 'Insights',
-    selectedIcon: Icon(Icons.dashboard_customize_rounded),
-  ),
-  NavigationDestination(
-    tooltip: '',
     icon: Icon(Icons.account_circle_outlined ),
     label: 'Profile',
     selectedIcon: Icon(Icons.account_circle_rounded),
