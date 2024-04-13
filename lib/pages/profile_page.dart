@@ -18,7 +18,6 @@ const placeholderImage =
 
 /// Profile page shows after sign in or registration.
 class ProfilePage extends StatefulWidget {
-
   final void Function() callback;
 
   // ignore: public_member_api_docs
@@ -102,11 +101,20 @@ class _ProfilePageState extends State<ProfilePage> {
     await FirebaseAuth.instance.signOut();
   }
 
+  Future<User> getUser() async {
+    debugPrint('Checking user');
+    await auth.currentUser!.reload();
+    debugPrint('!!!! ${await auth.currentUser!.getIdToken(true)}');
+    return auth.currentUser!;
+  }
+
   @override
   Widget build(BuildContext context) {
+    user = auth.currentUser!;
+
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -118,14 +126,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
             // Name
             const Text(
-              "anon",
+              // TODO Suriya: make it dynamic to user
+              'Name',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
 
             // Email
-            const Text(
-              "email",
+            Text(
+              user.email ?? 'No Email',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 10), // Add spacing before button
@@ -188,6 +197,4 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return photoURL;
   }
-
-
 }

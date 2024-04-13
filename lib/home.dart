@@ -1,12 +1,9 @@
-// Copyright 2021 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
@@ -124,7 +121,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
-      title: const Text('SpeakSharp'),
+      title: Center(
+          child: Row(
+        children: [
+          Image.asset(
+            'assets/icon.png',
+            height: 30,
+          ),
+          const SizedBox(width: 10),
+          const Text('SpeakSharp'),
+        ],
+
+      )),
       leading:
         _GoHomeButton(
           handleBrightnessChange: widget.handleBrightnessChange,),
@@ -241,6 +249,7 @@ class _GoHomeButton extends StatelessWidget {
         icon: isBright
             ? const Icon(Icons.home_outlined)
             : const Icon(Icons.home_outlined),
+        // TODO Suriya: make it go home
         onPressed: () => handleBrightnessChange(!isBright),
       ),
     );

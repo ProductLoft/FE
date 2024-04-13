@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -13,9 +12,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lang_fe/main.dart';
 import 'package:lang_fe/pages/login_email_password_screen.dart';
 import 'package:lang_fe/pages/signup_email_password_screen.dart';
-import 'package:provider/provider.dart';
-
-import '../req/firebase_auth_methods.dart';
 
 typedef OAuthSignIn = void Function();
 
@@ -62,6 +58,7 @@ class AuthGate extends StatefulWidget {
   final void Function() callback;
 
   const AuthGate({super.key, required this.callback});
+
   static String? appleAuthorizationCode;
 
   @override
@@ -142,31 +139,34 @@ class _AuthGateState extends State<AuthGate> {
     return Expanded(
         child: Center(
             child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SafeArea(
-            child: Form(
-              key: formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Column(children: [
-                  mode==AuthMode.login? EmailPasswordLogin(callback: authRenderCallback): EmailPasswordSignup(
-                    callback: authRenderCallback,
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                      onPressed: () {
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SafeArea(
+        child: Form(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Column(children: [
+              mode == AuthMode.login
+                  ? EmailPasswordLogin(callback: authRenderCallback)
+                  : EmailPasswordSignup(
+                      callback: authRenderCallback,
+                    ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                  onPressed: () {
                     setState(() {
-                            mode = AuthMode.register;
-                        });
-
-                      },
-                      child: const Text("Signup"))
-                ]),
-              ),
-            ),
+                      // TODO: Suriya Clean this mess
+                      mode = mode == AuthMode.register ? AuthMode.login : AuthMode.register;
+                    });
+                  },
+                  child: mode == AuthMode.login
+                      ? const Text("Signup"):const Text("login"))
+            ]),
           ),
-        )));
+        ),
+      ),
+    )));
   }
 
   Future<void> _handleMultiFactorException(

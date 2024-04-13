@@ -44,7 +44,6 @@ class _RecordingPageState extends State<RecordingPage> {
           await AudioRecordingProvider().getAll();
       List<Widget> audioPlayers = [
         Recorder(
-          isSampleRecord: false,
           waitToText: 'Waiting to record',
           onStop: (path) async {
             if (kDebugMode) {
@@ -197,7 +196,6 @@ class _RecordingPageState extends State<RecordingPage> {
     } else {
       List<Widget> audioPlayers = [
         Recorder(
-          isSampleRecord: true,
           waitToText: "HERE'S A RECORDING SAMPLE",
           onStop: (path) async {
             if (kDebugMode) {
