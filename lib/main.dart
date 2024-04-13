@@ -21,6 +21,8 @@ void main() async {
   app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAuth.instance.useAuthEmulator('f9a5-128-237-82-3.ngrok-free.app', 443);
+
   auth = FirebaseAuth.instanceFor(app: app);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

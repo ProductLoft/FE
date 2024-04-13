@@ -18,8 +18,10 @@ const placeholderImage =
 
 /// Profile page shows after sign in or registration.
 class ProfilePage extends StatefulWidget {
+  final void Function() callback;
+
   // ignore: public_member_api_docs
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key, required this.callback});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -93,246 +95,59 @@ class _ProfilePageState extends State<ProfilePage> {
     ScaffoldSnackbar.of(context).show('Name updated');
   }
 
+  /// Example code for sign out.
+  Future<void> _signOut() async {
+    print('Signing out');
+    await FirebaseAuth.instance.signOut();
+  }
+
+  Future<User> getUser() async {
+    debugPrint('Checking user');
+    await auth.currentUser!.reload();
+    debugPrint('!!!! ${await auth.currentUser!.getIdToken(true)}');
+    return auth.currentUser!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Scaffold(
-        body: Stack(
+    user = auth.currentUser!;
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Center(
-              child: SizedBox(
-                width: 400,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            maxRadius: 60,
-                            backgroundImage: NetworkImage(
-                              user.photoURL ?? placeholderImage,
-                            ),
-                          ),
-                          Positioned.directional(
-                            textDirection: Directionality.of(context),
-                            end: 0,
-                            bottom: 0,
-                            child: Material(
-                              clipBehavior: Clip.antiAlias,
-                              color: Theme.of(context).colorScheme.secondary,
-                              borderRadius: BorderRadius.circular(40),
-                              child: InkWell(
-                                onTap: () async {
-                                  final photoURL = await getPhotoURLFromUser();
-
-                                  if (photoURL != null) {
-                                    await user.updatePhotoURL(photoURL);
-                                  }
-                                },
-                                radius: 50,
-                                child: const SizedBox(
-                                  width: 35,
-                                  height: 35,
-                                  child: Icon(Icons.edit),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        textAlign: TextAlign.center,
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          alignLabelWithHint: true,
-                          label: Center(
-                            child: Text(
-                              'Click to add a display name',
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(user.email ?? user.phoneNumber ?? 'User'),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (userProviders.contains('phone'))
-                            const Icon(Icons.phone),
-                          if (userProviders.contains('password'))
-                            const Icon(Icons.mail),
-                          if (userProviders.contains('google.com'))
-                            SizedBox(
-                              width: 24,
-                              child: Image.network(
-                                'https://upload.wikimedia.org/wikipedia/commons/0/09/IOS_Google_icon.png',
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () {
-                          user.sendEmailVerification();
-                        },
-                        child: const Text('Verify Email'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final a = await user.multiFactor.getEnrolledFactors();
-                          print(a);
-                        },
-                        child: const Text('Get enrolled factors'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          if (AuthGate.appleAuthorizationCode != null) {
-                            // The `authorizationCode` is on the user credential.
-                            // e.g. final authorizationCode = userCredential.additionalUserInfo?.authorizationCode;
-                            await FirebaseAuth.instance
-                                .revokeTokenWithAuthorizationCode(
-                              AuthGate.appleAuthorizationCode!,
-                            );
-                            // You may wish to delete the user at this point
-                            AuthGate.appleAuthorizationCode = null;
-                          } else {
-                            print(
-                              'Apple `authorizationCode` is null, cannot revoke token.',
-                            );
-                          }
-                        },
-                        child: const Text('Revoke Apple auth token'),
-                      ),
-                      TextFormField(
-                        controller: phoneController,
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.phone),
-                          hintText: '+33612345678',
-                          labelText: 'Phone number',
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () async {
-                          final session = await user.multiFactor.getSession();
-                          await auth.verifyPhoneNumber(
-                            multiFactorSession: session,
-                            phoneNumber: phoneController.text,
-                            verificationCompleted: (_) {},
-                            verificationFailed: print,
-                            codeSent: (
-                                String verificationId,
-                                int? resendToken,
-                                ) async {
-                              final smsCode = await getSmsCodeFromUser(context);
-
-                              if (smsCode != null) {
-                                // Create a PhoneAuthCredential with the code
-                                final credential = PhoneAuthProvider.credential(
-                                  verificationId: verificationId,
-                                  smsCode: smsCode,
-                                );
-
-                                try {
-                                  await user.multiFactor.enroll(
-                                    PhoneMultiFactorGenerator.getAssertion(
-                                      credential,
-                                    ),
-                                  );
-                                } on FirebaseAuthException catch (e) {
-                                  print(e.message);
-                                }
-                              }
-                            },
-                            codeAutoRetrievalTimeout: print,
-                          );
-                        },
-                        child: const Text('Verify Number For MFA'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final totp =
-                          (await user.multiFactor.getEnrolledFactors())
-                              .firstWhereOrNull(
-                                (element) => element.factorId == 'totp',
-                          );
-                          if (totp != null) {
-                            await user.multiFactor.unenroll(
-                              factorUid:
-                              (await user.multiFactor.getEnrolledFactors())
-                                  .firstWhere(
-                                    (element) => element.factorId == 'totp',
-                              )
-                                  .uid,
-                            );
-                          }
-                          final session = await user.multiFactor.getSession();
-                          final totpSecret =
-                          await TotpMultiFactorGenerator.generateSecret(
-                            session,
-                          );
-                          print(totpSecret);
-                          final code =
-                          await getTotpFromUser(context, totpSecret);
-                          print('code: $code');
-                          if (code == null) {
-                            return;
-                          }
-                          await user.multiFactor.enroll(
-                            await TotpMultiFactorGenerator
-                                .getAssertionForEnrollment(
-                              totpSecret,
-                              code,
-                            ),
-                            displayName: 'TOTP',
-                          );
-                        },
-                        child: const Text('Enroll TOTP'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          try {
-                            final enrolledFactors =
-                            await user.multiFactor.getEnrolledFactors();
-
-                            await user.multiFactor.unenroll(
-                              factorUid: enrolledFactors.first.uid,
-                            );
-                            // Show snackbar
-                            ScaffoldSnackbar.of(context).show('MFA unenrolled');
-                          } catch (e) {
-                            print(e);
-                          }
-                        },
-                        child: const Text('Unenroll MFA'),
-                      ),
-                      const Divider(),
-                      TextButton(
-                        onPressed: _signOut,
-                        child: const Text('Sign out'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            // Photo in the center
+            const CircleAvatar(
+              radius: 50.0, // Adjust the radius as needed
             ),
-            Positioned.directional(
-              textDirection: Directionality.of(context),
-              end: 40,
-              top: 40,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: !showSaveButton
-                    ? SizedBox(key: UniqueKey())
-                    : TextButton(
-                  onPressed: isLoading ? null : updateDisplayName,
-                  child: const Text('Save changes'),
-                ),
+            const SizedBox(height: 10),
+
+            // Name
+            const Text(
+              // TODO Suriya: make it dynamic to user
+              'Name',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+
+            // Email
+            Text(
+              user.email ?? 'No Email',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 10), // Add spacing before button
+
+            // Signout button
+            TextButton(
+              onPressed: () async {
+                await _signOut();
+                widget.callback();
+              },
+              child: const Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.red, fontSize: 16),
               ),
             ),
           ],
@@ -381,11 +196,5 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     return photoURL;
-  }
-
-  /// Example code for sign out.
-  Future<void> _signOut() async {
-    await auth.signOut();
-    await GoogleSignIn().signOut();
   }
 }

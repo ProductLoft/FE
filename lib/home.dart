@@ -1,16 +1,12 @@
-// Copyright 2021 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/login_screen.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
-import 'db/user_models.dart';
 import 'main.dart';
 
 class Home extends StatefulWidget {
@@ -116,29 +112,30 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           );
         }
-      case ScreenSelected.insights:
-        {
-          return Column(children: [ StreamBuilder<User?>(
-                      stream: auth.authStateChanges(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return const ProfilePage();
-                        }
-                        return const AuthGate();
-                      },
-                    ),
-              ]);
-        }
       case ScreenSelected.profile:
         {
-          return LoginPage();
+          return ProfilePage(callback: homeRenderCallback);
         }
     }
   }
 
   PreferredSizeWidget createAppBar() {
     return AppBar(
-      title: const Text(''),
+      title: Center(
+          child: Row(
+        children: [
+          Image.asset(
+            'assets/icon.png',
+            height: 30,
+          ),
+          const SizedBox(width: 10),
+          const Text('SpeakSharp'),
+        ],
+
+      )),
+      leading:
+        _GoHomeButton(
+          handleBrightnessChange: widget.handleBrightnessChange,),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
               _BrightnessButton(
@@ -162,37 +159,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       );
 
   Future<bool> isLoggedIn() async {
-    return await UserProvider().getUser().then((user) {
-      if (user != null) {
-        // Navigator.pushReplacementNamed(context, '/login');
-        debugPrint('true user');
-        return true;
-      }
-      debugPrint('false user');
-      return false;
-    });
+    final firebaseUser = context.watch<User?>();
+    if (firebaseUser != null) {
+      debugPrint('truee!!');
+      return true;
+    }
+    return false;
   }
 
-  void homeRenderCallback() {
+  Future<void> homeRenderCallback() async {
     debugPrint("Home render callback");
     setState(() {});
   }
 
-  Widget LoginPage() {
-    return LoginScreen(
-      callback: homeRenderCallback,
-    );
-  }
-
   Future<Widget> createScreen() async {
     bool loggedin = await isLoggedIn();
-    return loggedin
-        ? createScreenFor(ScreenSelected.values[screenIndex], false)
-        : LoginPage();
+    debugPrint("Logged in: $loggedin");
+    return createScreenFor(ScreenSelected.values[screenIndex], false);
   }
 
   @override
   Widget build(BuildContext context) {
+    var firebaseUser = auth.currentUser;
+    debugPrint("Firebase user: $firebaseUser");
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
@@ -201,19 +190,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           animationController: controller,
           railAnimation: railAnimation,
           appBar: createAppBar(),
-          body: FutureBuilder(
-              future: createScreen(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return snapshot.data!;
-                }
-              }),
+          body:  (firebaseUser != null)
+              ? createScreenFor(ScreenSelected.values[screenIndex], true): AuthGate(callback: homeRenderCallback),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: navRailDestinations,
@@ -248,6 +226,32 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
         );
       },
+    );
+  }
+}
+
+class _GoHomeButton extends StatelessWidget {
+  const _GoHomeButton({
+    required this.handleBrightnessChange,
+    this.showTooltipBelow = true,
+  });
+
+  final Function handleBrightnessChange;
+  final bool showTooltipBelow;
+
+  @override
+  Widget build(BuildContext context) {
+    final isBright = Theme.of(context).brightness == Brightness.light;
+    return Tooltip(
+      preferBelow: showTooltipBelow,
+      message: 'Go Home',
+      child: IconButton(
+        icon: isBright
+            ? const Icon(Icons.home_outlined)
+            : const Icon(Icons.home_outlined),
+        // TODO Suriya: make it go home
+        onPressed: () => handleBrightnessChange(!isBright),
+      ),
     );
   }
 }
