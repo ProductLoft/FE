@@ -259,6 +259,20 @@ class _RecordingPageState extends State<RecordingPage> {
                               // Adjust font size if needed
                               children: [
                                 const TextSpan(
+                                    text: 'Speaker: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: "${speakerTurnStart['speaker']}"),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
                                     text: 'You said:   ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
@@ -280,6 +294,21 @@ class _RecordingPageState extends State<RecordingPage> {
                                 TextSpan(
                                     text:
                                         "${speakerTurnStart['improved_sentence']}"),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
+                                    text: 'Reason: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text:
+                                        "${speakerTurnStart['improve_reason']}"),
                               ],
                             ),
                           ),
