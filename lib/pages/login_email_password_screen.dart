@@ -18,10 +18,10 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void loginUser() {
+  Future<void> loginUser() async {
     debugPrint(
         'Login user ${_emailController.text} ${_passwordController.text}');
-    FirebaseAuthMethods(auth).loginWithEmail(
+    await FirebaseAuthMethods(auth).loginWithEmail(
       email: _emailController.text,
       password: _passwordController.text,
       context: context,
@@ -70,22 +70,6 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
             'Login',
           ),
         ),
-        // ElevatedButton(
-        //   onPressed: loginUser,
-        //   style: ButtonStyle(
-        //     backgroundColor: MaterialStateProperty.all(Colors.blue),
-        //     textStyle: MaterialStateProperty.all(
-        //       const TextStyle(color: Colors.white),
-        //     ),
-        //     minimumSize: MaterialStateProperty.all(
-        //       Size(MediaQuery.of(context).size.width / 2.5, 50),
-        //     ),
-        //   ),
-        //   child: const Text(
-        //     "Login",
-        //     style: TextStyle(color: Colors.white, fontSize: 16),
-        //   ),
-        // ),
       ],
     );
   }

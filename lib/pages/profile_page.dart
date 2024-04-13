@@ -132,9 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
             // Signout button
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await _signOut();
                 widget.callback();
-                _signOut();
               },
               child: const Text(
                 'Sign Out',

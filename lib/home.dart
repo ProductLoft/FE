@@ -159,7 +159,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return false;
   }
 
-  void homeRenderCallback() {
+  Future<void> homeRenderCallback() async {
     debugPrint("Home render callback");
     setState(() {});
   }
