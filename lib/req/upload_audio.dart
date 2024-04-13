@@ -32,6 +32,7 @@ Future<int?> uploadAudio(String filePath, String isSampleVoice) async{
   request.files.add(await http.MultipartFile.fromPath('audio_file', filePath));
   request.headers.addAll(headers);
   debugPrint('Request: ${request.toString()}');
+  debugPrint('Request: ${request.toString()}');
   http.StreamedResponse response = await request.send();
   // debugPrint('Response: ${response.statusCode}');
   // debugPrint('Response: ${await response.stream.bytesToString()}');
