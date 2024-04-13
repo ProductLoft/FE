@@ -11,8 +11,8 @@ import '../main.dart';
 Future<Map<String, String>> getHeaders() async {
   CustomUser? user = await UserProvider().getUser();
   return {
-    'Cookie': user?.cookie ?? '',
-    'X-CSRFToken': user?.csrfToken ?? '',
+    'Cookie': 'csrftoken=hMJOYlzD9z8IRGXGTH872Ky7soeOoiUj; sessionid=xtyefw3xfrqzvsur2av097hnwwzz4ump',
+    'X-CSRFToken': 'hMJOYlzD9z8IRGXGTH872Ky7soeOoiUj',
   };
 }
 
