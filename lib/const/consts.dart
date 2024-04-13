@@ -28,7 +28,7 @@ const String sampleRecordInsightsDirPathColumn = "zipPath";
 const String sampleRecordAudioIdColumn = "audioId";
 
 // consts for network calls
-const String baseUrl = "http://localhost:8000";
+const String baseUrl = "http://52.72.143.117:8000";
 const String loginUri = "/auth/login/";
 const String uploadUri = "/audio-record/upload/";
 const String jobStatusUri = "/check_job_status/";
