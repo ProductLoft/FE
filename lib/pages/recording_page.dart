@@ -35,17 +35,16 @@ class _RecordingPageState extends State<RecordingPage> {
   int showInsightsRecordId = -1;
   bool isSampleRecord = false;
 
-
   Future<List<Widget>> getAudioplayers(bool isBright) async {
     // AudioSampleRecordingProvider.getAll();
-    List<AudioSampleRecord> sampleRecords = await AudioSampleRecordingProvider().getAll();
+    List<AudioSampleRecord> sampleRecords =
+        await AudioSampleRecordingProvider().getAll();
     debugPrint('isBright111:$isBright');
-    if(sampleRecords.length > 0){
+    if (sampleRecords.length > 0) {
       List<AudioRecord> previousrecordings =
-        await AudioRecordingProvider().getAll();
+          await AudioRecordingProvider().getAll();
       List<Widget> audioPlayers = [
         Recorder(
-          isSampleRecord: false,
           waitToText: 'Waiting to record',
           onStop: (path) async {
             if (kDebugMode) {
@@ -61,28 +60,25 @@ class _RecordingPageState extends State<RecordingPage> {
           },
         ),
         const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:[
-            Container(
-              height: 1.5, // 设置分割线的高度
-              width: 100.0, // 设置分割线的宽度为100逻辑像素
-              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
-            ),
-            SizedBox(width: 8),
-            Container(
-              height: 2, // 设置分割线的高度
-              width: 2, // 设置分割线的宽度为100逻辑像素
-              color:  Colors.black.withOpacity(0.1), // 设置分割线的颜色
-            ),
-            SizedBox(width: 8),
-            Container(
-              height: 1.5, // 设置分割线的高度
-              width: 100.0, // 设置分割线的宽度为100逻辑像素
-              color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
-            ),
-          ]
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+            height: 1.5, // 设置分割线的高度
+            width: 100.0, // 设置分割线的宽度为100逻辑像素
+            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+          ),
+          SizedBox(width: 8),
+          Container(
+            height: 2, // 设置分割线的高度
+            width: 2, // 设置分割线的宽度为100逻辑像素
+            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+          ),
+          SizedBox(width: 8),
+          Container(
+            height: 1.5, // 设置分割线的高度
+            width: 100.0, // 设置分割线的宽度为100逻辑像素
+            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+          ),
+        ]),
         const SizedBox(height: 24),
         const Text(
           'Previous Recordings:',
@@ -137,32 +133,58 @@ class _RecordingPageState extends State<RecordingPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                                    textBaseline: TextBaseline.alphabetic,
-                                    children:[
-                                      Text("COMMENT: ", style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold)),
-                                      Text(previousRecording.comment != '' ? previousRecording.comment : "Audio_${previousRecording.id}", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
-                                    ]
-                                  )
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                                  textBaseline: TextBaseline.alphabetic,
-                                  children:[
-                                    Text("DATE-TIME: ", style: TextStyle(fontSize: 12.0, color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8))),
-                                    Text(_time, style: TextStyle(fontSize: 12.0,color: isBright ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8)))
-                                  ]
-                                )
-                              ]
-                            )
-                          ),
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              const Text("COMMENT: ",
+                                                  style: TextStyle(
+                                                      fontSize: 12.0,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Text(
+                                                  previousRecording.comment !=
+                                                          ''
+                                                      ? previousRecording
+                                                          .comment
+                                                      : "Audio_${previousRecording.id}",
+                                                  style: const TextStyle(
+                                                      fontSize: 18.0,
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                            ])),
+                                    Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.baseline,
+                                        textBaseline: TextBaseline.alphabetic,
+                                        children: [
+                                          Text("DATE-TIME: ",
+                                              style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: isBright
+                                                      ? Colors.black
+                                                          .withOpacity(0.5)
+                                                      : Colors.white
+                                                          .withOpacity(0.8))),
+                                          Text(_time,
+                                              style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: isBright
+                                                      ? Colors.black
+                                                          .withOpacity(0.5)
+                                                      : Colors.white
+                                                          .withOpacity(0.8)))
+                                        ])
+                                  ])),
                         ])
                   ])),
             ),
@@ -172,10 +194,9 @@ class _RecordingPageState extends State<RecordingPage> {
         audioPlayers.add(customPlayer);
       }
       return audioPlayers;
-    }else{
+    } else {
       List<Widget> audioPlayers = [
         Recorder(
-          isSampleRecord: true,
           waitToText: "HERE'S A RECORDING SAMPLE",
           onStop: (path) async {
             if (kDebugMode) {
@@ -224,39 +245,90 @@ class _RecordingPageState extends State<RecordingPage> {
                 //   showInsights = true;
                 // });
               },
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Container(
+              child: Row(mainAxisSize: MainAxisSize.max, children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Container(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children:[
-                            Text("You said: ${speakerTurnStart['original_sentence']}"),
-                            Text("Improved Sentence: ${speakerTurnStart['improved_sentence']}"),
-                            Container(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
+                                    text: 'Speaker: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: "${speakerTurnStart['speaker']}"),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
+                                    text: 'You said:   ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text:
+                                        "${speakerTurnStart['original_sentence']}"),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
+                                    text: 'You can say: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text:
+                                        "${speakerTurnStart['improved_sentence']}"),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16.0),
+                              // Adjust font size if needed
+                              children: [
+                                const TextSpan(
+                                    text: 'Reason: ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text:
+                                        "${speakerTurnStart['improve_reason']}"),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: 10.0),
+                            child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children:[
+                                children: [
                                   CustomAudioPlayer(
-                                    source: '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                    source:
+                                        '$insightsDirPath/${speakerTurnStart['file_name']}',
                                     onDelete: () {},
                                   )
-                                ]
-                              ),
-                            )
-                          ]
-                        )
-                      ),
-                    ),
+                                ]),
+                          )
+                        ])),
                   ),
-                ]
-              )
-          ),
+                ),
+              ])),
         ),
       );
       // insights.add(Text('Speaker Turn: $speakerTurn'));
@@ -282,41 +354,39 @@ class _RecordingPageState extends State<RecordingPage> {
         ),
       ),
       Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children:[
-          CustomAudioPlayer(
-            source: audioRecord?.path ?? 'Audio Not Found',
-            onDelete: () {
-              // TODO modal confirmation on Delete
-              AudioRecordingProvider().deleteRecording(showInsightsRecordId);
-              setState(() {
-                refreshRecordings = true;
-                showInsights = false;
-              });
-            },
-          ),
-        ]
-      ),
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomAudioPlayer(
+              source: audioRecord?.path ?? 'Audio Not Found',
+              onDelete: () {
+                // TODO modal confirmation on Delete
+                AudioRecordingProvider().deleteRecording(showInsightsRecordId);
+                setState(() {
+                  refreshRecordings = true;
+                  showInsights = false;
+                });
+              },
+            ),
+          ]),
       Padding(
           padding: const EdgeInsets.all(16.0),
-      child:FutureBuilder<List<Widget>>(
-            future: getAllInsights(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: snapshot.data!,
-                    );
-              }
-            })
-      ),
+          child: FutureBuilder<List<Widget>>(
+              future: getAllInsights(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: snapshot.data!,
+                  );
+                }
+              })),
     ];
 
     // insights.add();
@@ -348,21 +418,30 @@ class _RecordingPageState extends State<RecordingPage> {
               child: const Text('Save audio'),
               onPressed: () async {
                 debugPrint(_controller.text);
-                int? audioRecordId = await uploadAudio(path, isSampleRecord ? 'True' : '');
+                int? audioRecordId =
+                    await uploadAudio(path, isSampleRecord ? 'True' : '');
                 // debugPrint('Audio record id: $audioRecordId');
 
-                if(isSampleRecord){
-                  await AudioSampleRecordingProvider().createRecording(path,
-                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
-                }else{
-                  await AudioRecordingProvider().createRecording(path,
-                    _controller.text, "", getCurrentTime(), audioRecordId ?? -1);
+                if (isSampleRecord) {
+                  await AudioSampleRecordingProvider().createRecording(
+                      path,
+                      _controller.text,
+                      "",
+                      getCurrentTime(),
+                      audioRecordId ?? -1);
+                } else {
+                  await AudioRecordingProvider().createRecording(
+                      path,
+                      _controller.text,
+                      "",
+                      getCurrentTime(),
+                      audioRecordId ?? -1);
                 }
 
                 setState(() {
                   commentText = _controller.text;
                 });
-                
+
                 Navigator.pop(context); // Close the modal after submission
               },
             ),
@@ -374,9 +453,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isBright = Theme
-        .of(context)
-        .brightness == Brightness.light;
+    final isBright = Theme.of(context).brightness == Brightness.light;
     debugPrint('isBright:$isBright');
 
     return Column(children: [

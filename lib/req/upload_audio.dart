@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:lang_fe/req/reqest_utils.dart';
@@ -10,6 +11,7 @@ Future<int?> uploadAudio(String filePath, String isSampleVoice) async{
   var headers = await getHeaders();
   debugPrint('Headers: $headers');
   debugPrint('Headers: ${getUploadUrl().toString()}');
+  debugPrint('Headers: ${await FirebaseAuth.instance.currentUser?.getIdToken(true)}');
 
   var request = http.MultipartRequest('POST', getUploadUrl());
 

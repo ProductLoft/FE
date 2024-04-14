@@ -29,18 +29,6 @@ class FirstComponentList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> children = [
       const Actions(),
-      // colDivider,
-      // const Communication(),
-      // colDivider,
-      // const Containment(),
-      // if (!showSecondList) ...[
-      //   colDivider,
-      //   Navigation(scaffoldKey: scaffoldKey),
-      //   colDivider,
-      //   const Selection(),
-      //   colDivider,
-      //   const TextInputs()
-      // ],
     ];
     List<double?> heights = List.filled(children.length, null);
 
@@ -237,11 +225,7 @@ class _RecordingsState extends State<Recordings> {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: <Widget>[
-        RecordingPage(),
-      ],
-    );
+    return const RecordingPage();
   }
 }
 
@@ -1102,19 +1086,16 @@ class _ProgressIndicatorsState extends State<ProgressIndicators> {
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
-    tooltip: '',
     icon: Icon(Icons.record_voice_over_outlined),
     label: 'Record',
     selectedIcon: Icon(Icons.record_voice_over),
   ),
+  // NavigationDestination(
+  //   icon: Icon(Icons.dashboard_customize_outlined),
+  //   label: 'Insights',
+  //   selectedIcon: Icon(Icons.dashboard_customize_rounded),
+  // ),
   NavigationDestination(
-    tooltip: '',
-    icon: Icon(Icons.dashboard_customize_outlined),
-    label: 'Insights',
-    selectedIcon: Icon(Icons.dashboard_customize_rounded),
-  ),
-  NavigationDestination(
-    tooltip: '',
     icon: Icon(Icons.account_circle_outlined ),
     label: 'Profile',
     selectedIcon: Icon(Icons.account_circle_rounded),

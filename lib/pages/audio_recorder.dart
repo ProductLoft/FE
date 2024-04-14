@@ -8,13 +8,12 @@ import 'platform/audio_recorder_platform.dart';
 class Recorder extends StatefulWidget {
   final Future<void> Function(String path) onStop;
   final String waitToText;
-  final bool isSampleRecord;
+  final bool isSampleRecord = false;
 
   const Recorder(
       {super.key,
       required this.onStop,
-      required this.waitToText,
-      required this.isSampleRecord});
+      required this.waitToText});
 
   @override
   State<Recorder> createState() => _RecorderState();
@@ -62,18 +61,15 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
         const config = RecordConfig(
             encoder: AudioEncoder.wav,
-            bitRate: 320000,
-            sampleRate: 44100,
-            numChannels: 2,
+            bitRate: 256000,
+            sampleRate: 16000,
+            numChannels: 1,
             autoGain: true,
             echoCancel: false,
-            noiseSuppress: false);
+            noiseSuppress: true);
 
         // Record to file
         await recordFile(_audioRecorder, config);
-
-        // Record to stream
-        // await recordStream(_audioRecorder, config);
 
         _recordDuration = 0;
 
