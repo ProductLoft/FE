@@ -43,6 +43,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   xml: ^6.5.0
+  build_runner: ^2.4.0
+  build_web_compilers: ^4.0.4
 
 flutter:
   uses-material-design: true
