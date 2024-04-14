@@ -25,24 +25,7 @@ class AppBasicInfoProvider extends ChangeNotifier {
 
     final ConnectivityResult checkConnectivity =
         await (Connectivity().checkConnectivity());
-
-    switch (checkConnectivity) {
-      case ConnectivityResult.mobile:
-        connectivity = 'mobile';
-      case ConnectivityResult.wifi:
-        connectivity = 'wifi';
-      case ConnectivityResult.ethernet:
-        connectivity = 'ethernet';
-      case ConnectivityResult.vpn:
-        connectivity = 'vpn';
-      case ConnectivityResult.bluetooth:
-        connectivity = 'bluetooth';
-      case ConnectivityResult.none:
-        connectivity = 'none';
-      default:
-        connectivity = 'other';
-        break;
-    }
+    connectivity = checkConnectivity.toString();
 
     isInited = true;
 
@@ -86,17 +69,17 @@ class AppBasicInfoProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addUserActionLog(String eventCode) async {
+  Future<void> addUserActionLog(String code) async {
     // 提交日志
     await clientEventUpload({
       "event_type": 'important_event_occurred',
-      "event_code": eventCode,
+      "event_code": code,
       "event_message": "",
       "software_version": appVersion,
       "os_info": jsonEncode({
-        "appName": appName,
-        "appBuildNumber": appBuildNumber,
-        "os_info": {"system": system, "systemVersion": systemVersion},
+        "app_name": appName,
+        "app_build_number": appBuildNumber,
+        "os_info": {"system": system, "system_version": systemVersion},
         "network_info": connectivity
       }),
       "operation_trace": jsonEncode(pageTrackPathList)
