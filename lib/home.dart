@@ -201,6 +201,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     var firebaseUser = auth.currentUser;
     debugPrint("Firebase user: $firebaseUser");
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {

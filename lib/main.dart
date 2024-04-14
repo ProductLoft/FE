@@ -84,31 +84,7 @@ void main() async {
   };
 
   runApp(const App());
-
-  // runZoned(
-  //   () => runApp(App()),
-  //   zoneSpecification: ZoneSpecification(
-  //     print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-  //       collectLog(line);
-  //     },
-  //   ),
-  //   onError: (Object obj, StackTrace stack) {
-  //     var details = makeDetails(obj, stack);
-  //     reportErrorAndLog(details);
-  //   },
-  // );
 }
-
-// void collectLog(String line){
-//      //收集日志
-// }
-// void reportErrorAndLog(FlutterErrorDetails details){
-//      //上报错误和日志逻辑
-// }
-
-// FlutterErrorDetails makeDetails(Object obj, StackTrace stack){
-//     // 构建错误信息
-// }
 
 class App extends StatefulWidget {
   const App({super.key});
