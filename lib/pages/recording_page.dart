@@ -226,9 +226,6 @@ class _RecordingPageState extends State<RecordingPage> {
     }
   }
 
-  // Future<String> getInsightsDirPath(int audioRecordId) async {
-  //       return  checkAudioIdStatus(audioRecordId);
-  // }
 
   Future<List<Widget>> getAllInsights() async {
     String insightsDirPath = await checkAudioIdStatus(showInsightsRecordId);
@@ -237,9 +234,8 @@ class _RecordingPageState extends State<RecordingPage> {
     List<dynamic> speakerTurns = jsonDecode(
             await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
         as List<dynamic>;
-//80% of screen width
-    double c_width = MediaQuery.of(context).size.width * 0.8;
-    for (dynamic speakerTurn in speakerTurns) {
+
+      for (dynamic speakerTurn in speakerTurns) {
       Map<String, dynamic> speakerTurnStart =
           speakerTurn as Map<String, dynamic>;
       insights.add(
@@ -247,103 +243,95 @@ class _RecordingPageState extends State<RecordingPage> {
           clipBehavior: Clip.hardEdge,
           child: InkWell(
               splashColor: Colors.blue.withAlpha(30),
-              onTap: () {
-                // debugPrint('Card tapped.${previousRecording.id}');
-                // setState(() {
-                //   showInsightsRecordId = previousRecording.id ?? -1;
-                //   showInsights = true;
-                // });
-              },
+              onTap: () {},
               child: Row(mainAxisSize: MainAxisSize.max, children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Container(
-                        child: Column(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(fontSize: 16.0),
+                          // Adjust font size if needed
+                          children: [
+                            const TextSpan(
+                                text: 'Speaker: ',
+                                style:
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: "${speakerTurnStart['speaker']}"),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(fontSize: 16.0),
+                          // Adjust font size if needed
+                          children: [
+                            const TextSpan(
+                                text: 'You said:   ',
+                                style:
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text:
+                                    "${speakerTurnStart['original_sentence']}"),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(fontSize: 16.0),
+                          // Adjust font size if needed
+                          children: [
+                            const TextSpan(
+                                text: 'You can say: ',
+                                style:
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text:
+                                    "${speakerTurnStart['improved_sentence']}"),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(fontSize: 16.0),
+                          // Adjust font size if needed
+                          children: [
+                            const TextSpan(
+                                text: 'Reason: ',
+                                style:
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text:
+                                    "${speakerTurnStart['improve_reason']}"),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(fontSize: 16.0),
-                              // Adjust font size if needed
-                              children: [
-                                const TextSpan(
-                                    text: 'Speaker: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text: "${speakerTurnStart['speaker']}"),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(fontSize: 16.0),
-                              // Adjust font size if needed
-                              children: [
-                                const TextSpan(
-                                    text: 'You said:   ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text:
-                                        "${speakerTurnStart['original_sentence']}"),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(fontSize: 16.0),
-                              // Adjust font size if needed
-                              children: [
-                                const TextSpan(
-                                    text: 'You can say: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text:
-                                        "${speakerTurnStart['improved_sentence']}"),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(fontSize: 16.0),
-                              // Adjust font size if needed
-                              children: [
-                                const TextSpan(
-                                    text: 'Reason: ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text:
-                                        "${speakerTurnStart['improve_reason']}"),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomAudioPlayer(
-                                    source:
-                                        '$insightsDirPath/${speakerTurnStart['file_name']}',
-                                    onDelete: () {},
-                                  )
-                                ]),
-                          )
-                        ])),
+                              CustomAudioPlayer(
+                                source:
+                                    '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                onDelete: () {},
+                              )
+                            ]),
+                      )
+                    ]),
                   ),
                 ),
               ])),
         ),
       );
-      // insights.add(Text('Speaker Turn: $speakerTurn'));
-
-      // debugPrint('Speaker Turn: $speakerTurn');
     }
+      debugPrint("Done with audio players");
+      debugPrint('insights:${insights.length}');
 
     return insights;
   }
@@ -355,7 +343,6 @@ class _RecordingPageState extends State<RecordingPage> {
     List<Widget> insights = [
       const Center(
         child: Text(
-          // TODO, this should be in the appbar
           'Conversation Insights',
           style: TextStyle(
             fontSize: 15,
@@ -389,11 +376,14 @@ class _RecordingPageState extends State<RecordingPage> {
                   );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else {
+                } else if (snapshot.hasData) {
+                  debugPrint('Snapshot data: ${snapshot.data!.length}');
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: snapshot.data!,
                   );
+                } else {
+                  return const Text('No insights found');
                 }
               })),
     ];

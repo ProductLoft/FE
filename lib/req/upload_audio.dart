@@ -35,7 +35,7 @@ Future<int?> uploadAudio(String filePath, String isSampleVoice) async{
   http.StreamedResponse response = await request.send();
   // debugPrint('Response: ${response.statusCode}');
   // debugPrint('Response: ${await response.stream.bytesToString()}');
-  var resp = json.decode(await response.stream.bytesToString());
+  var resp = await json.decode(await response.stream.bytesToString());
   if (response.statusCode >= 200 && response.statusCode < 300) {
     int audioRecordId = resp['audio_record_id'] as int;
 
