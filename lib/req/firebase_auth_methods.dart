@@ -68,7 +68,9 @@ class FirebaseAuthMethods {
         password: password,
       );
       if (!user.emailVerified) {
-        await sendEmailVerification(context);
+        // TODO: suriya handle email unverified
+
+        // await sendEmailVerification(context);
         // restrict access to certain things using provider
         // transition to another page instead of home screen
       }
