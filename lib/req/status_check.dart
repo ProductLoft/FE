@@ -30,10 +30,12 @@ Future<String> checkAudioIdStatus(int audioId) async {
     }
     debugPrint('Audio processed: $audioProcessed');
     // Wait for a specified duration
-    if (!audioProcessed) await Future.delayed(const Duration(seconds: 5));
+    if (!audioProcessed) {
+      await Future.delayed(const Duration(seconds: 5));
+    }
   }
 
-  return downloadAndExtractZip(audioRecord.audioId??-1);
+  return await downloadAndExtractZip(audioRecord.audioId??-1);
 }
 
 Future<bool> makeStatusCheckRequest(int audioId) async {
