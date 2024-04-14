@@ -1,14 +1,8 @@
-import 'dart:io';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/const/consts.dart';
-import 'package:lang_fe/pages/audio_player.dart';
 import 'package:lang_fe/db/recording_models.dart';
-import 'package:record/record.dart';
-import 'package:http/http.dart' as http;
-
-import '../db/recording_models.dart';
+import 'package:lang_fe/pages/audio_player.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:provider/provider.dart';
 
 // import 'audio_player.dart';
 // import 'audio_recorder.dart';
@@ -31,6 +25,13 @@ class _AudioPageWidgetState extends State<AudioPageWidget> {
   bool showPlayer = false;
   bool refreshRecordings = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('audio-page');
+  }
 
   Future<List<Widget>> getAudioPageLayout() async {
     audioRecord = await AudioRecordingProvider().getRecording(widget.audioID);
@@ -52,7 +53,6 @@ class _AudioPageWidgetState extends State<AudioPageWidget> {
           fontSize: 15,
         ),
       )
-
     ];
 
     return audioPageLayout;

@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
@@ -46,6 +49,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       parent: controller,
       curve: const Interval(0.5, 1.0),
     );
+
+    if (!Provider.of<AppBasicInfoProvider>(context, listen: false)
+        .isInitialled) {
+      debugPrint('no init');
+      final provider =
+          Provider.of<AppBasicInfoProvider>(context, listen: false);
+      provider.initDataAndAppOpenLog();
+    }
+
+    debugPrint('initState');
   }
 
   @override
@@ -96,9 +109,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ScreenSelected screenSelected,
     bool showNavBarExample,
   ) {
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    debugPrint(jsonEncode({screenSelected: screenSelected}));
+
     switch (screenSelected) {
       case ScreenSelected.component:
         {
+          provider.addPageTrack('component-page');
+
           return Expanded(
             child: OneTwoTransition(
               animation: railAnimation,
@@ -114,6 +132,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.profile:
         {
+          provider.addPageTrack('profile-page');
+
           return ProfilePage(callback: homeRenderCallback);
         }
     }
@@ -131,11 +151,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           const SizedBox(width: 10),
           const Text('SpeakSharp'),
         ],
-
       )),
-      leading:
-        _GoHomeButton(
-          handleBrightnessChange: widget.handleBrightnessChange,),
+      leading: _GoHomeButton(
+        handleBrightnessChange: widget.handleBrightnessChange,
+      ),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
               _BrightnessButton(
@@ -190,8 +209,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           animationController: controller,
           railAnimation: railAnimation,
           appBar: createAppBar(),
-          body:  (firebaseUser != null)
-              ? createScreenFor(ScreenSelected.values[screenIndex], true): AuthGate(callback: homeRenderCallback),
+          body: (firebaseUser != null)
+              ? createScreenFor(ScreenSelected.values[screenIndex], true)
+              : AuthGate(callback: homeRenderCallback),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: navRailDestinations,
