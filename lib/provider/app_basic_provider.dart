@@ -20,7 +20,7 @@ class AppBasicInfoProvider extends ChangeNotifier {
 
   bool get isInitialled => isInited;
 
-  Future<void> initDataAndAppOpenLog() async {
+  Future<void> initDataAndAppOpenLog(Duration duration) async {
     system = Platform.operatingSystem; // 获取操作系统名称
     systemVersion = Platform.operatingSystemVersion; // 获取操作系统版本信息
 
@@ -52,8 +52,9 @@ class AppBasicInfoProvider extends ChangeNotifier {
       "event_message": "",
       "software_version": appVersion,
       "os_info": jsonEncode({
-        "appName": appName,
-        "appBuildNumber": appBuildNumber,
+        "app_name": appName,
+        "app_build_number": appBuildNumber,
+        "app_start_duration": duration.toString(),
         "os_info": {"system": system, "systemVersion": systemVersion},
         "network_info": connectivity,
         "device_info": deviceInfo

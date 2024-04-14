@@ -34,12 +34,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool controllerInitialized = false;
   bool showMediumSizeLayout = false;
   bool showLargeSizeLayout = false;
+  final startTime = DateTime.now();
 
   int screenIndex = ScreenSelected.component.value;
 
   @override
   initState() {
     super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+
+    if (!provider.isInitialled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final endTime = DateTime.now();
+        final duration = endTime.difference(startTime);
+
+        provider.initDataAndAppOpenLog(duration);
+      });
+    }
+
     controller = AnimationController(
       duration: Duration(milliseconds: transitionLength.toInt() * 2),
       value: 0,
@@ -49,16 +62,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       parent: controller,
       curve: const Interval(0.5, 1.0),
     );
-
-    if (!Provider.of<AppBasicInfoProvider>(context, listen: false)
-        .isInitialled) {
-      debugPrint('no init');
-      final provider =
-          Provider.of<AppBasicInfoProvider>(context, listen: false);
-      provider.initDataAndAppOpenLog();
-    }
-
-    debugPrint('initState');
   }
 
   @override
