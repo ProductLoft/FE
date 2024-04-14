@@ -1,49 +1,84 @@
-import 'dart:io';
+import 'dart:convert';
 import 'dart:core';
-import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:lang_fe/req/client_event_upload.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AppBasicInfoProvider extends ChangeNotifier {
-  bool _isInited = false;
-  String _platformVersion = '';
-  String _system = '';
-  String _systemVersion = '';
-  String _connectivity = '';
-  List<String> _pageTrackPathList = [];
+  bool isInited = false;
+  String appName = '';
+  String appVersion = '';
+  String appBuildNumber = '';
+  String system = '';
+  String systemVersion = '';
+  String connectivity = '';
+  List<String> pageTrackPathList = [];
 
-  bool get isInited => _isInited;
+  bool get isInitialled => isInited;
 
-  void initData() async {
-    String _platformVersion = Platform.version;
-    String _system = Platform.operatingSystem; // 获取操作系统名称
-    String _systemVersion = Platform.operatingSystemVersion; // 获取操作系统版本信息
+  Future<void> initDataAndAppOpenLog() async {
+    system = Platform.operatingSystem; // 获取操作系统名称
+    systemVersion = Platform.operatingSystemVersion; // 获取操作系统版本信息
 
-    final ConnectivityResult _checkConnectivity = await (Connectivity().checkConnectivity());
+    final ConnectivityResult checkConnectivity =
+        await (Connectivity().checkConnectivity());
 
-    switch (_checkConnectivity) {
-      case ConnectivityResult.wifi:
-        String _connectivity = 'wifi';
-        break;
+    switch (checkConnectivity) {
       case ConnectivityResult.mobile:
-        String _connectivity = 'mobile';
-        break;
+        connectivity = 'mobile';
+      case ConnectivityResult.wifi:
+        connectivity = 'wifi';
+      case ConnectivityResult.ethernet:
+        connectivity = 'ethernet';
+      case ConnectivityResult.vpn:
+        connectivity = 'vpn';
+      case ConnectivityResult.bluetooth:
+        connectivity = 'bluetooth';
       case ConnectivityResult.none:
-        String _connectivity = 'none';
-        break;
+        connectivity = 'none';
       default:
-        String _connectivity = 'other';
+        connectivity = 'other';
         break;
     }
 
-    _isInited = true;
+    isInited = true;
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    appName = packageInfo.appName;
+    appVersion = packageInfo.version;
+    appBuildNumber = packageInfo.buildNumber;
+
+    debugPrint(jsonEncode({
+      "appName": appName,
+      "version": appVersion,
+      "buildNumber": appBuildNumber,
+      "connectivity": checkConnectivity.toString()
+    }));
+
+    // 提交日志
+    await clientEventUpload({
+      "event_type": 'important_event_occurred',
+      "event_code": "0002",
+      "event_message": "",
+      "software_version": appVersion,
+      "os_info": jsonEncode({
+        "appName": appName,
+        "appBuildNumber": appBuildNumber,
+        "os_info": {"system": system, "systemVersion": systemVersion},
+        "network_info": connectivity
+      })
+    });
   }
 
-  void addPageTrack(String path){
-    _pageTrackPathList?.add(path);
+  void addPageTrack(String path) {
+    pageTrackPathList.add(path);
   }
 
-  void clearPageTrack(){
-    _pageTrackPathList?.clear();
+  void clearPageTrack() {
+    pageTrackPathList.clear();
   }
 }

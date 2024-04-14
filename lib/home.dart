@@ -1,13 +1,13 @@
 // Copyright 2021 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_fe/login_screen.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
 import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
@@ -52,13 +52,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       curve: const Interval(0.5, 1.0),
     );
 
-    if (!Provider.of<AppBasicInfoProvider>(context, listen: false).isInited) {
-      print('no init');
-      final _provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
-      _provider.initData();
+    if (!Provider.of<AppBasicInfoProvider>(context, listen: false)
+        .isInitialled) {
+      debugPrint('no init');
+      final provider =
+          Provider.of<AppBasicInfoProvider>(context, listen: false);
+      provider.initDataAndAppOpenLog();
     }
 
-    print('initState');
+    debugPrint('initState');
   }
 
   @override
@@ -109,9 +111,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ScreenSelected screenSelected,
     bool showNavBarExample,
   ) {
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    print({screenSelected: screenSelected});
+
     switch (screenSelected) {
       case ScreenSelected.component:
         {
+          provider.addPageTrack('component-page');
+
           return Expanded(
             child: OneTwoTransition(
               animation: railAnimation,
@@ -127,19 +134,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.insights:
         {
-          return Column(children: [ StreamBuilder<User?>(
-                      stream: auth.authStateChanges(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return const ProfilePage();
-                        }
-                        return const AuthGate();
-                      },
-                    ),
-              ]);
+          return Column(children: [
+            StreamBuilder<User?>(
+              stream: auth.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  provider.addPageTrack('profile-page');
+                  return const ProfilePage();
+                }
+                return const AuthGate();
+              },
+            ),
+          ]);
         }
       case ScreenSelected.profile:
         {
+          provider.addPageTrack('login-page');
           return LoginPage();
         }
     }

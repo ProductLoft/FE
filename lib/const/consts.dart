@@ -33,7 +33,7 @@ const String loginUri = "/auth/login/";
 const String uploadUri = "/audio-record/upload/";
 const String jobStatusUri = "/check_job_status/";
 const String downloadZipUri = "/speaker-turn/download/";
-
+const String clientEventUploadUri = "/client_event_upload/";
 
 // FilePaths
 const String audioPath = "audio";

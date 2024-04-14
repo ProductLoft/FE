@@ -2,19 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:web_startup_analyzer/web_startup_analyzer.dart';
 import 'package:lang_fe/provider/app_basic_provider.dart';
+// import 'package:lang_fe/utils/navigator_util.dart';
+import 'package:provider/provider.dart';
+import 'package:web_startup_analyzer/web_startup_analyzer.dart';
 
 import 'constants.dart';
-import 'home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'home.dart';
 
 late final FirebaseApp app;
 late final FirebaseAuth auth;
@@ -46,18 +47,20 @@ void main() async {
     }));
   });
 
-  debugPrint(json.encode({'version':Platform.version}));
+  debugPrint(json.encode({'version': Platform.version}));
 
-  runApp(App());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(const App());
   // FlutterError.onError = (FlutterErrorDetails details) {
   //   reportErrorAndLog(details);
   // };
-  
+
   // runZoned(
   //   () => runApp(App()),
   //   zoneSpecification: ZoneSpecification(
   //     print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-  //       collectLog(line); 
+  //       collectLog(line);
   //     },
   //   ),
   //   onError: (Object obj, StackTrace stack) {
@@ -67,18 +70,16 @@ void main() async {
   // );
 }
 
-
 // void collectLog(String line){
 //      //收集日志
 // }
 // void reportErrorAndLog(FlutterErrorDetails details){
 //      //上报错误和日志逻辑
 // }
- 
+
 // FlutterErrorDetails makeDetails(Object obj, StackTrace stack){
 //     // 构建错误信息
 // }
-
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -112,40 +113,40 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AppBasicInfoProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: '',
-        themeMode: themeMode,
-        theme: ThemeData(
-          // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-          //     ? colorSelected.color
-          //     : null,
-          // colorScheme: colorSelectionMethod == ColorSelectionMethod.image
-          //     ? imageColorScheme
-          //     : null,
-          useMaterial3: useMaterial3,
-          brightness: Brightness.light,
-        ),
-        darkTheme: ThemeData(
-          // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-          //     ? colorSelected.color
-          //     : imageColorScheme!.primary,
-          useMaterial3: useMaterial3,
-          brightness: Brightness.dark,
-        ),
-        home: Home(
-          useLightMode: useLightMode,
-          // colorSelected: colorSelected,
-          // imageSelected: imageSelected,
-          handleBrightnessChange: handleBrightnessChange,
-          // handleColorSelect: handleColorSelect,
-          // handleImageSelect: handleImageSelect,
-          // colorSelectionMethod: colorSelectionMethod,
-        ),
-      )
-    );
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppBasicInfoProvider()),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: '',
+          themeMode: themeMode,
+          theme: ThemeData(
+            // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+            //     ? colorSelected.color
+            //     : null,
+            // colorScheme: colorSelectionMethod == ColorSelectionMethod.image
+            //     ? imageColorScheme
+            //     : null,
+            useMaterial3: useMaterial3,
+            brightness: Brightness.light,
+          ),
+          darkTheme: ThemeData(
+            // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+            //     ? colorSelected.color
+            //     : imageColorScheme!.primary,
+            useMaterial3: useMaterial3,
+            brightness: Brightness.dark,
+          ),
+          home: Home(
+            useLightMode: useLightMode,
+            // colorSelected: colorSelected,
+            // imageSelected: imageSelected,
+            handleBrightnessChange: handleBrightnessChange,
+            // handleColorSelect: handleColorSelect,
+            // handleImageSelect: handleImageSelect,
+            // colorSelectionMethod: colorSelectionMethod,
+          ),
+          // navigatorObservers: [MyNavigatorObserver()],
+        ));
   }
 }
