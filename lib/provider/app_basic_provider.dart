@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lang_fe/req/client_event_upload.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -35,12 +36,14 @@ class AppBasicInfoProvider extends ChangeNotifier {
     appVersion = packageInfo.version;
     appBuildNumber = packageInfo.buildNumber;
 
-    debugPrint(jsonEncode({
-      "appName": appName,
-      "version": appVersion,
-      "buildNumber": appBuildNumber,
-      "connectivity": checkConnectivity.toString()
-    }));
+    String deviceInfo = '';
+
+    try {
+      final deviceInfoPlugin = DeviceInfoPlugin();
+      deviceInfo = (await deviceInfoPlugin.deviceInfo).data.toString();
+    } catch (e) {
+      debugPrint('no deviceIndo ${e.toString()}');
+    }
 
     // 提交日志
     await clientEventUpload({
@@ -52,7 +55,8 @@ class AppBasicInfoProvider extends ChangeNotifier {
         "appName": appName,
         "appBuildNumber": appBuildNumber,
         "os_info": {"system": system, "systemVersion": systemVersion},
-        "network_info": connectivity
+        "network_info": connectivity,
+        "device_info": deviceInfo
       })
     });
   }
