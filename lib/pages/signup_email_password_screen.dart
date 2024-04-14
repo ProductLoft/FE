@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lang_fe/provider/app_basic_provider.dart';
 import 'package:lang_fe/req/firebase_auth_methods.dart';
-import 'package:path/path.dart';
+// import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -30,7 +30,7 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
     provider.addPageTrack('signup-pwd-login-page');
   }
 
-  void signUpUser() async {
+  Future<void> signUpUser() async {
     await FirebaseAuthMethods(auth).signUpWithEmail(
       email: _emailController.text,
       password: _passwordController.text,
@@ -38,7 +38,7 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
     );
 
     final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
-    await provider.addUserSignUpLog();
+    await provider.addUserActionLog('0003');
 
     setState(() {
       widget.callback();

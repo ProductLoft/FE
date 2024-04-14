@@ -35,6 +35,10 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
       password: _passwordController.text,
       context: context,
     );
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    await provider.addUserActionLog('0004');
+
     setState(() {
       widget.callback();
     });

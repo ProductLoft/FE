@@ -110,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     bool showNavBarExample,
   ) {
     final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
-    debugPrint(jsonEncode({screenSelected: screenSelected}));
+    debugPrint(screenSelected.toString());
 
     switch (screenSelected) {
       case ScreenSelected.component:

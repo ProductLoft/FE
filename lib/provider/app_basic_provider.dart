@@ -75,36 +75,22 @@ class AppBasicInfoProvider extends ChangeNotifier {
   }
 
   void addPageTrack(String path) {
-    String last = pageTrackPathList.last;
-    if (last != path) {
+    if (pageTrackPathList.isNotEmpty) {
+      String last = pageTrackPathList.last;
+
+      if (last != path) {
+        pageTrackPathList.add(path);
+      }
+    } else {
       pageTrackPathList.add(path);
     }
   }
 
-  Future<void> addUserLoginLog() async {
+  Future<void> addUserActionLog(String eventCode) async {
     // 提交日志
     await clientEventUpload({
       "event_type": 'important_event_occurred',
-      "event_code": "0004",
-      "event_message": "",
-      "software_version": appVersion,
-      "os_info": jsonEncode({
-        "appName": appName,
-        "appBuildNumber": appBuildNumber,
-        "os_info": {"system": system, "systemVersion": systemVersion},
-        "network_info": connectivity
-      }),
-      "operation_trace": jsonEncode(pageTrackPathList)
-    });
-
-    clearPageTrack();
-  }
-
-  Future<void> addUserSignUpLog() async {
-    // 提交日志
-    await clientEventUpload({
-      "event_type": 'important_event_occurred',
-      "event_code": "0003",
+      "event_code": eventCode,
       "event_message": "",
       "software_version": appVersion,
       "os_info": jsonEncode({
