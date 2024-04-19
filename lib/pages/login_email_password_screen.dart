@@ -1,5 +1,6 @@
-import 'package:lang_fe/req/firebase_auth_methods.dart';
 import 'package:flutter/material.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:lang_fe/req/firebase_auth_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -18,6 +19,14 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  @override
+  initState() {
+    super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('email-pwd-login-page');
+  }
+
   Future<void> loginUser() async {
     debugPrint(
         'Login user ${_emailController.text} ${_passwordController.text}');
@@ -26,6 +35,10 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
       password: _passwordController.text,
       context: context,
     );
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    await provider.addUserActionLog('0004');
+
     setState(() {
       widget.callback();
     });
@@ -65,7 +78,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
         ),
         const SizedBox(height: 40),
         ElevatedButton(
-          onPressed:loginUser,
+          onPressed: loginUser,
           child: const Text(
             'Login',
           ),

@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lang_fe/pages/auth.dart';
 import 'package:lang_fe/pages/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';
@@ -31,12 +34,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool controllerInitialized = false;
   bool showMediumSizeLayout = false;
   bool showLargeSizeLayout = false;
+  final startTime = DateTime.now();
 
   int screenIndex = ScreenSelected.component.value;
 
   @override
   initState() {
     super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+
+    if (!provider.isInitialled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final endTime = DateTime.now();
+        final duration = endTime.difference(startTime);
+
+        provider.initDataAndAppOpenLog(duration);
+      });
+    }
+
     controller = AnimationController(
       duration: Duration(milliseconds: transitionLength.toInt() * 2),
       value: 0,
@@ -96,9 +112,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ScreenSelected screenSelected,
     bool showNavBarExample,
   ) {
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    debugPrint(screenSelected.toString());
+
     switch (screenSelected) {
       case ScreenSelected.component:
         {
+          provider.addPageTrack('component-page');
+
           return Expanded(
             child: OneTwoTransition(
               animation: railAnimation,
@@ -114,6 +135,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.profile:
         {
+          provider.addPageTrack('profile-page');
+
           return ProfilePage(callback: homeRenderCallback);
         }
     }
@@ -131,11 +154,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           const SizedBox(width: 10),
           const Text('SpeakSharp'),
         ],
-
       )),
-      leading:
-        _GoHomeButton(
-          handleBrightnessChange: widget.handleBrightnessChange,),
+      leading: _GoHomeButton(
+        handleBrightnessChange: widget.handleBrightnessChange,
+      ),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
               _BrightnessButton(
@@ -182,6 +204,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     var firebaseUser = auth.currentUser;
     debugPrint("Firebase user: $firebaseUser");
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
@@ -190,8 +213,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           animationController: controller,
           railAnimation: railAnimation,
           appBar: createAppBar(),
-          body:  (firebaseUser != null)
-              ? createScreenFor(ScreenSelected.values[screenIndex], true): AuthGate(callback: homeRenderCallback),
+          body: (firebaseUser != null)
+              ? createScreenFor(ScreenSelected.values[screenIndex], true)
+              : AuthGate(callback: homeRenderCallback),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: navRailDestinations,

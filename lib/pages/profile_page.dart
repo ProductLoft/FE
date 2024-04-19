@@ -4,11 +4,11 @@
 
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lang_fe/main.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lang_fe/main.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'auth.dart';
 
@@ -54,6 +54,9 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     log(user.toString());
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('profile-page');
 
     super.initState();
   }

@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+
 import 'platform/audio_recorder_platform.dart';
 
 class Recorder extends StatefulWidget {
@@ -10,10 +13,7 @@ class Recorder extends StatefulWidget {
   final String waitToText;
   final bool isSampleRecord = false;
 
-  const Recorder(
-      {super.key,
-      required this.onStop,
-      required this.waitToText});
+  const Recorder({super.key, required this.onStop, required this.waitToText});
 
   @override
   State<Recorder> createState() => _RecorderState();
@@ -42,6 +42,9 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     });
 
     super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('audio-recorder-page');
   }
 
   Future<void> _start() async {
