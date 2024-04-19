@@ -28,7 +28,7 @@ Future<int?> uploadAudio(String filePath, String isSampleVoice) async{
     });
     debugPrint('params:222');
   }
-  
+  debugPrint('params:$filePath');
   request.files.add(await http.MultipartFile.fromPath('audio_file', filePath));
   request.headers.addAll(headers);
   debugPrint('Request: ${request.toString()}');

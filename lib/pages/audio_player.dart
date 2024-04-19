@@ -156,7 +156,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     );
   }
 
-  Future<void> play() => _customAudioPlayer.play(_source);
+  Future<void> play() async => _customAudioPlayer.play(_source);
 
   Future<void> pause() async {
     await _customAudioPlayer.pause();
