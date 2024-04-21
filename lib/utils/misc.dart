@@ -1,4 +1,3 @@
-
 import 'package:lang_fe/const/consts.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,11 +18,15 @@ Uri getDownloadZipUrl() {
   return Uri.parse('$baseUrl$downloadZipUri');
 }
 
+Uri getClientEventUploadUrl() {
+  return Uri.parse('$baseUrl$clientEventUploadUri');
+}
 
 String getCurrentTime() {
   return DateTime.now().toIso8601String();
 }
+
 Future<String> getInsightsDirPath(int audioId) async {
   final dir = await getApplicationDocumentsDirectory();
-  return join(dir.path,'$insightPath/$audioId');
+  return join(dir.path, '$insightPath/$audioId');
 }

@@ -3,15 +3,22 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:lang_fe/req/client_event_upload.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:lang_fe/utils/navigator_util.dart';
+import 'package:provider/provider.dart';
 import 'package:web_startup_analyzer/web_startup_analyzer.dart';
 
 import 'constants.dart';
-import 'home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'home.dart';
 
 late final FirebaseApp app;
 late final FirebaseAuth auth;
@@ -44,9 +51,39 @@ void main() async {
       'additionalFrames': analyzer.onAdditionalFrames.value,
     }));
   });
-  runApp(
-    const App(),
-  );
+
+  debugPrint(json.encode({'version': Platform.version}));
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (details) async {
+    debugPrint('onError===start==');
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final ConnectivityResult checkConnectivity =
+        await (Connectivity().checkConnectivity());
+
+    await clientEventUpload({
+      "event_type": 'client_error_occurred',
+      "event_code": '0001',
+      "event_message": 'FlutterError.onError',
+      "stack_trace": details.toString(),
+      "thread_info": jsonEncode({
+        "software_version": packageInfo.version,
+        "app_name": packageInfo.appName,
+        "app_build_number": packageInfo.buildNumber,
+        "os_info": {
+          "system": Platform.operatingSystem,
+          "system_version": Platform.operatingSystemVersion
+        },
+        "network_info": checkConnectivity.toString()
+      })
+    });
+
+    debugPrint('onError===end');
+  };
+
+  runApp(const App());
 }
 
 class App extends StatefulWidget {
@@ -87,33 +124,38 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '',
-      themeMode: themeMode,
-      theme: ThemeData(
-        colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-            ? colorSelected.color
-            : null,
-        useMaterial3: useMaterial3,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-            ? colorSelected.color
-            : imageColorScheme!.primary,
-        useMaterial3: useMaterial3,
-        brightness: Brightness.dark,
-      ),
-      home: Home(
-        useLightMode: useLightMode,
-        colorSelected: colorSelected,
-        // imageSelected: imageSelected,
-        handleBrightnessChange: handleBrightnessChange,
-        handleColorSelect: handleColorSelect,
-        // handleImageSelect: handleImageSelect,
-        // colorSelectionMethod: colorSelectionMethod,
-      ),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppBasicInfoProvider()),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: '',
+          themeMode: themeMode,
+          theme: ThemeData(
+            colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+                ? colorSelected.color
+                : null,
+            useMaterial3: useMaterial3,
+            brightness: Brightness.light,
+          ),
+          darkTheme: ThemeData(
+            colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+                ? colorSelected.color
+                : imageColorScheme!.primary,
+            useMaterial3: useMaterial3,
+            brightness: Brightness.dark,
+          ),
+          home: Home(
+            useLightMode: useLightMode,
+            colorSelected: colorSelected,
+            // imageSelected: imageSelected,
+            handleBrightnessChange: handleBrightnessChange,
+            handleColorSelect: handleColorSelect,
+            // handleImageSelect: handleImageSelect,
+            // colorSelectionMethod: colorSelectionMethod,
+          ),
+          // navigatorObservers: [MyNavigatorObserver()],
+        ));
   }
 }

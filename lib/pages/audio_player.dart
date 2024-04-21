@@ -4,6 +4,8 @@ import 'package:audioplayers/audioplayers.dart' as ap;
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomAudioPlayer extends StatefulWidget {
   /// Path from where to play recorded audio
@@ -27,7 +29,8 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
 
-  final _customAudioPlayer = ap.AudioPlayer()..setReleaseMode(ap.ReleaseMode.stop);
+  final _customAudioPlayer = ap.AudioPlayer()
+    ..setReleaseMode(ap.ReleaseMode.stop);
   late StreamSubscription<void> _playerStateChangedSubscription;
   late StreamSubscription<Duration?> _durationChangedSubscription;
   late StreamSubscription<Duration> _positionChangedSubscription;
@@ -38,15 +41,15 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   void initState() {
     _playerStateChangedSubscription =
         _customAudioPlayer.onPlayerComplete.listen((state) async {
-          await stop();
-        });
+      await stop();
+    });
     _positionChangedSubscription = _customAudioPlayer.onPositionChanged.listen(
-          (position) => setState(() {
+      (position) => setState(() {
         _position = position;
       }),
     );
     _durationChangedSubscription = _customAudioPlayer.onDurationChanged.listen(
-          (duration) => setState(() {
+      (duration) => setState(() {
         _duration = duration;
       }),
     );
@@ -54,6 +57,9 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     _customAudioPlayer.setSource(_source);
 
     super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('audio-player');
   }
 
   @override
@@ -64,8 +70,6 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
     _customAudioPlayer.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +122,7 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
         color: color,
         child: InkWell(
           child:
-          SizedBox(width: _controlSize, height: _controlSize, child: icon),
+              SizedBox(width: _controlSize, height: _controlSize, child: icon),
           onTap: () {
             if (_customAudioPlayer.state == ap.PlayerState.playing) {
               pause();

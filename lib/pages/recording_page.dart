@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lang_fe/provider/app_basic_provider.dart';
 import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
+import 'package:provider/provider.dart';
 
 import '../const/consts.dart';
 import '../db/recording_models.dart';
@@ -33,6 +35,14 @@ class _RecordingPageState extends State<RecordingPage> {
   bool showInsights = false;
   int showInsightsRecordId = -1;
   bool isSampleRecord = false;
+
+  @override
+  initState() {
+    super.initState();
+
+    final provider = Provider.of<AppBasicInfoProvider>(context, listen: false);
+    provider.addPageTrack('recording-page');
+  }
 
   Future<List<Widget>> getAudioplayers(bool isBright) async {
     // AudioSampleRecordingProvider.getAll();
