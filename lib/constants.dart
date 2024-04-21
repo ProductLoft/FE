@@ -20,10 +20,10 @@ enum ColorSelectionMethod {
 }
 
 enum ColorSeed {
+  teal('Teal', Colors.teal),
   baseColor('M3 Baseline', Color(0xff6750a4)),
   indigo('Indigo', Colors.indigo),
   blue('Blue', Colors.blue),
-  teal('Teal', Colors.teal),
   green('Green', Colors.green),
   yellow('Yellow', Colors.yellow),
   orange('Orange', Colors.orange),
