@@ -14,11 +14,14 @@ class Home extends StatefulWidget {
     super.key,
     required this.useLightMode,
     required this.handleBrightnessChange,
+    required this.colorSelected,
+    required this.handleColorSelect,
   });
 
   final bool useLightMode;
-
   final void Function(bool useLightMode) handleBrightnessChange;
+  final ColorSeed colorSelected;
+  final void Function(int value) handleColorSelect;
 
   @override
   State<Home> createState() => _HomeState();
@@ -114,7 +117,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       case ScreenSelected.profile:
         {
-          return ProfilePage(callback: homeRenderCallback);
+          return ProfilePage(
+            callback: homeRenderCallback,
+            colorSelected: widget.colorSelected,
+            handleColorSelect: widget.handleColorSelect,
+          );
         }
     }
   }
@@ -131,11 +138,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           const SizedBox(width: 10),
           const Text('SpeakSharp'),
         ],
-
       )),
-      leading:
-        _GoHomeButton(
-          handleBrightnessChange: widget.handleBrightnessChange,),
+      leading: _GoHomeButton(
+        handleBrightnessChange: widget.handleBrightnessChange,
+      ),
       actions: !showMediumSizeLayout && !showLargeSizeLayout
           ? [
               _BrightnessButton(
@@ -190,8 +196,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           animationController: controller,
           railAnimation: railAnimation,
           appBar: createAppBar(),
-          body:  (firebaseUser != null)
-              ? createScreenFor(ScreenSelected.values[screenIndex], true): AuthGate(callback: homeRenderCallback),
+          body: (firebaseUser != null)
+              ? createScreenFor(ScreenSelected.values[screenIndex], true)
+              : AuthGate(callback: homeRenderCallback),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: navRailDestinations,

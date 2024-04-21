@@ -9,7 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lang_fe/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lang_fe/pages/themer.dart';
 
+import '../constants.dart';
 import 'auth.dart';
 
 /// Displayed as a profile image if the user doesn't have one.
@@ -19,9 +21,16 @@ const placeholderImage =
 /// Profile page shows after sign in or registration.
 class ProfilePage extends StatefulWidget {
   final void Function() callback;
+  final ColorSeed colorSelected;
+  final void Function(int value) handleColorSelect;
 
   // ignore: public_member_api_docs
-  const ProfilePage({super.key, required this.callback});
+  const ProfilePage({
+    super.key,
+    required this.callback,
+    required this.colorSelected,
+    required this.handleColorSelect,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -150,6 +159,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(color: Colors.red, fontSize: 16),
               ),
             ),
+            Container(
+              constraints: const BoxConstraints.tightFor(width: 250),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ExpandedColorSeedAction(
+                  handleColorSelect: widget.handleColorSelect,
+                  colorSelected: widget.colorSelected,
+                  colorSelectionMethod: ColorSelectionMethod.colorSeed),
+            )
           ],
         ),
       ),
