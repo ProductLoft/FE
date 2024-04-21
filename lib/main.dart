@@ -52,7 +52,7 @@ void main() async {
     }));
   });
 
-  debugPrint(json.encode({'version': Platform.version}));
+  // debugPrint(json.encode({'version': Platform.version}));
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -95,11 +95,11 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   bool useMaterial3 = true;
-  ThemeMode themeMode = ThemeMode.system;
-  ColorSeed colorSelected = ColorSeed.baseColor;
+  ThemeMode themeMode = ThemeMode.light;
+  ColorSeed colorSelected = ColorSeed.teal;
   ColorImageProvider imageSelected = ColorImageProvider.leaves;
   ColorScheme? imageColorScheme = const ColorScheme.light();
-  // ColorSelectionMethod colorSelectionMethod = ColorSelectionMethod.colorSeed;
+  ColorSelectionMethod colorSelectionMethod = ColorSelectionMethod.colorSeed;
 
   bool get useLightMode => switch (themeMode) {
         ThemeMode.system =>
@@ -115,6 +115,13 @@ class _AppState extends State<App> {
     });
   }
 
+  void handleColorSelect(int value) {
+    setState(() {
+      colorSelectionMethod = ColorSelectionMethod.colorSeed;
+      colorSelected = ColorSeed.values[value];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -126,28 +133,25 @@ class _AppState extends State<App> {
           title: '',
           themeMode: themeMode,
           theme: ThemeData(
-            // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-            //     ? colorSelected.color
-            //     : null,
-            // colorScheme: colorSelectionMethod == ColorSelectionMethod.image
-            //     ? imageColorScheme
-            //     : null,
+            colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+                ? colorSelected.color
+                : null,
             useMaterial3: useMaterial3,
             brightness: Brightness.light,
           ),
           darkTheme: ThemeData(
-            // colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
-            //     ? colorSelected.color
-            //     : imageColorScheme!.primary,
+            colorSchemeSeed: colorSelectionMethod == ColorSelectionMethod.colorSeed
+                ? colorSelected.color
+                : imageColorScheme!.primary,
             useMaterial3: useMaterial3,
             brightness: Brightness.dark,
           ),
           home: Home(
             useLightMode: useLightMode,
-            // colorSelected: colorSelected,
+            colorSelected: colorSelected,
             // imageSelected: imageSelected,
             handleBrightnessChange: handleBrightnessChange,
-            // handleColorSelect: handleColorSelect,
+            handleColorSelect: handleColorSelect,
             // handleImageSelect: handleImageSelect,
             // colorSelectionMethod: colorSelectionMethod,
           ),

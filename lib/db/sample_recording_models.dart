@@ -57,6 +57,7 @@ class AudioSampleRecordingProvider {
 
   Future<AudioSampleRecord?> createRecording(
       String filePath,String comment,String length,String timestamp, int audioId) async {
+    debugPrint('createRecording!!');
     Database db = await DatabaseHelper().database;
     AudioSampleRecord recording = AudioSampleRecord(
       path: filePath,
