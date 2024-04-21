@@ -89,9 +89,9 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     final path = await _audioRecorder.stop();
     _textBoxIsVisible = true;
     if (path != null) {
-      widget.onStop(path);
+      await widget.onStop(path);
 
-      downloadWebData(path);
+      // downloadWebData(path);
     }
   }
 

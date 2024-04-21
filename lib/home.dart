@@ -17,11 +17,14 @@ class Home extends StatefulWidget {
     super.key,
     required this.useLightMode,
     required this.handleBrightnessChange,
+    required this.colorSelected,
+    required this.handleColorSelect,
   });
 
   final bool useLightMode;
-
   final void Function(bool useLightMode) handleBrightnessChange;
+  final ColorSeed colorSelected;
+  final void Function(int value) handleColorSelect;
 
   @override
   State<Home> createState() => _HomeState();
@@ -136,8 +139,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       case ScreenSelected.profile:
         {
           provider.addPageTrack('profile-page');
+          return ProfilePage(
+            callback: homeRenderCallback,
+            colorSelected: widget.colorSelected,
+            handleColorSelect: widget.handleColorSelect,
+          );
 
-          return ProfilePage(callback: homeRenderCallback);
         }
     }
   }
