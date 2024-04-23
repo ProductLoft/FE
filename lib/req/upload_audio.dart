@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'dart:typed_data';
+
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:lang_fe/req/reqest_utils.dart';
