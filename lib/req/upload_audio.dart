@@ -1,16 +1,12 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:lang_fe/req/reqest_utils.dart';
 import 'package:lang_fe/utils/misc.dart';
 import 'package:path/path.dart';
-import 'package:async/async.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
 
 Future<int?> uploadAudio(String filePath, String isSampleVoice) async {
   // Fetch the blob data
