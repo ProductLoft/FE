@@ -233,9 +233,8 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
           selectedIcon: const Icon(Icons.pause, size: 80.0),
           icon: (_recordState != RecordState.stop)
               ? (isSampleRecord
-                  ? const Icon(Icons.stop, size: 40.0, color: Color(0x806750a4))
-                  : const Icon(Icons.stop,
-                      size: 40.0, color: Color(0x806750a4)))
+                  ? const Icon(Icons.stop, size: 40.0)
+                  : const Icon(Icons.stop, size: 40.0, color: Colors.red))
               : (isSampleRecord
                   ? const Icon(Icons.mic, size: 80.0, color: Colors.white)
                   : const Icon(Icons.mic, size: 40.0, color: Colors.white)),
@@ -259,9 +258,9 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
           // isSelected: playProgressIndicator,
           selectedIcon: const Icon(Icons.pause, size: 80.0),
           icon: (_recordState == RecordState.record)
-              ? const Icon(Icons.pause, size: 40.0, color: Color(0x806750a4))
+              ? const Icon(Icons.pause, size: 40.0)
               : const Icon(Icons.play_arrow,
-                  size: 40.0, color: Color(0x806750a4)),
+                  size: 40.0),
           onPressed: () {
             setState(() {
               (_recordState == RecordState.pause) ? _resume() : _pause();
