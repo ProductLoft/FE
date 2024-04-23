@@ -215,8 +215,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   }
 
   Widget _buildRecordStopControl(Color _color, bool isSampleRecord) {
-    debugPrint('isSampleRecord: $isSampleRecord');
-
     return Container(
         width: (!isSampleRecord || _recordState != RecordState.stop)
             ? 60.0
@@ -235,11 +233,11 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
           selectedIcon: const Icon(Icons.pause, size: 80.0),
           icon: (_recordState != RecordState.stop)
               ? (isSampleRecord
-                  ? Icon(Icons.stop, size: 40.0, color: Color(0x806750a4))
-                  : Icon(Icons.stop, size: 40.0, color: Color(0x806750a4)))
+                  ? const Icon(Icons.stop, size: 40.0)
+                  : const Icon(Icons.stop, size: 40.0, color: Colors.red))
               : (isSampleRecord
-                  ? Icon(Icons.mic, size: 80.0, color: Colors.white)
-                  : Icon(Icons.mic, size: 40.0, color: Colors.white)),
+                  ? const Icon(Icons.mic, size: 80.0, color: Colors.white)
+                  : const Icon(Icons.mic, size: 40.0, color: Colors.white)),
           onPressed: () {
             setState(() {
               (_recordState != RecordState.stop) ? _stop() : _start();
@@ -260,9 +258,9 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
           // isSelected: playProgressIndicator,
           selectedIcon: const Icon(Icons.pause, size: 80.0),
           icon: (_recordState == RecordState.record)
-              ? const Icon(Icons.pause, size: 40.0, color: Color(0x806750a4))
+              ? const Icon(Icons.pause, size: 40.0)
               : const Icon(Icons.play_arrow,
-                  size: 40.0, color: Color(0x806750a4)),
+                  size: 40.0),
           onPressed: () {
             setState(() {
               (_recordState == RecordState.pause) ? _resume() : _pause();
@@ -272,13 +270,13 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
   }
 
   Widget _buildText(String text) {
-    debugPrint(text);
+    // debugPrint(text);
     // if (_recordState != RecordState.stop) {
     //   return _buildTimer();
     // }
 
     return Text(text,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18));
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18));
   }
 
   Widget _buildTimer() {
