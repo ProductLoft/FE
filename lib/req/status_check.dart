@@ -10,14 +10,29 @@ import 'package:sqflite/sqflite.dart';
 import '../db/db_helper.dart';
 import 'package:http/http.dart' as http;
 
-Future<String> checkAudioIdStatus(int audioId) async {
+
+Future<String> checkAudioAndDownload(int audioId) async {
+
+  AudioRecord? audioRecord = await AudioRecordingProvider().getRecording(audioId);
+  // TODO: Suriya AudioId in 2 places is fucking up
+  bool audioProcessed = await checkAudioIdStatus(audioId);
+  if (audioProcessed) {
+    debugPrint('Audio processed, downloading zip');
+    return await downloadAndExtractZip(audioId);
+  } else {
+    return '';
+  }
+}
+
+
+Future<bool> checkAudioIdStatus(int audioId) async {
 
   AudioRecord? audioRecord = await AudioRecordingProvider().getRecording(audioId);
   debugPrint('Checking status of audio id: $audioId, ${audioRecord?.toMap()}');
   if (audioRecord == null) {
-    return "";
+    return false;
   } else if (audioRecord.isProcessed == 1) {
-    return audioRecord.insightsDirPath;
+    return true;
   }
 
   bool audioProcessed = false;
@@ -35,7 +50,7 @@ Future<String> checkAudioIdStatus(int audioId) async {
     }
   }
 
-  return await downloadAndExtractZip(audioRecord.audioId??-1);
+  return audioProcessed;
 }
 
 Future<bool> makeStatusCheckRequest(int audioId) async {
