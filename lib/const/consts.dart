@@ -28,12 +28,13 @@ const String sampleRecordInsightsDirPathColumn = "zipPath";
 const String sampleRecordAudioIdColumn = "audioId";
 
 // consts for network calls
-const String baseUrl = "http://52.72.143.117:8000";
-const String loginUri = "/auth/login/";
-const String uploadUri = "/audio-record/upload/";
-const String jobStatusUri = "/check_job_status/";
-const String downloadZipUri = "/speaker-turn/download/";
-const String clientEventUploadUri = "/client_event_upload/";
+const String baseUrl = "https://demo.speaksharp.io";
+const String loginUri = "/api/v1/auth/login/";
+const String uploadUri = "/api/v1/audio-record/upload/";
+const String jobStatusUri = "/api/v1/check_job_status/";
+const String downloadZipUri = "/api/v1/speaker-turn/download/";
+const downloadAudioJsonUri = "/api/v1/speaker-turn/download_json/";
+const String clientEventUploadUri = "/api/v1/client_event_upload/";
 
 // FilePaths
 const String audioPath = "audio";

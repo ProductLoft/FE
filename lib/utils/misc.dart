@@ -18,6 +18,10 @@ Uri getDownloadZipUrl() {
   return Uri.parse('$baseUrl$downloadZipUri');
 }
 
+Uri getDownloadAudioJsonUrl() {
+  return Uri.parse('$baseUrl$downloadAudioJsonUri');
+}
+
 Uri getClientEventUploadUrl() {
   return Uri.parse('$baseUrl$clientEventUploadUri');
 }

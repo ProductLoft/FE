@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:lang_fe/req/get_speakers.dart';
 import 'package:lang_fe/req/status_check.dart';
 import 'package:lang_fe/req/upload_audio.dart';
 import 'package:lang_fe/utils/misc.dart';
@@ -227,13 +228,26 @@ class _RecordingPageState extends State<RecordingPage> {
   }
 
   Future<List<Widget>> getAllInsights() async {
-    String insightsDirPath = await checkAudioIdStatus(showInsightsRecordId);
+    //  TODO: Suriya, This should just be links in aws that download audio once clicked.
+
+    List<dynamic> speakerTurns;
+    String insightsDirPath = '';
+
     List<Widget> insights = [];
+    debugPrint('showInsightsRecordId!!:$showInsightsRecordId');
+    if (kIsWeb) {
+      await checkAudioIdStatus(showInsightsRecordId);
 
-    List<dynamic> speakerTurns = jsonDecode(
-            await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
-        as List<dynamic>;
+      speakerTurns = await GetAudioIDJson(showInsightsRecordId);
+    } else {
+      String insightsDirPath =
+          await checkAudioAndDownload(showInsightsRecordId);
 
+      speakerTurns = jsonDecode(
+              await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
+          as List<dynamic>;
+    }
+    debugPrint('speakerTurns!!@!:${speakerTurns.length}');
     for (dynamic speakerTurn in speakerTurns) {
       Map<String, dynamic> speakerTurnStart =
           speakerTurn as Map<String, dynamic>;
@@ -262,8 +276,7 @@ class _RecordingPageState extends State<RecordingPage> {
                                 Expanded(
                                     child: Text(
                                         "${speakerTurnStart['speaker']}",
-                                        style: const TextStyle(
-                                            fontSize: 12.0)))
+                                        style: const TextStyle(fontSize: 12.0)))
                               ]),
                           Row(
                               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -310,18 +323,20 @@ class _RecordingPageState extends State<RecordingPage> {
                                           fontSize: 12.0,
                                         ))),
                               ]),
-                          Container(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomAudioPlayer(
-                                    source:
-                                        '$insightsDirPath/${speakerTurnStart['file_name']}',
-                                    onDelete: () {},
-                                  )
-                                ]),
-                          )
+                          // TODO: Suriya Why is it not in web?
+                          if (!kIsWeb)
+                            Container(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CustomAudioPlayer(
+                                      source:
+                                          '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                      onDelete: () {},
+                                    )
+                                  ]),
+                            ),
                         ]),
                   ),
                 ),
@@ -353,17 +368,20 @@ class _RecordingPageState extends State<RecordingPage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomAudioPlayer(
-              source: audioRecord?.path ?? 'Audio Not Found',
-              onDelete: () {
-                // TODO modal confirmation on Delete
-                AudioRecordingProvider().deleteRecording(showInsightsRecordId);
-                setState(() {
-                  refreshRecordings = true;
-                  showInsights = false;
-                });
-              },
-            ),
+            // TODO: Suriya Why is it not in web?
+            if (!kIsWeb)
+              CustomAudioPlayer(
+                source: audioRecord?.path ?? 'Audio Not Found',
+                onDelete: () {
+                  // TODO modal confirmation on Delete
+                  AudioRecordingProvider()
+                      .deleteRecording(showInsightsRecordId);
+                  setState(() {
+                    refreshRecordings = true;
+                    showInsights = false;
+                  });
+                },
+              ),
           ]),
       Padding(
           padding: const EdgeInsets.all(16.0),
@@ -375,7 +393,7 @@ class _RecordingPageState extends State<RecordingPage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text('Error123!: ${snapshot.error}');
                 } else if (snapshot.hasData) {
                   debugPrint('Snapshot data: ${snapshot.data!.length}');
                   return Column(
@@ -464,7 +482,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
-              return Text('Error!!!: ${snapshot.error}');
+              return Text('Error!45!: ${snapshot.error}');
             } else {
               return Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16.0),
