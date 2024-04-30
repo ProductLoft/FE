@@ -28,7 +28,7 @@ const String sampleRecordInsightsDirPathColumn = "zipPath";
 const String sampleRecordAudioIdColumn = "audioId";
 
 // consts for network calls
-const String baseUrl = "https://demo.speaksharp.io";
+const String baseUrl = "https://api.speaksharp.io";
 const String loginUri = "/api/v1/auth/login/";
 const String uploadUri = "/api/v1/audio-record/upload/";
 const String jobStatusUri = "/api/v1/check_job_status/";
