@@ -1,4 +1,4 @@
-# lang_fe
+# SpeakSharp
 
 SpeakSharp is a digital language and communication coach which utilizes personal daily conversations as a learning opportunity. Once consent is provided, this application listens to your speech (intelligently filtering out other individual’s speech and background noise) and provides multidimensional feedback on communication style including improvements in sentence structure, vocabulary, and grammar to name a few. This feedback can be conveniently reviewed by the user in real-time during the conversation or after the fact. 
 
