@@ -11,7 +11,6 @@ import 'platform/audio_recorder_platform.dart';
 class Recorder extends StatefulWidget {
   final Future<void> Function(String path) onStop;
   final String waitToText;
-  final bool isSampleRecord = false;
 
   const Recorder({super.key, required this.onStop, required this.waitToText});
 
@@ -147,11 +146,7 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
             //   bottom: Radius.circular(8.0),
             // ),
             ),
-        padding: widget.isSampleRecord
-            ? ((_recordState != RecordState.stop)
-                ? const EdgeInsets.fromLTRB(24, 160, 24, 20)
-                : const EdgeInsets.fromLTRB(24, 80, 24, 20))
-            : const EdgeInsets.fromLTRB(24, 20, 24, 0),
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
         child: (_recordState != RecordState.stop)
             ? Container(
                 padding: const EdgeInsets.only(bottom: 12.0),
@@ -160,17 +155,14 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: widget.isSampleRecord
-                            ? EdgeInsets.only(bottom: 24.0)
-                            : EdgeInsets.only(bottom: 12.0),
+                        padding: EdgeInsets.only(bottom: 12.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               _buildRecordStopControl(
                                   Theme.of(context)
                                       .primaryColor
-                                      .withOpacity(0.5),
-                                  widget.isSampleRecord),
+                                      .withOpacity(0.5),),
                               SizedBox(width: 8),
                               _buildPauseResumeControl(),
                               SizedBox(width: 8),
@@ -188,15 +180,13 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                     Padding(
-                      padding: widget.isSampleRecord
-                          ? EdgeInsets.only(bottom: 24.0)
-                          : EdgeInsets.only(bottom: 12.0),
+                      padding: const EdgeInsets.only(bottom: 12.0),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildRecordStopControl(
                                 Theme.of(context).primaryColor.withOpacity(0.5),
-                                widget.isSampleRecord),
+                               ),
                           ]),
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -214,14 +204,14 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     super.dispose();
   }
 
-  Widget _buildRecordStopControl(Color _color, bool isSampleRecord) {
+  Widget _buildRecordStopControl(Color _color) {
     return Container(
-        width: (!isSampleRecord || _recordState != RecordState.stop)
+        width: (_recordState != RecordState.stop)
             ? 60.0
-            : 120.0,
-        height: (!isSampleRecord || _recordState != RecordState.stop)
+            : 60.0,
+        height: ( _recordState != RecordState.stop)
             ? 60.0
-            : 120.0,
+            : 60.0,
         decoration: BoxDecoration(
           color: (_recordState != RecordState.stop)
               ? Colors.black.withOpacity(0.05)
@@ -232,12 +222,8 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         child: IconButton(
           selectedIcon: const Icon(Icons.pause, size: 80.0),
           icon: (_recordState != RecordState.stop)
-              ? (isSampleRecord
-                  ? const Icon(Icons.stop, size: 40.0)
-                  : const Icon(Icons.stop, size: 40.0, color: Colors.red))
-              : (isSampleRecord
-                  ? const Icon(Icons.mic, size: 80.0, color: Colors.white)
-                  : const Icon(Icons.mic, size: 40.0, color: Colors.white)),
+              ? (const Icon(Icons.stop, size: 40.0, color: Colors.red))
+              : (const Icon(Icons.mic, size: 40.0, color: Colors.white)),
           onPressed: () {
             setState(() {
               (_recordState != RecordState.stop) ? _stop() : _start();
