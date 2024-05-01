@@ -7,8 +7,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:lang_fe/req/reqest_utils.dart';
-import 'package:lang_fe/utils/misc.dart';
+import 'package:speaksharp/req/reqest_utils.dart';
+import 'package:speaksharp/utils/misc.dart';
 import 'package:path/path.dart';
 
 Future<int?> uploadAudio(String filePath) async {

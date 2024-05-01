@@ -6,11 +6,11 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/main.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:speaksharp/main.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lang_fe/pages/themer.dart';
+import 'package:speaksharp/pages/themer.dart';
 
 import '../constants.dart';
 import 'auth.dart';

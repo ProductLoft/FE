@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
-import 'package:lang_fe/db/recording_models.dart';
-import 'package:lang_fe/db/sample_recording_models.dart';
+import 'package:speaksharp/db/recording_models.dart';
+import 'package:speaksharp/db/sample_recording_models.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import 'user_models.dart'; // Import your data model
 // import 'sample_recording_models.dart'; // Import your data model
-import 'package:lang_fe/const/consts.dart';
+import 'package:speaksharp/const/consts.dart';
 
 // Create and manage database from here. Creation of new models need to be registered here.
 //

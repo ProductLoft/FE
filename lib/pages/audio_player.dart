@@ -5,7 +5,7 @@ import 'package:audioplayers/audioplayers.dart' as ap;
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
 import 'package:provider/provider.dart';
 
 class CustomAudioPlayer extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -65,10 +65,8 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
             encoder: AudioEncoder.wav,
             bitRate: 256000,
             sampleRate: 16000,
-            numChannels: 1,
-            autoGain: true,
-            echoCancel: false,
-            noiseSuppress: true);
+            numChannels: 1
+        );
 
         // Record to file
         await recordFile(_audioRecorder, config);

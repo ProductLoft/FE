@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:lang_fe/const/consts.dart';
-import 'package:lang_fe/db/db_helper.dart';
+import 'package:speaksharp/const/consts.dart';
+import 'package:speaksharp/db/db_helper.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:collection/collection.dart';

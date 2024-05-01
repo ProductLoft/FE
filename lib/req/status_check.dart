@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:lang_fe/db/recording_models.dart';
-import 'package:lang_fe/req/reqest_utils.dart';
-import 'package:lang_fe/req/zip_req.dart';
-import 'package:lang_fe/utils/misc.dart';
+import 'package:speaksharp/db/recording_models.dart';
+import 'package:speaksharp/req/reqest_utils.dart';
+import 'package:speaksharp/req/zip_req.dart';
+import 'package:speaksharp/utils/misc.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../db/db_helper.dart';
@@ -18,7 +18,7 @@ Future<String> checkAudioAndDownload(int audioId) async {
   bool audioProcessed = await checkAudioIdStatus(audioId);
   if (audioProcessed) {
     debugPrint('Audio processed, downloading zip');
-    return await downloadAndExtractZip(audioId);
+    return await downloadAndExtractZip(audioRecord?.audioId??-1);
   } else {
     return '';
   }

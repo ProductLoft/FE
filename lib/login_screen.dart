@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:lang_fe/req/login_req.dart';
-import 'package:lang_fe/utils/misc.dart';
+import 'package:speaksharp/req/login_req.dart';
+import 'package:speaksharp/utils/misc.dart';
 
 import 'db/user_models.dart';
 
