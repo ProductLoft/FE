@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/pages/auth.dart';
-import 'package:lang_fe/pages/profile_page.dart';
+import 'package:speaksharp/pages/auth.dart';
+import 'package:speaksharp/pages/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
 
 import 'component_screen.dart';
 import 'constants.dart';

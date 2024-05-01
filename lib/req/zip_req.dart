@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:lang_fe/req/reqest_utils.dart';
+import 'package:speaksharp/req/reqest_utils.dart';
 
 import '../utils/misc.dart';
 

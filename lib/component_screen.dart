@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:lang_fe/pages/audio_player.dart';
-import 'package:lang_fe/pages/recording_page.dart';
+import 'package:speaksharp/pages/audio_player.dart';
+import 'package:speaksharp/pages/recording_page.dart';
 
 import 'db/recording_models.dart';
 

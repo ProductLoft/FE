@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
-import 'package:lang_fe/req/firebase_auth_methods.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
+import 'package:speaksharp/req/firebase_auth_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';

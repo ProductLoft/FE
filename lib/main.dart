@@ -9,10 +9,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
-import 'package:lang_fe/req/client_event_upload.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
+import 'package:speaksharp/req/client_event_upload.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-// import 'package:lang_fe/utils/navigator_util.dart';
+// import 'package:speaksharp/utils/navigator_util.dart';
 import 'package:provider/provider.dart';
 import 'package:web_startup_analyzer/web_startup_analyzer.dart';
 

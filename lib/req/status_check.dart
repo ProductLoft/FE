@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:lang_fe/db/recording_models.dart';
-import 'package:lang_fe/req/reqest_utils.dart';
-import 'package:lang_fe/req/zip_req.dart';
-import 'package:lang_fe/utils/misc.dart';
+import 'package:speaksharp/db/recording_models.dart';
+import 'package:speaksharp/req/reqest_utils.dart';
+import 'package:speaksharp/req/zip_req.dart';
+import 'package:speaksharp/utils/misc.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../db/db_helper.dart';
@@ -18,7 +18,7 @@ Future<String> checkAudioAndDownload(int audioId) async {
   bool audioProcessed = await checkAudioIdStatus(audioId);
   if (audioProcessed) {
     debugPrint('Audio processed, downloading zip');
-    return await downloadAndExtractZip(audioId);
+    return await downloadAndExtractZip(audioRecord?.audioId??-1);
   } else {
     return '';
   }
@@ -36,8 +36,10 @@ Future<bool> checkAudioIdStatus(int audioId) async {
   }
 
   bool audioProcessed = false;
-  while (!audioProcessed) {
+  int retrycount = 0;
+  while (!audioProcessed && retrycount < 5) {
     debugPrint('Checking status of audio id: $audioId, ${audioRecord.audioId}');
+    debugPrint('$retrycount');
     try {
       audioProcessed = await makeStatusCheckRequest(audioRecord.audioId??-1);
     } catch (e) {
@@ -48,6 +50,7 @@ Future<bool> checkAudioIdStatus(int audioId) async {
     if (!audioProcessed) {
       await Future.delayed(const Duration(seconds: 5));
     }
+    retrycount++;
   }
 
   return audioProcessed;

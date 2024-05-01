@@ -35,6 +35,7 @@ const String jobStatusUri = "/api/v1/check_job_status/";
 const String downloadZipUri = "/api/v1/speaker-turn/download/";
 const downloadAudioJsonUri = "/api/v1/speaker-turn/download_json/";
 const String clientEventUploadUri = "/api/v1/client_event_upload/";
+const String downloadAuthenticAudio = "/api/v1/speaker-turn/download_authentic_audio/";
 
 // FilePaths
 const String audioPath = "audio";

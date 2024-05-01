@@ -5,8 +5,8 @@
 // ignore_for_file: avoid_types_on_closure_parameters
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lang_fe/component_screen.dart';
-import 'package:lang_fe/main.dart';
+import 'package:speaksharp/component_screen.dart';
+import 'package:speaksharp/main.dart';
 
 void main() {
   testWidgets('Default main page shows all M3 components', (tester) async {

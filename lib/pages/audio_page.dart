@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lang_fe/db/recording_models.dart';
-import 'package:lang_fe/pages/audio_player.dart';
-import 'package:lang_fe/provider/app_basic_provider.dart';
+import 'package:speaksharp/db/recording_models.dart';
+import 'package:speaksharp/pages/audio_player.dart';
+import 'package:speaksharp/provider/app_basic_provider.dart';
 import 'package:provider/provider.dart';
 
 // import 'audio_player.dart';
