@@ -72,7 +72,7 @@ void main() {
   },);
 
   final document = builder.buildDocument();
-  File('lang-fe.evb').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
+  File('speaksharp.evb').writeAsStringSync(document.toXmlString(pretty: true), mode: FileMode.append);
 }
 
 void buildFile(XmlBuilder builder, String name, String path) {
