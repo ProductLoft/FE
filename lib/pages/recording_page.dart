@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../const/consts.dart';
 import '../db/recording_models.dart';
 import '../db/sample_recording_models.dart';
+import '../req/reqest_utils.dart';
 import 'audio_player.dart';
 import 'audio_recorder.dart';
 
@@ -35,7 +36,6 @@ class _RecordingPageState extends State<RecordingPage> {
   String commentText = '';
   bool showInsights = false;
   int showInsightsRecordId = -1;
-  bool isSampleRecord = false;
 
   @override
   initState() {
@@ -47,12 +47,14 @@ class _RecordingPageState extends State<RecordingPage> {
 
   Future<List<Widget>> getAudioplayers(bool isBright) async {
     // AudioSampleRecordingProvider.getAll();
-    List<AudioSampleRecord> sampleRecords =
-        await AudioSampleRecordingProvider().getAll();
-    debugPrint('isBright111:$isBright');
-    if (sampleRecords.length > 0) {
-      List<AudioRecord> previousrecordings =
+    // List<AudioSampleRecord> sampleRecords =
+    //     await AudioSampleRecordingProvider().getAll();
+    // debugPrint('isBright111:$isBright');
+    // debugPrint('sampleRecords:${sampleRecords.length}');
+    // if (sampleRecords.isNotEmpty) {
+    List<AudioRecord> previousrecordings =
           await AudioRecordingProvider().getAll();
+      debugPrint("previousrecordings:!!!!1${previousrecordings.length}");
       List<Widget> audioPlayers = [
         Recorder(
           waitToText: 'Waiting to record',
@@ -62,7 +64,6 @@ class _RecordingPageState extends State<RecordingPage> {
             }
 
             setState(() {
-              isSampleRecord = false;
               _showCommentModal(context, path);
               audioPath = path;
               showPlayer = true;
@@ -204,27 +205,26 @@ class _RecordingPageState extends State<RecordingPage> {
         audioPlayers.add(customPlayer);
       }
       return audioPlayers;
-    } else {
-      List<Widget> audioPlayers = [
-        Recorder(
-          waitToText: "HERE'S A RECORDING SAMPLE",
-          onStop: (path) async {
-            if (kDebugMode) {
-              print('Recorded file path: $path');
-            }
-
-            setState(() {
-              isSampleRecord = true;
-              _showCommentModal(context, path);
-              audioPath = path;
-              showPlayer = true;
-            });
-          },
-        ),
-      ];
-
-      return audioPlayers;
-    }
+    // } else {
+    //   List<Widget> audioPlayers = [
+    //     Recorder(
+    //       waitToText: "HERE'S A RECORDING SAMPLE",
+    //       onStop: (path) async {
+    //         if (kDebugMode) {
+    //           print('Recorded file path: $path');
+    //         }
+    //
+    //         setState(() {
+    //           _showCommentModal(context, path);
+    //           audioPath = path;
+    //           showPlayer = true;
+    //         });
+    //       },
+    //     ),
+    //   ];
+    //
+    //   return audioPlayers;
+    // }
   }
 
   Future<List<Widget>> getAllInsights() async {
@@ -247,6 +247,7 @@ class _RecordingPageState extends State<RecordingPage> {
               await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
           as List<dynamic>;
     }
+    var index = 0;
     debugPrint('speakerTurns!!@!:${speakerTurns.length}');
     for (dynamic speakerTurn in speakerTurns) {
       Map<String, dynamic> speakerTurnStart =
@@ -331,8 +332,7 @@ class _RecordingPageState extends State<RecordingPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CustomAudioPlayer(
-                                      source:
-                                          '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                      source: kIsWeb? await getAudioUrl(speakerTurnStart["audio_record_id"] as int,index) : '$insightsDirPath/${speakerTurnStart['file_name']}',
                                       onDelete: () {},
                                     )
                                   ]),
@@ -343,6 +343,7 @@ class _RecordingPageState extends State<RecordingPage> {
               ])),
         ),
       );
+      index++;
     }
     debugPrint("Done with audio players");
     debugPrint('insights:${insights.length}');
@@ -419,7 +420,7 @@ class _RecordingPageState extends State<RecordingPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add context'),
+          title: const Text('Save audio with a comment'),
           content: TextField(
             controller: _controller,
             autofocus: true,
@@ -436,24 +437,16 @@ class _RecordingPageState extends State<RecordingPage> {
               onPressed: () async {
                 debugPrint(_controller.text);
                 int? audioRecordId =
-                    await uploadAudio(path, isSampleRecord ? 'True' : '');
+                    await uploadAudio(path);
                 // debugPrint('Audio record id: $audioRecordId');
 
-                if (isSampleRecord) {
-                  await AudioSampleRecordingProvider().createRecording(
-                      path,
-                      _controller.text,
-                      "",
-                      getCurrentTime(),
-                      audioRecordId ?? -1);
-                } else {
+
                   await AudioRecordingProvider().createRecording(
                       path,
                       _controller.text,
                       "",
                       getCurrentTime(),
                       audioRecordId ?? -1);
-                }
 
                 setState(() {
                   commentText = _controller.text;

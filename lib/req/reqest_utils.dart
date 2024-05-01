@@ -1,9 +1,7 @@
-
-
-
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lang_fe/const/consts.dart';
 import 'package:lang_fe/db/user_models.dart';
 
 import '../main.dart';
@@ -23,4 +21,8 @@ Future<Map<String, String>> getHeaders() async {
     // 'X-CSRFToken': user?.csrfToken ?? '',
     'Authorization': 'Bearer ${await user?.getIdToken(true)}',
   };
+}
+
+Future<String> getAudioUrl(int AudioId, int index) async {
+  return '$baseUrl$downloadAuthenticAudio?job_id=$AudioId&index=$index';
 }
