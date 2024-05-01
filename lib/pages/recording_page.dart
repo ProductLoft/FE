@@ -26,6 +26,7 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingPageState extends State<RecordingPage> {
+  // TODO: Why are these here
   String popupValue = 'One';
   String languagePopupValue = 'English';
   bool switchValue = false;
@@ -236,16 +237,16 @@ class _RecordingPageState extends State<RecordingPage> {
     List<Widget> insights = [];
     debugPrint('showInsightsRecordId!!:$showInsightsRecordId');
     if (kIsWeb) {
-      await checkAudioIdStatus(showInsightsRecordId);
+      bool audioStatus = await checkAudioIdStatus(showInsightsRecordId);
 
-      speakerTurns = await GetAudioIDJson(showInsightsRecordId);
+      speakerTurns = audioStatus ? await GetAudioIDJson(showInsightsRecordId): [];
     } else {
       String insightsDirPath =
           await checkAudioAndDownload(showInsightsRecordId);
 
-      speakerTurns = jsonDecode(
+      speakerTurns = insightsDirPath.isNotEmpty? jsonDecode(
               await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
-          as List<dynamic>;
+          as List<dynamic> : [] ;
     }
     var index = 0;
     debugPrint('speakerTurns!!@!:${speakerTurns.length}');

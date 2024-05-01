@@ -36,8 +36,10 @@ Future<bool> checkAudioIdStatus(int audioId) async {
   }
 
   bool audioProcessed = false;
-  while (!audioProcessed) {
+  int retrycount = 0;
+  while (!audioProcessed && retrycount < 5) {
     debugPrint('Checking status of audio id: $audioId, ${audioRecord.audioId}');
+    debugPrint('$retrycount');
     try {
       audioProcessed = await makeStatusCheckRequest(audioRecord.audioId??-1);
     } catch (e) {
@@ -48,6 +50,7 @@ Future<bool> checkAudioIdStatus(int audioId) async {
     if (!audioProcessed) {
       await Future.delayed(const Duration(seconds: 5));
     }
+    retrycount++;
   }
 
   return audioProcessed;
