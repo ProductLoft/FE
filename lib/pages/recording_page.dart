@@ -54,158 +54,155 @@ class _RecordingPageState extends State<RecordingPage> {
     // debugPrint('sampleRecords:${sampleRecords.length}');
     // if (sampleRecords.isNotEmpty) {
     List<AudioRecord> previousrecordings =
-          await AudioRecordingProvider().getAll();
-      debugPrint("previousrecordings:!!!!1${previousrecordings.length}");
-      List<Widget> audioPlayers = [
-        Recorder(
-          waitToText: 'Waiting to record',
-          onStop: (path) async {
-            if (kDebugMode) {
-              print('Recorded file path: $path');
-            }
+        await AudioRecordingProvider().getAll();
+    debugPrint("previousrecordings:!!!!1${previousrecordings.length}");
+    List<Widget> audioPlayers = [
+      Recorder(
+        waitToText: 'Waiting to record',
+        onStop: (path) async {
+          if (kDebugMode) {
+            print('Recorded file path: $path');
+          }
 
-            setState(() {
-              _showCommentModal(context, path);
-              audioPath = path;
-              showPlayer = true;
-            });
-          },
+          setState(() {
+            _showCommentModal(context, path);
+            audioPath = path;
+            showPlayer = true;
+          });
+        },
+      ),
+      const SizedBox(height: 12),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(
+          height: 1.5, // 设置分割线的高度
+          width: 100.0, // 设置分割线的宽度为100逻辑像素
+          color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
         ),
-        const SizedBox(height: 12),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            height: 1.5, // 设置分割线的高度
-            width: 100.0, // 设置分割线的宽度为100逻辑像素
-            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
-          ),
-          SizedBox(width: 8),
-          Container(
-            height: 2, // 设置分割线的高度
-            width: 2, // 设置分割线的宽度为100逻辑像素
-            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
-          ),
-          SizedBox(width: 8),
-          Container(
-            height: 1.5, // 设置分割线的高度
-            width: 100.0, // 设置分割线的宽度为100逻辑像素
-            color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
-          ),
-        ]),
-        const SizedBox(height: 24),
-        const Text(
-          'Previous Recordings:',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        SizedBox(width: 8),
+        Container(
+          height: 2, // 设置分割线的高度
+          width: 2, // 设置分割线的宽度为100逻辑像素
+          color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
         ),
-        const SizedBox(height: 12),
-      ];
+        SizedBox(width: 8),
+        Container(
+          height: 1.5, // 设置分割线的高度
+          width: 100.0, // 设置分割线的宽度为100逻辑像素
+          color: Colors.black.withOpacity(0.1), // 设置分割线的颜色
+        ),
+      ]),
+      const SizedBox(height: 24),
+      const Text(
+        'Previous Recordings:',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 12),
+    ];
 
-      // debugPrint('previousrecordings:$previousrecordings');
-      for (AudioRecord previousRecording in previousrecordings) {
-        debugPrint(previousRecording.comment);
+    // debugPrint('previousrecordings:$previousrecordings');
+    for (AudioRecord previousRecording in previousrecordings) {
+      debugPrint(previousRecording.comment);
 
-        var _time = '';
+      var _time = '';
 
-        try {
-          // 将字符串转换为DateTime对象
-          DateTime dateTime = DateTime.parse(previousRecording.timestamp);
+      try {
+        // 将字符串转换为DateTime对象
+        DateTime dateTime = DateTime.parse(previousRecording.timestamp);
 
-          // 创建一个格式化器
-          var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+        // 创建一个格式化器
+        var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-          // 使用格式化器来格式化日期和时间
-          _time = formatter.format(dateTime);
-        } catch (e) {
-          // 处理解析错误
-          _time = previousRecording.timestamp;
-        }
-
-        // debugPrint(themeMode);
-
-        Widget customPlayer = Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            // Text(previousRecording.comment),
-            Card(
-              clipBehavior: Clip.hardEdge,
-              child: InkWell(
-                  splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {
-                    debugPrint('Card tapped.${previousRecording.id}');
-                    setState(() {
-                      showInsightsRecordId = previousRecording.id ?? -1;
-                      showInsights = true;
-                    });
-                  },
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 8.0),
-                                        child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              const Text("COMMENT: ",
-                                                  style: TextStyle(
-                                                      fontSize: 12.0,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                  previousRecording.comment !=
-                                                          ''
-                                                      ? previousRecording
-                                                          .comment
-                                                      : "Audio_${previousRecording.id}",
-                                                  style: const TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight:
-                                                          FontWeight.bold))
-                                            ])),
-                                    Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.baseline,
-                                        textBaseline: TextBaseline.alphabetic,
-                                        children: [
-                                          Text("DATE-TIME: ",
-                                              style: TextStyle(
-                                                  fontSize: 12.0,
-                                                  color: isBright
-                                                      ? Colors.black
-                                                          .withOpacity(0.5)
-                                                      : Colors.white
-                                                          .withOpacity(0.8))),
-                                          Text(_time,
-                                              style: TextStyle(
-                                                  fontSize: 12.0,
-                                                  color: isBright
-                                                      ? Colors.black
-                                                          .withOpacity(0.5)
-                                                      : Colors.white
-                                                          .withOpacity(0.8)))
-                                        ])
-                                  ])),
-                        ])
-                  ])),
-            ),
-          ],
-        );
-
-        audioPlayers.add(customPlayer);
+        // 使用格式化器来格式化日期和时间
+        _time = formatter.format(dateTime);
+      } catch (e) {
+        // 处理解析错误
+        _time = previousRecording.timestamp;
       }
-      return audioPlayers;
+
+      // debugPrint(themeMode);
+
+      Widget customPlayer = Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          // Text(previousRecording.comment),
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+                splashColor: Colors.blue.withAlpha(30),
+                onTap: () {
+                  debugPrint('Card tapped.${previousRecording.id}');
+                  setState(() {
+                    showInsightsRecordId = previousRecording.id ?? -1;
+                    showInsights = true;
+                  });
+                },
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.baseline,
+                                          textBaseline: TextBaseline.alphabetic,
+                                          children: [
+                                            const Text("COMMENT: ",
+                                                style: TextStyle(
+                                                    fontSize: 12.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text(
+                                                previousRecording.comment != ''
+                                                    ? previousRecording.comment
+                                                    : "Audio_${previousRecording.id}",
+                                                style: const TextStyle(
+                                                    fontSize: 18.0,
+                                                    fontWeight:
+                                                        FontWeight.bold))
+                                          ])),
+                                  Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text("DATE-TIME: ",
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: isBright
+                                                    ? Colors.black
+                                                        .withOpacity(0.5)
+                                                    : Colors.white
+                                                        .withOpacity(0.8))),
+                                        Text(_time,
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: isBright
+                                                    ? Colors.black
+                                                        .withOpacity(0.5)
+                                                    : Colors.white
+                                                        .withOpacity(0.8)))
+                                      ])
+                                ])),
+                      ])
+                ])),
+          ),
+        ],
+      );
+
+      audioPlayers.add(customPlayer);
+    }
+    return audioPlayers;
     // } else {
     //   List<Widget> audioPlayers = [
     //     Recorder(
@@ -239,20 +236,22 @@ class _RecordingPageState extends State<RecordingPage> {
     if (kIsWeb) {
       bool audioStatus = await checkAudioIdStatus(showInsightsRecordId);
 
-      speakerTurns = audioStatus ? await GetAudioIDJson(showInsightsRecordId): [];
+      speakerTurns =
+          audioStatus ? await GetAudioIDJson(showInsightsRecordId) : [];
     } else {
       String insightsDirPath =
           await checkAudioAndDownload(showInsightsRecordId);
 
-      speakerTurns = insightsDirPath.isNotEmpty? jsonDecode(
-              await rootBundle.loadString('$insightsDirPath/$speakerTurnsJson'))
-          as List<dynamic> : [] ;
+      speakerTurns = insightsDirPath.isNotEmpty
+          ? jsonDecode(await rootBundle.loadString(
+              '$insightsDirPath/$speakerTurnsJson')) as List<dynamic>
+          : [];
     }
-    var index = 0;
     debugPrint('speakerTurns!!@!:${speakerTurns.length}');
     for (dynamic speakerTurn in speakerTurns) {
       Map<String, dynamic> speakerTurnStart =
           speakerTurn as Map<String, dynamic>;
+      debugPrint('speakerTurnStart!!@!:$speakerTurnStart');
       insights.add(
         Card(
           clipBehavior: Clip.hardEdge,
@@ -326,14 +325,18 @@ class _RecordingPageState extends State<RecordingPage> {
                                         ))),
                               ]),
                           // TODO: Suriya Why is it not in web?
-                          if (!kIsWeb)
                             Container(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CustomAudioPlayer(
-                                      source: kIsWeb? await getAudioUrl(speakerTurnStart["audio_record_id"] as int,index) : '$insightsDirPath/${speakerTurnStart['file_name']}',
+                                      source: kIsWeb
+                                          ? await getAudioUrl(
+                                              speakerTurnStart[
+                                                  "audio_record_id"] as int,
+                                              speakerTurnStart["index"] as int)
+                                          : '$insightsDirPath/${speakerTurnStart['file_name']}',
                                       onDelete: () {},
                                     )
                                   ]),
@@ -344,7 +347,6 @@ class _RecordingPageState extends State<RecordingPage> {
               ])),
         ),
       );
-      index++;
     }
     debugPrint("Done with audio players");
     debugPrint('insights:${insights.length}');
@@ -437,17 +439,15 @@ class _RecordingPageState extends State<RecordingPage> {
               child: const Text('Save audio'),
               onPressed: () async {
                 debugPrint(_controller.text);
-                int? audioRecordId =
-                    await uploadAudio(path);
+                int? audioRecordId = await uploadAudio(path);
                 // debugPrint('Audio record id: $audioRecordId');
 
-
-                  await AudioRecordingProvider().createRecording(
-                      path,
-                      _controller.text,
-                      "",
-                      getCurrentTime(),
-                      audioRecordId ?? -1);
+                await AudioRecordingProvider().createRecording(
+                    path,
+                    _controller.text,
+                    "",
+                    getCurrentTime(),
+                    audioRecordId ?? -1);
 
                 setState(() {
                   commentText = _controller.text;
